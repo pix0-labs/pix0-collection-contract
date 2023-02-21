@@ -1,5 +1,5 @@
 use crate::msg::{CollectionResponse, CollectionsResponse, UserExistsResponse, UsersResponse, UserResponse};
-use cosmwasm_std::{Deps, StdResult, Order, Addr, Env};
+use cosmwasm_std::{Deps, StdResult, Order, Addr};
 use crate::state::{Collection, User};
 use crate::indexes::{collections_store, users_store};
 use cw_storage_plus::Bound;
@@ -170,13 +170,10 @@ pub fn get_users(deps : Deps , start_after: Option<String>, limit: Option<u32>)
 
 
 
-pub fn get_user(deps : Deps, env: Env  ) 
+pub fn get_user(deps : Deps, wallet_address : String  ) 
 ->StdResult<UserResponse> {
 
-    let caller: Addr = env.contract.address;
-   
-
-    let _key = caller.to_string();
+    let _key = wallet_address;
 
     let stored_user = users_store().key(_key.clone());
     

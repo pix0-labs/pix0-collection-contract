@@ -77,8 +77,8 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::GetUsers { start_after, limit } =>
         to_binary(&get_users(deps, start_after, limit)?),
 
-        QueryMsg::GetUser { } =>
-        to_binary(&get_user(deps, _env)?),
+        QueryMsg::GetUser {  wallet_address} =>
+        to_binary(&get_user(deps, wallet_address)?),
 
         QueryMsg::UserExists {wallet_address } =>
         to_binary(&user_exists(deps, wallet_address)?),

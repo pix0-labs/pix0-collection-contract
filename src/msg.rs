@@ -86,7 +86,7 @@ pub enum QueryMsg {
         wallet_address : String, 
     },
 
-    GetUser { },
+    GetUser {  wallet_address : String },
 
 }
 
