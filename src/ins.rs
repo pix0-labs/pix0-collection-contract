@@ -243,6 +243,9 @@ message : Option<String>) -> Result<Response, ContractError> {
     if message.is_some() {
 
         let mesg = message.unwrap();
+
+        println!("at@common_response:{}",mesg);
+        
         Ok(Response::new()
         .add_attribute("key",key)
         .add_attribute("method", method)
