@@ -8,6 +8,13 @@
     "deployments": [
       {
         "project": "pix0-contract",
+        "type": "store",
+        "chainId": "constantine-1",
+        "codeId": 147,
+        "txhash": "61694F2CADB8C900E0987C60CF8CDC5F8F0ECA63839C95FF9D9C02D115940888"
+      },
+      {
+        "project": "pix0-contract",
         "type": "instantiate",
         "chainId": "constantine-1",
         "codeId": 146,

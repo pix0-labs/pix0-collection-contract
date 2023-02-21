@@ -1,4 +1,4 @@
-use cosmwasm_std::{DepsMut, Env, Response, MessageInfo};
+use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Empty};
 use crate::state::{Collection, Treasury, User, Attribute, PriceType, COLLECTION_STATUS_NEW,
 COLLECTION_STATUS_ACTIVE, COLLECTION_STATUS_DEACTIVATED};
 use crate::indexes::{collections_store, users_store };
@@ -196,8 +196,39 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
 
     collections_store().save(deps.storage, _key.clone(), &new_collection)?;
 
-    common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, None)
+    let _nft_contract = init_nft_contract(deps, _env, info, name, symbol);
+
+    
+    common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, 
+    Some("NFT contract instantiated".to_string()))
 }
+
+
+pub type Metadata = crate::state::Metadata;
+
+pub type Extension = Option<Metadata>;
+
+pub type NftContract<'a> = cw721_base::Cw721Contract<'a, Extension, Empty>;
+
+
+pub fn init_nft_contract(deps: DepsMut,  _env : Env, 
+info: MessageInfo, name : String ,
+symbol : String) -> NftContract {
+    
+    let msg =  cw721_base::InstantiateMsg {
+        name: name,
+        symbol: symbol,
+        minter: String::from(info.sender.clone()),
+    };
+
+    let contract = NftContract::default();
+
+    let _ = contract.instantiate(deps, _env.clone(), info.clone(),msg);
+
+    
+    contract
+}
+
 
 
 #[allow(dead_code)]
