@@ -8,6 +8,8 @@ use crate::error::ContractError;
 use crate::ins::create_collection;
 use crate::query::{get_all_collections, get_collections, get_collection};
 use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg};
+use crate::state::ContractInfo;
+use crate::indexes::CONTRACT_INFO;
 
 // version info for migration info
 const CONTRACT_NAME: &str = "crates.io:pix0-contract";
@@ -23,11 +25,23 @@ pub fn instantiate(
     
 
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
-    
-    
+    let contract_info = ContractInfo {
+
+        allowed_admins : _msg.allowed_admins,
+
+        date_instantiated :_env.block.time,
+
+        name : _msg.name, 
+    };
+   
+    CONTRACT_INFO.save(deps.storage, &contract_info)?;
+
+
     Ok(Response::new()
         .add_attribute("method", "instantiate")
-        .add_attribute("owner", info.sender))
+        .add_attribute("owner", info.sender)
+        .add_attribute("contract info", contract_info)
+    )
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]

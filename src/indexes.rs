@@ -1,7 +1,9 @@
-use crate::state::{Collection, Item, User};
+use crate::state::{Collection, Item, User, ContractInfo};
 use cosmwasm_std::Addr;
 use cw_storage_plus::{UniqueIndex, Index, IndexList, IndexedMap, Map};
 use crate::ins::collection_id;
+
+pub const CONTRACT_INFO: cw_storage_plus::Item<ContractInfo> = cw_storage_plus::Item::new("contract_info");
 
 pub const ITEMS_STORE : Map<(Addr,String,String), Item> = Map::new("items_store");
 

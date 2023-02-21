@@ -2,6 +2,34 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use cosmwasm_std::{Addr, Timestamp};
 
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct ContractInfo {
+
+    pub name : String, 
+
+    pub allowed_admins : Vec<String>,
+
+    pub date_instantiated : Timestamp,
+
+}
+
+// Implement the `Display` trait for the `Person` struct
+impl std::fmt::Display for ContractInfo {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Name: {}\nAllowed Admins: {:?}\nDate Instantiated: {}",
+            self.name, self.allowed_admins, self.date_instantiated
+        )
+    }
+}
+
+impl Into<String> for ContractInfo {
+    fn into(self) -> String {
+        format!("Name: {}\nAllowed Admins: {:?}\nDate Instantiated: {}", self.name, self.allowed_admins, 
+        self.date_instantiated)
+    }
+}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct User {
