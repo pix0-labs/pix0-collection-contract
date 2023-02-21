@@ -131,9 +131,9 @@ pub fn create_collection (deps: DepsMut,
     }
     else {
 
-        return common_response("none", "create_collection", STATUS_ERROR,
-        Some( format!("User {} must register first!", info.sender.clone().as_str())));
-      
+        return Err(ContractError::CustomErrorMesg { message: 
+            format!("User {} must register first!", info.sender.clone().as_str()).to_string() } );
+
     }
  
 }
@@ -161,9 +161,7 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
     let owner = info.clone().sender;
 
     if collection_exists(info.clone(), name.clone(), symbol.clone(), &deps) {
-  
-        return common_response("none", "create_collection", STATUS_ERROR,
-        Some(format!("Collection {}-{} already exists!", name, symbol)));
+        return Err(ContractError::CustomErrorMesg { message: format!("Collection {}-{} already exists!", name, symbol).to_string() } );
     }  
   
     let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
@@ -175,8 +173,9 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
     if _status.is_some() {
         let stat = _status.unwrap();
         if !is_status_valid(stat) {
-            return common_response("none","create_collection", STATUS_ERROR, 
-            Some(format!("Invalid status :{}",stat)))
+            return Err(ContractError::CustomErrorMesg { message: 
+            format!("Invalid status :{}!", stat ).to_string() } );
+    
         }
 
         status = stat; 
@@ -201,6 +200,7 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
 }
 
 
+#[allow(dead_code)]
 const STATUS_ERROR : i8 = -1;
 
 const STATUS_OK : i8 = 1;

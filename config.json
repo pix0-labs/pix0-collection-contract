@@ -10,6 +10,22 @@
         "project": "pix0-contract",
         "type": "instantiate",
         "chainId": "constantine-1",
+        "codeId": 145,
+        "txhash": "A555572ADA5FBFA8E5BFCBC4AD3FBB7B8D67528CAE4FB9C880BDC620B8B81992",
+        "address": "archway1tr64tv3y3zrht3v8wv8swr4tpkmxldu0wedel2gxyt6ympj4z05qpkfyu5",
+        "admin": "archway12pcytur9del2t5wm93t8kuqakvf9yk9wzt4w0x"
+      },
+      {
+        "project": "pix0-contract",
+        "type": "store",
+        "chainId": "constantine-1",
+        "codeId": 145,
+        "txhash": "D25C3FC8B4643DC960B61CE4500AC4128FADBC10CC30231DC7E76AC47583E7C7"
+      },
+      {
+        "project": "pix0-contract",
+        "type": "instantiate",
+        "chainId": "constantine-1",
         "codeId": 144,
         "txhash": "DD2F336D3E52579BE269170549DF949421F5FA702F40EE73B94D1D8AB764D2C4",
         "address": "archway1h93c5xl953l8jvxdqlmvqkugjw24rds4lapsuhjlp6vpxhpnnhwsxdv2p0",
@@ -49,9 +65,9 @@
       "feeDenom": "uconst"
     },
     "gas": {
-      "prices": "0.002uconst",
+      "prices": "0.005uconst",
       "mode": "auto",
-      "adjustment": "1.2"
+      "adjustment": "1.5"
     },
     "wasm": {
       "bech32Hrp": "archway",
