@@ -8,7 +8,7 @@ pub struct InstantiateMsg {
 
     pub name : String, 
 
-    pub allowed_admins : Vec<String>,
+    pub allowed_admins : Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

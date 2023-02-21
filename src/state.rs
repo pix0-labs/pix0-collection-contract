@@ -7,7 +7,7 @@ pub struct ContractInfo {
 
     pub name : String, 
 
-    pub allowed_admins : Vec<String>,
+    pub allowed_admins : Option<Vec<String>>,
 
     pub date_instantiated : Timestamp,
 
