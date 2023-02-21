@@ -13,16 +13,6 @@ pub struct ContractInfo {
 
 }
 
-// Implement the `Display` trait for the `Person` struct
-impl std::fmt::Display for ContractInfo {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Name: {}\nAllowed Admins: {:?}\nDate Instantiated: {}",
-            self.name, self.allowed_admins, self.date_instantiated
-        )
-    }
-}
 
 impl Into<String> for ContractInfo {
     fn into(self) -> String {
