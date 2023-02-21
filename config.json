@@ -5,7 +5,15 @@
     "archwayd": {
       "docker": false
     },
-    "deployments": [],
+    "deployments": [
+      {
+        "project": "pix0-contract",
+        "type": "store",
+        "chainId": "constantine-1",
+        "codeId": 144,
+        "txhash": "B107E060155237D30BAB6AF08EC075F030950A0FF26CD5FD316C14432D13D0C9"
+      }
+    ],
     "scripts": {
       "test": "cargo unit-test",
       "build": "cargo build",
