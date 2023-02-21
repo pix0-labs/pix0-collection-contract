@@ -5,8 +5,8 @@ use cosmwasm_std::{
 };
 use cw2::set_contract_version;
 use crate::error::ContractError;
-use crate::ins::create_collection;
-use crate::query::{get_all_collections, get_collections, get_collection};
+use crate::ins::{create_collection, create_user};
+use crate::query::{get_all_collections, get_collections, get_collection, user_exists, get_user, get_users};
 use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg};
 use crate::state::ContractInfo;
 use crate::indexes::CONTRACT_INFO;
@@ -54,6 +54,10 @@ pub fn execute(
     match msg {
         ExecuteMsg::CreateCollection { name, symbol, description, treasuries, attributes, prices, status }
         => create_collection(deps, _env, info, name,symbol, description, treasuries, attributes, prices, status ),
+
+        ExecuteMsg::CreateUser { user_name, first_name, last_name, email, mobile}
+        => create_user(deps, _env, info,user_name, first_name, last_name,email, mobile),
+
     }
 }
 
@@ -69,6 +73,16 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
 
         QueryMsg::GetAllCollections { limit } =>
         to_binary(&get_all_collections(deps, limit)?),
+
+        QueryMsg::GetUsers { start_after, limit } =>
+        to_binary(&get_users(deps, start_after, limit)?),
+
+        QueryMsg::GetUser { } =>
+        to_binary(&get_user(deps, _env)?),
+
+        QueryMsg::UserExists {wallet_address } =>
+        to_binary(&user_exists(deps, wallet_address)?),
+
     }
 }
 
