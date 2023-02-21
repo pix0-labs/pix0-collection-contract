@@ -131,9 +131,9 @@ pub fn create_collection (deps: DepsMut,
     }
     else {
 
-        return Err(ContractError::CustomErrorMesg { message: 
-            format!("User {} must register first!", info.sender.clone().as_str()).to_string() } );
-
+        return common_response("none", "create_collection", STATUS_ERROR,
+        Some( format!("User {} must register first!", info.sender.clone().as_str())));
+      
     }
  
 }
@@ -161,7 +161,9 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
     let owner = info.clone().sender;
 
     if collection_exists(info.clone(), name.clone(), symbol.clone(), &deps) {
-        return Err(ContractError::CustomErrorMesg { message: format!("Collection {}-{} already exists!", name, symbol).to_string() } );
+  
+        return common_response("none", "create_collection", STATUS_ERROR,
+        Some(format!("Collection {}-{} already exists!", name, symbol)));
     }  
   
     let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
@@ -173,7 +175,8 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
     if _status.is_some() {
         let stat = _status.unwrap();
         if !is_status_valid(stat) {
-            return Err(ContractError::CustomErrorMesg { message: format!("Invalid status : {}!", stat) } );
+            return common_response("none","create_collection", STATUS_ERROR, 
+            Some(format!("Invalid status :{}",stat)))
         }
 
         status = stat; 
@@ -194,5 +197,34 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
 
     collections_store().save(deps.storage, _key.clone(), &new_collection)?;
 
-    Ok(Response::new().add_attribute("key", format!("{}-{}",_key.0, _key.1)).add_attribute("method", "create_collection"))
+    common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, None)
+}
+
+
+const STATUS_ERROR : i8 = -1;
+
+const STATUS_OK : i8 = 1;
+
+
+pub (crate) fn common_response (key : &str , method : &str, status : i8,
+message : Option<String>) -> Result<Response, ContractError> {
+
+    if message.is_some() {
+
+        let mesg = message.unwrap();
+        Ok(Response::new()
+        .add_attribute("key",key)
+        .add_attribute("method", method)
+        .add_attribute("status", format!("{}", status))
+        .add_attribute("message", mesg))
+
+    }
+    else {
+
+        Ok(Response::new()
+        .add_attribute("key",key)
+        .add_attribute("method", method)
+        .add_attribute("status", format!("{}", status)))
+    }
+   
 }
