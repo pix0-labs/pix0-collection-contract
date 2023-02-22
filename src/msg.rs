@@ -88,10 +88,7 @@ pub enum QueryMsg {
 
     GetUser {  wallet_address : String },
 
-    RemoteUserExists {
-
-        wallet_address : String, 
-    },
+    
 }
 
 
@@ -143,14 +140,6 @@ pub struct UserExistsResponse {
     pub exists : bool ,
 }
 
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct RemoteUserExistsResponse {
-    
-    pub exists : bool ,
-
-    pub message : Option<String>, 
-}
 
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

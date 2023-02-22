@@ -1,11 +1,10 @@
 use crate::msg::{CollectionResponse, CollectionsResponse, UserExistsResponse, UsersResponse, 
-    UserResponse, RemoteUserExistsResponse};
+    UserResponse};
 use cosmwasm_std::{Deps, StdResult, Order, Addr };
 use crate::state::{Collection, User};
 use crate::indexes::{collections_store, users_store};
 use cw_storage_plus::Bound;
 use crate::ins::collection_id;
-use crate::user_check::check_remote_user_exists;
 
 pub const DEFAULT_LIMIT : u32 = 10;
 
@@ -132,25 +131,6 @@ fn user_exists_by( wallet_address : String , deps: Deps ) -> bool {
 }
 
 
-pub fn check_remote_user(  wallet_address : String , deps: Deps  ) -> StdResult<RemoteUserExistsResponse> {
-
-    let exists_resp = check_remote_user_exists(wallet_address, deps );
-
-    match exists_resp {
-
-        Ok(ex) =>{
-            Ok(RemoteUserExistsResponse { exists: ex, message : None })
-        },
-
-        Err(e) =>{
-            Ok(RemoteUserExistsResponse { exists: false , message : 
-                Some(format!("Error@{:?}",e))
-             })
-      
-        },
-    }
-
-}
 
 
 pub fn user_exists(  deps: Deps, wallet_address : String  ) -> StdResult<UserExistsResponse> {

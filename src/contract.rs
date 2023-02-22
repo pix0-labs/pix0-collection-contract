@@ -6,8 +6,7 @@ use cosmwasm_std::{
 use cw2::set_contract_version;
 use crate::error::ContractError;
 use crate::ins::{create_collection, create_user};
-use crate::query::{get_all_collections, get_collections, get_collection, user_exists, get_user, get_users,
-check_remote_user};
+use crate::query::{get_all_collections, get_collections, get_collection, user_exists, get_user, get_users};
 use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg};
 use crate::state::ContractInfo;
 use crate::indexes::CONTRACT_INFO;
@@ -83,9 +82,6 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
 
         QueryMsg::UserExists {wallet_address } =>
         to_binary(&user_exists(deps, wallet_address)?),
-
-        QueryMsg::RemoteUserExists {wallet_address } =>
-        to_binary(&check_remote_user( wallet_address, deps)?),
 
     }
 }
