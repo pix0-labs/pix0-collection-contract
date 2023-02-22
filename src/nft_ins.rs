@@ -134,7 +134,10 @@ Result<Response, ContractError>{
 
     treasuries.iter().for_each( |t| {
 
-        let amount = total_amount * ((t.percentage as u64)/ 100); 
+        let quotient = t.percentage.div_euclid(100);
+        println!("q::{}", quotient);
+        
+        let amount = total_amount * quotient as u64; 
       
         let res =  pay_treasury(t.wallet.as_str(), amount as u128, _denom.clone());
 
