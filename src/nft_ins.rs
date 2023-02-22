@@ -1,7 +1,7 @@
 use cosmwasm_std::{Empty, DepsMut, MessageInfo, Env, Response, BankMsg, coins};
 use crate::state::{Item, Treasury};
 use crate::error::ContractError;
-use std::convert::{TryFrom};
+//use std::convert::{TryFrom};
 use crate::utils::nft_token_id;
 
 // refer to https://docs.opensea.io/docs/metadata-standards
@@ -75,15 +75,12 @@ pub fn mint_nft(deps: DepsMut,  _env : Env,
 
         Ok(_res) =>  {
 
-            Ok(_res.add_attribute("method", "nft-minted"))
-            
-            /* 
             if _treasuries.is_some()  {
 
                 let _ts = _treasuries.unwrap();
 
                 let res = pay_collection_treasuries(_ts,
-                    245, None, Some(true) );
+                    245, None);
     
                 if res.is_err() {
     
@@ -98,7 +95,7 @@ pub fn mint_nft(deps: DepsMut,  _env : Env,
             else {
 
                 Ok(_res.add_attribute("method", "nft-minted"))
-            }*/
+            }
            
         },
 
@@ -130,23 +127,16 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
 
 pub fn pay_collection_treasuries (
 treasuries : Vec<Treasury>,    
-total_amount : u64, _denom : Option<String>, debug : Option<bool>) -> 
+total_amount : u64, _denom : Option<String>) -> 
 Result<Response, ContractError>{
 
     let mut error : Option<ContractError> = None ;
 
     treasuries.iter().for_each( |t| {
 
-        let perc : f64 = convert(t.percentage as u64) / 100.00;
-        let amount = (convert(total_amount) * perc) as u64;
-
-        if debug.is_some() && debug.unwrap_or(false) {
-
-            println!("Paid.amount:{}:{}:{}", t.wallet.as_str(), perc,  amount );
-
-        }
+        let amount = total_amount * ((t.percentage as u64)/ 100); 
       
-        let res =  pay_treasury(t.wallet.as_str(), amount, _denom.clone());
+        let res =  pay_treasury(t.wallet.as_str(), amount as u128, _denom.clone());
 
         match res {
 
@@ -173,7 +163,7 @@ Result<Response, ContractError>{
 
 pub const DEFAULT_PRICE_DENOM : &str = "uconst";
 
-fn pay_treasury (wallet_address : &str, amount : u64, _denom : Option <String>)
+fn pay_treasury (wallet_address : &str, amount : u128 , _denom : Option <String>)
 -> Result<Response, ContractError>{
 
     if amount == 0 {
@@ -186,22 +176,12 @@ fn pay_treasury (wallet_address : &str, amount : u64, _denom : Option <String>)
         denom = _denom.unwrap_or( String::from( DEFAULT_PRICE_DENOM) );
     }
 
-    let real_amt = u128::try_from(amount);
-
+   
     let bank_mesg = BankMsg::Send {
         to_address: String::from(wallet_address),
-        amount: coins(real_amt.expect("Invalid Amount")  , denom)
+        amount: coins(amount   , denom)
     };
 
     Ok(Response::new().add_attribute("action", "approve").add_message(bank_mesg))
 
-}
-
-#[allow(dead_code)]
-fn convert(x: u64) -> f64 {
-    let result = x as f64;
-    if result as u64 != x {
-        return 0.0;
-    }
-    return result;
 }
