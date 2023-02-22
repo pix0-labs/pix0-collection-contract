@@ -166,9 +166,10 @@ pub const DEFAULT_PRICE_DENOM : &str = "uconst";
 fn pay_treasury (wallet_address : &str, amount : u128 , _denom : Option <String>)
 -> Result<Response, ContractError>{
 
+    /* 
     if amount == 0 {
         return Err(ContractError::CustomErrorMesg {message : "Invalid Amount".to_string()});
-    }
+    }*/
 
     let mut denom = String::from(DEFAULT_PRICE_DENOM);
 
@@ -176,12 +177,15 @@ fn pay_treasury (wallet_address : &str, amount : u128 , _denom : Option <String>
         denom = _denom.unwrap_or( String::from( DEFAULT_PRICE_DENOM) );
     }
 
-   
+    println!("Going to pay :{},:{}", wallet_address, amount);
+
+    let coin = coins(amount, denom);
     let bank_mesg = BankMsg::Send {
         to_address: String::from(wallet_address),
-        amount: coins(amount   , denom)
+        amount: coin, 
     };
 
+   
     Ok(Response::new().add_attribute("action", "approve").add_message(bank_mesg))
 
 }
