@@ -1,8 +1,8 @@
 use crate::msg::{CollectionResponse, CollectionsResponse, UserExistsResponse, UsersResponse, 
     UserResponse};
 use cosmwasm_std::{Deps, StdResult, Order, Addr };
-use crate::state::{Collection, User};
-use crate::indexes::{collections_store, users_store};
+use crate::state::{Collection, User, Item};
+use crate::indexes::{collections_store, users_store, ITEMS_STORE};
 use cw_storage_plus::Bound;
 use crate::ins::collection_id;
 
@@ -186,3 +186,49 @@ pub fn get_user(deps : Deps, wallet_address : String  )
     Ok (UserResponse { user : user })
 
 }
+
+
+
+pub (crate) fn internal_get_items(deps : Deps , 
+owner : Addr,collection_name : String,  
+collection_symbol : String,    
+start_after: Option<String>, limit: Option<u32>) 
+->Vec<Item> {
+
+    let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
+    
+    //let start = start_after.map(|s| Bound::ExclusiveRaw(s.into()));
+
+    let start = start_after.map(Bound::exclusive);
+    
+    let _prefix = (owner, collection_id(collection_name
+        , collection_symbol) );
+    
+    let items : StdResult <Vec<Item>> = 
+    ITEMS_STORE
+    .prefix(_prefix)
+    .range(deps.storage, start, None, Order::Ascending)
+    .take(limit)
+    .map(|itm| {
+        
+        let (_k, i) = itm?;
+
+        Ok(
+            Item { collection_owner : i.collection_owner, name : i.name, 
+            collection_name : i.collection_name, 
+            collection_symbol : i.collection_symbol, 
+            description: i.description, 
+            attributes : i.attributes, links : i.links, background_color: i.background_color, 
+            date_created: i.date_created, date_updated: i.date_updated }
+        )
+    }).collect();
+
+    match items {
+
+        Ok(itms)=> itms,
+
+        Err(_) => Vec::new(),
+    }
+    
+}
+    

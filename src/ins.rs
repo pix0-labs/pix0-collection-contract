@@ -1,9 +1,10 @@
-use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Empty};
-use crate::state::{Collection, Treasury, User, Attribute, PriceType, COLLECTION_STATUS_NEW,
+use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr};
+use crate::state::{Collection, Treasury, User, Attribute, PriceType, Item, COLLECTION_STATUS_NEW,
 COLLECTION_STATUS_ACTIVE, COLLECTION_STATUS_DEACTIVATED};
-use crate::indexes::{collections_store, users_store };
+use crate::indexes::{collections_store, users_store, ITEMS_STORE };
 use crate::error::ContractError;
-
+use crate::query::{internal_get_collection, internal_get_items};
+use crate::nft_ins::init_and_mint_nft;
 
 pub fn collection_id ( name : String, symbol : String ) -> String {
     format!("{}-{}", name, symbol)
@@ -196,37 +197,97 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
 
     collections_store().save(deps.storage, _key.clone(), &new_collection)?;
 
-    let _nft_contract = init_nft_contract(deps, _env, info, name, symbol);
-
-    
-    common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, 
-    Some("NFT contract instantiated".to_string()))
+    common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, None)
 }
 
 
-pub type Metadata = crate::state::Metadata;
+pub fn item_exists( info: MessageInfo, 
+    collection_name : String,
+    collection_symbol : String,
+    name : String, 
+    deps: &DepsMut ) -> bool {
 
-pub type Extension = Option<Metadata>;
-
-pub type NftContract<'a> = cw721_base::Cw721Contract<'a, Extension, Empty>;
-
-
-pub fn init_nft_contract(deps: DepsMut,  _env : Env, 
-info: MessageInfo, name : String ,
-symbol : String) -> NftContract {
+    let owner = info.clone().sender;
     
-    let msg =  cw721_base::InstantiateMsg {
-        name: name,
-        symbol: symbol,
-        minter: String::from(info.sender.clone()),
-    };
+    let _key = (owner, collection_id(collection_name
+        , collection_symbol), name );
 
-    let contract = NftContract::default();
-
-    let _ = contract.instantiate(deps, _env.clone(), info.clone(),msg);
-
+    let stored_item = ITEMS_STORE.load(deps.storage,_key);
     
-    contract
+    stored_item.is_ok()
+}
+
+pub fn create_item(deps: DepsMut, 
+    _env : Env, info: MessageInfo,item : Item 
+) -> Result<Response, ContractError> {
+  
+    let mut item = item; 
+
+    let owner = info.clone().sender;
+
+    if !collection_exists(info.clone(), item.collection_name.clone() ,item.collection_symbol.clone(),&deps) {
+        return Err(ContractError::CustomErrorMesg { message: format!("The collection '{}' does NOT exist!", 
+        item.collection_name.clone()).to_string() } );
+    }  
+
+
+    if item_exists(info.clone(), item.collection_name.clone() ,
+    item.collection_symbol.clone(),
+    item.name.clone(), &deps) {
+        return Err(ContractError::CustomErrorMesg { message: format!("The item {} in collection '{}' already exists!", 
+        item.name.clone(),
+        item.collection_name.clone()).to_string() } );
+    }  
+  
+    let _key = (item.collection_owner.clone(), 
+    collection_id(item.collection_name.clone(), item.collection_symbol.clone()), 
+    item.name.clone() );
+
+    let date_created = _env.block.time;
+    
+    item.collection_owner = owner;
+
+    item.date_created = Some(date_created);
+
+    item.date_updated = item.date_created;
+
+    ITEMS_STORE.save(deps.storage, _key.clone(), &item)?;
+    
+    common_response( format!("{}-{}={}",_key.0, _key.1,
+    _key.2).as_str(), "create_item", STATUS_OK, None)
+}
+
+
+pub fn mint_item (deps : DepsMut , 
+    _env : Env, info: MessageInfo, index : u32,
+    owner : Addr,collection_name : String,  
+    collection_symbol : String )-> Result<Response, ContractError> {
+
+    let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
+    collection_name.clone(), collection_symbol.clone());
+
+    let items = internal_get_items(deps.as_ref(), owner, collection_name, 
+    collection_symbol, None, None);
+
+    let index = index as usize;
+    
+    if index < items.len() {
+
+        let itm = items.get(index);
+        if itm.is_some() {
+
+            let i = itm.unwrap();
+
+            init_and_mint_nft(deps, _env, info, i.clone(), collection.treasuries())
+        }
+        else {
+            Err(ContractError::CustomErrorMesg{message : format!("Failed to find item at index :{}", index)})
+        }
+    }
+    else {
+        Err(ContractError::CustomErrorMesg{message : format!("Item at index :{} out of bound", index)})
+    }
+       
 }
 
 

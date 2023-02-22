@@ -5,7 +5,7 @@ use cosmwasm_std::{
 };
 use cw2::set_contract_version;
 use crate::error::ContractError;
-use crate::ins::{create_collection, create_user};
+use crate::ins::{create_collection, create_user, create_item};
 use crate::query::{get_all_collections, get_collections, get_collection, user_exists, get_user, get_users};
 use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg};
 use crate::state::ContractInfo;
@@ -58,6 +58,31 @@ pub fn execute(
         ExecuteMsg::CreateUser { user_name, first_name, last_name, email, mobile}
         => create_user(deps, _env, info,user_name, first_name, last_name,email, mobile),
 
+        ExecuteMsg::CreateItem { 
+            collection_owner,  
+            collection_name, 
+            collection_symbol, 
+            name,
+            description,
+            links,
+            attributes,
+            background_color}
+        => create_item(deps, _env, info, crate::state::Item {
+            collection_owner : collection_owner,
+            collection_name : collection_name,
+            collection_symbol : collection_symbol,
+            name : name, 
+            description : description,
+            links: links, 
+            attributes : attributes,
+            background_color : background_color,
+            date_created : None,
+            date_updated : None, 
+        }),
+        /* 
+        ExecuteMsg::MintItem { index, owner, collection_name, collection_symbol }
+        => mint_item(deps, _env, info, index, owner, collection_name, collection_symbol),
+        */
     }
 }
 
