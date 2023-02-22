@@ -188,6 +188,26 @@ pub fn get_user(deps : Deps, wallet_address : String  )
 }
 
 
+pub (crate) fn internal_get_item(deps : Deps , 
+    owner : Addr,collection_name : String,  
+    collection_symbol : String, item_name : String) ->Option<Item> {
+
+    let _key = (owner, 
+    collection_id(collection_name, collection_symbol), 
+    item_name.clone());
+
+    let stored_item = ITEMS_STORE.key(_key.clone());
+    
+    let item_result = stored_item.may_load(deps.storage);
+    
+    match item_result {
+
+        Ok(i)=> i,
+
+        Err(_)=> None, 
+    }
+}
+
 
 pub (crate) fn internal_get_items(deps : Deps , 
 owner : Addr,collection_name : String,  
@@ -218,7 +238,7 @@ start_after: Option<String>, limit: Option<u32>)
             collection_name : i.collection_name, 
             collection_symbol : i.collection_symbol, 
             description: i.description, 
-            attributes : i.attributes, links : i.links, background_color: i.background_color, 
+            traits : i.traits, links : i.links, background_color: i.background_color, 
             date_created: i.date_created, date_updated: i.date_updated }
         )
     }).collect();

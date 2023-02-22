@@ -19,3 +19,8 @@ pub fn hash_to_hex<T:Hash>(t: &T) -> String {
 pub fn nft_token_id<T:Hash>(t: &T) -> String {
     format!("Nft{}", hash_to_hex(t))
 }
+
+
+pub fn str_to_num(num_str : String) -> i32 {
+    num_str.parse().unwrap_or(-1)
+}

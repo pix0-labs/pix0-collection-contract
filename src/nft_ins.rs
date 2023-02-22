@@ -34,7 +34,7 @@ symbol : String) -> NftContract {
 pub fn mint_nft(deps: DepsMut,  _env : Env, 
     info: MessageInfo, 
     contract :  NftContract,
-    item : Item, _treasuries : Vec<Treasury>)-> Result<Response, ContractError>  {
+    item : Item, _treasuries : Option<Vec<Treasury>>)-> Result<Response, ContractError>  {
 
     let new_owner = info.clone().sender;
    
@@ -55,7 +55,7 @@ pub fn mint_nft(deps: DepsMut,  _env : Env,
         youtube_url : c_item.video_link(),
         animation_url : c_item.animation_link(), 
         external_url : ext_url.clone() ,
-        attributes : Some(item.attributes), 
+        attributes : Some(item.traits), 
         ..Metadata::default()
     });
 
@@ -73,20 +73,33 @@ pub fn mint_nft(deps: DepsMut,  _env : Env,
 
     match res {
 
-        Ok(_) =>  {
+        Ok(_res) =>  {
 
-            let res = pay_collection_treasuries(_treasuries,
-                245, None, Some(true) );
-
-            if res.is_err() {
-
-                return Err(ContractError::CustomErrorMesg{message : 
-                    "some error while paying treasuries".to_string()});
-            }
-
-            let resp = res.expect("Failed to unwrap pay treasuries' response");
+            Ok(_res.add_attribute("method", "nft-minted"))
             
-            Ok(resp.add_attribute("method", "nft-minted"))
+            /* 
+            if _treasuries.is_some()  {
+
+                let _ts = _treasuries.unwrap();
+
+                let res = pay_collection_treasuries(_ts,
+                    245, None, Some(true) );
+    
+                if res.is_err() {
+    
+                    return Err(ContractError::CustomErrorMesg{message : 
+                        "some error while paying treasuries".to_string()});
+                }
+    
+                let resp = res.expect("Failed to unwrap pay treasuries' response");
+                
+                Ok(resp.add_attribute("method", "nft-minted"))
+            }
+            else {
+
+                Ok(_res.add_attribute("method", "nft-minted"))
+            }*/
+           
         },
 
         Err(e) => Err(ContractError::CustomErrorMesg{message : e.to_string()}), 
@@ -99,7 +112,7 @@ pub fn mint_nft(deps: DepsMut,  _env : Env,
 
 pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env, 
     info: MessageInfo, 
-    item : Item, treasuries : Vec<Treasury>) -> Result<Response, ContractError>{
+    item : Item, _treasuries : Vec<Treasury>) -> Result<Response, ContractError>{
 
     let msg =  cw721_base::InstantiateMsg {
         name: item.collection_name.clone(),
@@ -111,9 +124,7 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
 
     let _res = contract.instantiate(deps.branch(), _env.clone(), info.clone(),msg);
     
-    println!("Inst.res::{:?}", _res);
-    
-    mint_nft(deps, _env, info, contract, item, treasuries)
+    mint_nft(deps, _env, info, contract, item, None)
     
 }
 

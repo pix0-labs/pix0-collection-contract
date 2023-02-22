@@ -186,7 +186,7 @@ pub struct Item {
 
     pub links : Vec<Link>,
 
-    pub attributes: Vec<Trait>,
+    pub traits : Vec<Trait>,
 
     pub background_color : Option<String>,
 

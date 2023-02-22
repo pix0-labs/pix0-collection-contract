@@ -3,7 +3,7 @@ use crate::state::{Collection, Treasury, User, Attribute, PriceType, Item, COLLE
 COLLECTION_STATUS_ACTIVE, COLLECTION_STATUS_DEACTIVATED};
 use crate::indexes::{collections_store, users_store, ITEMS_STORE };
 use crate::error::ContractError;
-use crate::query::{internal_get_collection, internal_get_items};
+use crate::query::{internal_get_collection, internal_get_items, internal_get_item};
 use crate::nft_ins::init_and_mint_nft;
 
 pub fn collection_id ( name : String, symbol : String ) -> String {
@@ -259,9 +259,13 @@ pub fn create_item(deps: DepsMut,
 
 
 pub fn mint_item (deps : DepsMut , 
-    _env : Env, info: MessageInfo, index : u32,
+    _env : Env, info: MessageInfo, index : i32,
     owner : Addr,collection_name : String,  
     collection_symbol : String )-> Result<Response, ContractError> {
+
+    if index < 0 {
+        return Err(ContractError::CustomErrorMesg{message : format!("Invalid index :{}", index)});
+    }
 
     let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
     collection_name.clone(), collection_symbol.clone());
@@ -290,6 +294,26 @@ pub fn mint_item (deps : DepsMut ,
        
 }
 
+pub fn mint_item_by_name (deps : DepsMut , 
+    _env : Env, info: MessageInfo, item_name : String ,
+    owner : Addr,collection_name : String,  
+    collection_symbol : String )-> Result<Response, ContractError> {
+
+    let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
+    collection_name.clone(), collection_symbol.clone());
+
+    let item = internal_get_item(deps.as_ref(), owner, collection_name, 
+    collection_symbol, item_name.clone());
+
+    if item.is_some() {
+        let itm = item.unwrap();
+        init_and_mint_nft(deps, _env, info, itm.clone(), collection.treasuries())
+    }
+    else {
+        Err(ContractError::CustomErrorMesg{message : format!("Item named {} not found", item_name )})
+    }
+       
+}
 
 
 #[allow(dead_code)]

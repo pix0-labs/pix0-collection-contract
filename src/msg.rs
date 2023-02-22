@@ -1,6 +1,6 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use crate::state::{Collection,Item, Treasury, Attribute, PriceType, User, Link, Trait};
+use crate::state::{Collection,Item, Treasury, Attribute, PriceType, User };
 use cosmwasm_std::Addr;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -47,27 +47,14 @@ pub enum ExecuteMsg {
 
     CreateItem {
 
-        collection_owner : Addr,
-
-        collection_name : String, 
-    
-        collection_symbol : String, 
-        
-        name : String,
-    
-        description : Option<String>,
-    
-        links : Vec<Link>,
-    
-        attributes: Vec<Trait>,
-    
-        background_color : Option<String>,
+       item : Item, 
     
     },
-    /* 
+   
+   /* 
     MintItem {
 
-        index : u32,
+        index : String,
 
         owner : Addr, 
 
@@ -75,6 +62,17 @@ pub enum ExecuteMsg {
 
         collection_symbol : String, 
     },*/
+
+    MintItemByName {
+        
+        name : String,
+
+        owner : Addr, 
+
+        collection_name : String, 
+
+        collection_symbol : String, 
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
