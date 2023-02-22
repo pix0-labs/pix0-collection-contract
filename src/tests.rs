@@ -21,7 +21,7 @@ mod tests {
         },
         Treasury{
             wallet : Addr::unchecked("Carmen".to_string()),
-            percentage : 13,
+            percentage : 10,
             name : None, 
         },
         ];
