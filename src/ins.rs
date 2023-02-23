@@ -1,6 +1,6 @@
 use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr};
 use crate::state::{Collection, Treasury, Attribute, PriceType, Item, COLLECTION_STATUS_NEW,
-COLLECTION_STATUS_ACTIVE, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
+COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
 use crate::indexes::{collections_store,ITEMS_STORE };
 use crate::error::ContractError;
 use crate::query::{internal_get_collection, internal_get_items, internal_get_item};
@@ -57,7 +57,7 @@ pub fn create_collection (deps: DepsMut,
 fn is_status_valid ( status : u8) -> bool {
 
     status == COLLECTION_STATUS_NEW ||
-    status == COLLECTION_STATUS_ACTIVE ||
+    status == COLLECTION_STATUS_ACTIVATED ||
     status == COLLECTION_STATUS_DEACTIVATED
 
 }

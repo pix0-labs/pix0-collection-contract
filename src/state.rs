@@ -40,14 +40,14 @@ pub struct PriceType {
 
     pub denom : Option<String>, 
 
-    pub date_start : Timestamp,
+    pub date_start : Option<Timestamp>,
 
-    pub date_end : Timestamp, 
+    pub date_end : Option<Timestamp>, 
 }
 
 pub const COLLECTION_STATUS_NEW : u8 = 0;
 
-pub const COLLECTION_STATUS_ACTIVE : u8 = 1;
+pub const COLLECTION_STATUS_ACTIVATED : u8 = 1;
 
 pub const COLLECTION_STATUS_DEACTIVATED : u8 = 2;
 
