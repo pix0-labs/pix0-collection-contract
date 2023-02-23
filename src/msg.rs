@@ -48,7 +48,7 @@ pub enum ExecuteMsg {
    
     MintItem {
 
-        index : usize,
+        index : String,
 
         owner : Addr, 
 

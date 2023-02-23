@@ -10,6 +10,7 @@ use crate::query::{get_all_collections, get_collections, get_collection};
 use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg, MigrateMsg};
 use crate::state::ContractInfo;
 use crate::indexes::CONTRACT_INFO;
+use crate::utils::str_to_num;
 
 // version info for migration info
 const CONTRACT_NAME: &str = "crates.io:pix0-contract";
@@ -62,7 +63,7 @@ pub fn execute(
         => mint_item_by_name(deps, _env, info, name , owner, collection_name, collection_symbol),
 
         ExecuteMsg::MintItem { index , owner, collection_name, collection_symbol }
-        => mint_item(deps, _env, info, index , owner, collection_name, collection_symbol),
+        => mint_item(deps, _env, info, str_to_num(index) , owner, collection_name, collection_symbol),
         
     }
 }

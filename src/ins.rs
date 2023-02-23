@@ -172,17 +172,22 @@ pub fn create_item(deps: DepsMut,
 
 
 pub fn mint_item (deps : DepsMut , 
-    _env : Env, info: MessageInfo, index : usize,
+    _env : Env, info: MessageInfo, index : i32,
     owner : Addr,collection_name : String,  
     collection_symbol : String )-> Result<Response, ContractError> {
 
-   
+    if index < 0 {
+        return Err(ContractError::CustomErrorMesg{message : format!("Invalid index :{}", index)});
+    }
+
     let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
     collection_name.clone(), collection_symbol.clone());
 
     let items = internal_get_items(deps.as_ref(), owner, collection_name, 
     collection_symbol, None, None);
- 
+
+    let index = index as usize;
+    
     if index < items.len() {
 
         let itm = items.get(index);
