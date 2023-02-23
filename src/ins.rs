@@ -1,5 +1,5 @@
 use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr};
-use crate::state::{Collection, Treasury, Attribute, PriceType, Item, COLLECTION_STATUS_NEW,
+use crate::state::{Collection, Treasury, Attribute, PriceType, Item, COLLECTION_STATUS_DRAFT,
 COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
 use crate::indexes::{collections_store,ITEMS_STORE };
 use crate::error::ContractError;
@@ -56,7 +56,7 @@ pub fn create_collection (deps: DepsMut,
 
 fn is_status_valid ( status : u8) -> bool {
 
-    status == COLLECTION_STATUS_NEW ||
+    status == COLLECTION_STATUS_DRAFT ||
     status == COLLECTION_STATUS_ACTIVATED ||
     status == COLLECTION_STATUS_DEACTIVATED
 
@@ -82,7 +82,7 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
 
     let date_created = _env.block.time;
     
-    let mut status = COLLECTION_STATUS_NEW;
+    let mut status = COLLECTION_STATUS_DRAFT;
 
     if _status.is_some() {
         let stat = _status.unwrap();
@@ -185,6 +185,10 @@ pub fn mint_item (deps : DepsMut ,
     let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
     collection_name.clone(), collection_symbol.clone());
 
+    if collection.status != COLLECTION_STATUS_ACTIVATED{
+        return Err(ContractError::CustomErrorMesg{message : "Collection is NOT ready for minting!".to_string()});
+    }
+
     let items = internal_get_items(deps.as_ref(), owner, collection_name, 
     collection_symbol, None, None);
 
@@ -220,6 +224,10 @@ pub fn mint_item_by_name (deps : DepsMut ,
 
     let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
     collection_name.clone(), collection_symbol.clone());
+    
+    if collection.status != COLLECTION_STATUS_ACTIVATED{
+        return Err(ContractError::CustomErrorMesg{message : "Collection is NOT ready for minting!".to_string()});
+    }
 
     let item = internal_get_item(deps.as_ref(), owner, collection_name, 
     collection_symbol, item_name.clone());

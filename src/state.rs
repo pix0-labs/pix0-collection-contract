@@ -45,7 +45,7 @@ pub struct PriceType {
     pub date_end : Option<Timestamp>, 
 }
 
-pub const COLLECTION_STATUS_NEW : u8 = 0;
+pub const COLLECTION_STATUS_DRAFT : u8 = 0;
 
 pub const COLLECTION_STATUS_ACTIVATED : u8 = 1;
 
