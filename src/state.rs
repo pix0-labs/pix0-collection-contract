@@ -21,47 +21,6 @@ impl Into<String> for ContractInfo {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct User {
-   
-    pub owner: Addr, // the user's wallet address
-
-    pub user_name : String,
-
-    pub first_name : Option<String>,
-
-    pub last_name : Option<String>,
-
-    pub email : Option<String>,
-
-    pub mobile : Option<String>,
-
-    pub date_created : Option<Timestamp>,
-
-    pub date_updated : Option<Timestamp>,
-
-}
-
-impl User {
-
-    pub fn new (owner : Addr, user_name : String, 
-    first_name : Option<String>, last_name : Option<String>,     
-    email : Option<String>, mobile : Option<String>,
-    date_created : Timestamp) -> User {
-
-        User {
-            owner : owner,
-            user_name : user_name,
-            first_name : first_name,
-            last_name : last_name, 
-            email : email,
-            mobile : mobile,
-            date_created : Some(date_created),
-            date_updated : Some(date_created),
-        }
-    }
-}
-
 
 pub const PRICE_TYPE_STANDARD : u8 = 1;
 

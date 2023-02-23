@@ -1,6 +1,6 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use crate::state::{Collection,Item, Treasury, Attribute, PriceType, User };
+use crate::state::{Collection,Item, Treasury, Attribute, PriceType};
 use cosmwasm_std::Addr;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -11,23 +11,17 @@ pub struct InstantiateMsg {
     pub allowed_admins : Option<Vec<String>>,
 }
 
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct MigrateMsg {
+    pub message : String,
+}
+
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
 
-    CreateUser {
-
-        user_name : String, 
-
-        first_name : Option<String>,
-
-        last_name : Option<String>,
-        
-        email : Option<String>,
-
-        mobile : Option<String>,
-    },
- 
     CreateCollection {
         name : String, 
 
@@ -51,17 +45,17 @@ pub enum ExecuteMsg {
     
     },
    
-   /* 
+   
     MintItem {
 
-        index : String,
+        index : usize,
 
         owner : Addr, 
 
         collection_name : String, 
 
         collection_symbol : String, 
-    },*/
+    },
 
     MintItemByName {
         
@@ -101,20 +95,6 @@ pub enum QueryMsg {
         limit : Option<u32>,
     },
 
-
-    GetUsers { 
-        start_after : Option<String>,
-        
-        limit : Option<u32>,
-    },
-
-    UserExists {
-
-        wallet_address : String, 
-    },
-
-    GetUser {  wallet_address : String },
-
     
 }
 
@@ -151,26 +131,4 @@ pub struct ItemsResponse {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ItemCountResponse {
     pub count : usize,
-}
-
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct UsersResponse {
-
-    pub users : Vec<User>,
-}
-
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct UserExistsResponse {
-    
-    pub exists : bool ,
-}
-
-
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct UserResponse {
-
-    pub user : User,
 }

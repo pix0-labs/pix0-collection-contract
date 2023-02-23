@@ -1,4 +1,4 @@
-use crate::state::{Collection, Item, User, ContractInfo};
+use crate::state::{Collection, Item,ContractInfo};
 use cosmwasm_std::Addr;
 use cw_storage_plus::{UniqueIndex, Index, IndexList, IndexedMap, Map};
 use crate::ins::collection_id;
@@ -40,36 +40,4 @@ pub fn collections_store<'a>() -> IndexedMap<'a,(Addr,String), Collection, Colle
     IndexedMap::new("COLLECTIONS_STORE", indexes)
 }
 
-
-
-pub struct UserIndexes<'a> {
-
-    // unique index by wallet address
-    pub owners : UniqueIndex<'a, Addr, User>,
-
-    // unique index by user name
-    pub user_names : UniqueIndex<'a, String, User>,
-}
-
-impl IndexList<User> for UserIndexes<'_> {
-
-    fn get_indexes(&'_ self) -> Box<dyn Iterator<Item = &'_ dyn Index<User>> + '_> {
-
-        let v : Vec<&dyn Index<User>> = vec![&self.owners, &self.user_names];
-        Box::new(v.into_iter())
-    } 
-}
-
-
-pub fn users_store<'a>() -> IndexedMap<'a,String, User, UserIndexes<'a>> {
-
-    let indexes = UserIndexes {
-
-        owners : UniqueIndex::new(|u| u.owner.clone(), "USERS_OWNERS"),
-
-        user_names :  UniqueIndex::new(|u| u.user_name.clone(), "USERS_NAMES"),
-    };
-
-    IndexedMap::new("USERS_STORE", indexes)
-}
 
