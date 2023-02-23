@@ -1,6 +1,6 @@
 use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr};
 use crate::state::{Collection, Treasury, Attribute, PriceType, Item, COLLECTION_STATUS_NEW,
-COLLECTION_STATUS_ACTIVE, COLLECTION_STATUS_DEACTIVATED};
+COLLECTION_STATUS_ACTIVE, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
 use crate::indexes::{collections_store,ITEMS_STORE };
 use crate::error::ContractError;
 use crate::query::{internal_get_collection, internal_get_items, internal_get_item};
@@ -174,7 +174,9 @@ pub fn create_item(deps: DepsMut,
 pub fn mint_item (deps : DepsMut , 
     _env : Env, info: MessageInfo, index : i32,
     owner : Addr,collection_name : String,  
-    collection_symbol : String )-> Result<Response, ContractError> {
+    collection_symbol : String , 
+    price_type : Option<u8>, 
+    token_uri : Option<String>)-> Result<Response, ContractError> {
 
     if index < 0 {
         return Err(ContractError::CustomErrorMesg{message : format!("Invalid index :{}", index)});
@@ -187,7 +189,7 @@ pub fn mint_item (deps : DepsMut ,
     collection_symbol, None, None);
 
     let index = index as usize;
-    
+
     if index < items.len() {
 
         let itm = items.get(index);
@@ -195,7 +197,9 @@ pub fn mint_item (deps : DepsMut ,
 
             let i = itm.unwrap();
 
-            init_and_mint_nft(deps, _env, info, i.clone(), collection.treasuries())
+            let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
+
+            init_and_mint_nft(deps, _env, info, i.clone(), collection.treasuries(), price, token_uri)
         }
         else {
             Err(ContractError::CustomErrorMesg{message : format!("Failed to find item at index :{}", index)})
@@ -210,7 +214,9 @@ pub fn mint_item (deps : DepsMut ,
 pub fn mint_item_by_name (deps : DepsMut , 
     _env : Env, info: MessageInfo, item_name : String ,
     owner : Addr,collection_name : String,  
-    collection_symbol : String )-> Result<Response, ContractError> {
+    collection_symbol : String , 
+    price_type : Option<u8>, 
+    token_uri : Option<String>)-> Result<Response, ContractError> {
 
     let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
     collection_name.clone(), collection_symbol.clone());
@@ -218,9 +224,11 @@ pub fn mint_item_by_name (deps : DepsMut ,
     let item = internal_get_item(deps.as_ref(), owner, collection_name, 
     collection_symbol, item_name.clone());
 
+    let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
+
     if item.is_some() {
         let itm = item.unwrap();
-        init_and_mint_nft(deps, _env, info, itm.clone(), collection.treasuries())
+        init_and_mint_nft(deps, _env, info, itm.clone(), collection.treasuries(),price,token_uri)
     }
     else {
         Err(ContractError::CustomErrorMesg{message : format!("Item named {} not found", item_name )})

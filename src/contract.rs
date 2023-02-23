@@ -59,11 +59,15 @@ pub fn execute(
          ExecuteMsg::CreateItem { item }
         => create_item(deps, _env, info, item ),
         
-        ExecuteMsg::MintItemByName { name , owner, collection_name, collection_symbol }
-        => mint_item_by_name(deps, _env, info, name , owner, collection_name, collection_symbol),
+        ExecuteMsg::MintItemByName { name , owner, collection_name, collection_symbol, 
+            price_type, token_uri }
+        => mint_item_by_name(deps, _env, info, name , owner, 
+            collection_name, collection_symbol, price_type,token_uri),
 
-        ExecuteMsg::MintItem { index , owner, collection_name, collection_symbol }
-        => mint_item(deps, _env, info, str_to_num(index) , owner, collection_name, collection_symbol),
+        ExecuteMsg::MintItem { index , owner, collection_name, 
+            collection_symbol, price_type, token_uri }
+        => mint_item(deps, _env, info, str_to_num(index) , owner, 
+        collection_name, collection_symbol,price_type, token_uri),
         
     }
 }

@@ -31,10 +31,14 @@ symbol : String) -> NftContract {
 }
 
 
-pub fn mint_nft(deps: DepsMut,  _env : Env, 
+pub fn mint_nft(deps: DepsMut,  
+    _env : Env, 
     info: MessageInfo, 
     contract :  NftContract,
-    item : Item, _treasuries : Option<Vec<Treasury>>)-> Result<Response, ContractError>  {
+    item : Item, 
+    treasuries : Option<Vec<Treasury>>,
+    price : Option<u64>, 
+    token_uri : Option<String>)-> Result<Response, ContractError>  {
 
     let new_owner = info.clone().sender;
    
@@ -63,7 +67,7 @@ pub fn mint_nft(deps: DepsMut,  _env : Env,
     let msg = cw721_base::msg::MintMsg {
         token_id: token_id ,
         owner: new_owner.to_string(),
-        token_uri: ext_url,
+        token_uri: token_uri,
         extension: ext ,
     };
 
@@ -75,12 +79,14 @@ pub fn mint_nft(deps: DepsMut,  _env : Env,
 
         Ok(_res) =>  {
 
-            if _treasuries.is_some()  {
+            if treasuries.is_some()  {
 
-                let _ts = _treasuries.unwrap();
+                let _ts = treasuries.unwrap();
+
+                let price = price.unwrap_or(0);
 
                 let res = pay_collection_treasuries(_ts,
-                    245, None);
+                    price, None);
     
                 if res.is_err() {
     
@@ -109,7 +115,9 @@ pub fn mint_nft(deps: DepsMut,  _env : Env,
 
 pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env, 
     info: MessageInfo, 
-    item : Item, _treasuries : Vec<Treasury>) -> Result<Response, ContractError>{
+    item : Item, _treasuries : Vec<Treasury>,
+    price : Option<u64>, 
+    token_uri : Option<String>) -> Result<Response, ContractError>{
 
     let msg =  cw721_base::InstantiateMsg {
         name: item.collection_name.clone(),
@@ -121,7 +129,7 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
 
     let _res = contract.instantiate(deps.branch(), _env.clone(), info.clone(),msg);
     
-    mint_nft(deps, _env, info, contract, item, None)
+    mint_nft(deps, _env, info, contract, item, Some(_treasuries), price, token_uri)
     
 }
 

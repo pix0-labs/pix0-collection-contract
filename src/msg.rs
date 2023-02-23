@@ -55,6 +55,11 @@ pub enum ExecuteMsg {
         collection_name : String, 
 
         collection_symbol : String, 
+
+        price_type : Option<u8>, 
+        
+        token_uri : Option<String>, 
+
     },
 
     MintItemByName {
@@ -66,6 +71,11 @@ pub enum ExecuteMsg {
         collection_name : String, 
 
         collection_symbol : String, 
+
+        price_type : Option<u8>, 
+
+        token_uri : Option<String>, 
+
     },
 }
 

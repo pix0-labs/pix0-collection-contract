@@ -36,7 +36,7 @@ pub struct PriceType {
 
     pub price_type : u8, 
 
-    pub value : u32, 
+    pub value : u64, 
 
     pub denom : Option<String>, 
 
@@ -97,6 +97,29 @@ impl Collection {
         }
 
         return vec![Treasury{wallet: self.owner.clone(), percentage :100, name : None}];
+    }
+}
+
+
+impl Collection {
+
+    pub fn price_by_type (&self,  _type : u8) -> Option<u64> {
+
+        if self.prices.is_some() {
+
+            let prc = self.prices.clone().unwrap();
+
+            let prcs : Vec<PriceType> = prc.into_iter()
+            .filter(|p| p.price_type  ==  _type)
+            .collect();
+
+            Some(prcs.first().unwrap().value)
+
+
+        }   
+        else {
+            None 
+        }
     }
 }
 
