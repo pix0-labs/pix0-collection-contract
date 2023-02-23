@@ -136,7 +136,8 @@ Result<Response, ContractError>{
 
         let fraction: u64 = (t.percentage as u64) * 100 / 100;
 
-        let amount = total_amount * fraction / 100;
+        // two decimal for total_amount 
+        let amount = (total_amount / 100) * fraction / 100;
       
         let res =  pay_treasury(t.wallet.as_str(), amount as u128, _denom.clone());
 

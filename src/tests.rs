@@ -26,7 +26,7 @@ mod tests {
         },
         ];
 
-        let _r = pay_collection_treasuries(ts, 1200, Some("uconst".to_string()));
+        let _r = pay_collection_treasuries(ts, 1250500, Some("uconst".to_string()));
         println!("Res::{:?}",_r);
     }
 }
