@@ -46,6 +46,21 @@ pub enum ExecuteMsg {
     },
    
    
+    RandomMintItem {
+
+        owner : Addr, 
+
+        collection_name : String, 
+
+        collection_symbol : String, 
+
+        price_type : Option<u8>, 
+        
+        token_uri : Option<String>, 
+
+    },
+
+    
     MintItem {
 
         index : String,

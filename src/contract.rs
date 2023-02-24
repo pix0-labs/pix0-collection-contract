@@ -5,7 +5,7 @@ use cosmwasm_std::{
 };
 use cw2::set_contract_version;
 use crate::error::ContractError;
-use crate::ins::{create_collection, create_item, mint_item_by_name, mint_item};
+use crate::ins::{create_collection, create_item, mint_item_by_name, mint_item, random_mint_item};
 use crate::query::{get_all_collections, get_collections, get_collection};
 use crate::nft_query::*;
 use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg, MigrateMsg};
@@ -68,6 +68,11 @@ pub fn execute(
         ExecuteMsg::MintItem { index , owner, collection_name, 
             collection_symbol, price_type, token_uri }
         => mint_item(deps, _env, info, str_to_num(index) , owner, 
+        collection_name, collection_symbol,price_type, token_uri),
+
+        ExecuteMsg::RandomMintItem { owner, collection_name, 
+            collection_symbol, price_type, token_uri }
+        => random_mint_item(deps, _env, info,  owner, 
         collection_name, collection_symbol,price_type, token_uri),
         
     }

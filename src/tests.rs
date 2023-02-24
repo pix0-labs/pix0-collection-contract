@@ -11,7 +11,7 @@ mod tests {
     use crate::msg::*;
     use crate::nft_ins::{DEFAULT_PRICE_DENOM, Extension};
     use crate::contract::*;
-    use crate::ins::mint_item;
+    use crate::ins::*;
 
     // cargo test test_pay_treasuries -- --show-output
     #[test]
@@ -115,22 +115,20 @@ mod tests {
           
         }
        
-        let mut idx = 2; 
-    
-        let r = mint_item(deps.as_mut(), mock_env(), info.clone(), idx, Addr::unchecked(owner), 
+        
+        let r = random_mint_item(deps.as_mut(), mock_env(), info.clone(),
+         Addr::unchecked(owner), 
         collection_name.clone(), collection_symb.clone(), Some(price_type), 
         Some("https://some.metadata/x199x.json".to_string()));
 
-        println!("Minted.item:{}::res:{:?}", idx,  r);
+        println!("Minted.item::res:{:?}",   r);
 
-        idx = 6;
-
-        let r = mint_item(deps.as_mut(), mock_env(), info, idx, 
+        let r = random_mint_item(deps.as_mut(), mock_env(), info,  
         Addr::unchecked(owner), collection_name, 
         collection_symb, Some(price_type), 
         Some("https://some.metadata/x208y.json".to_string()));
 
-        println!("Minted.item:{}::res:{:?}", idx,  r);
+        println!("Minted.item::res:{:?}", r);
 
         print_nfts_by_owner(&deps.as_ref(), owner);
        

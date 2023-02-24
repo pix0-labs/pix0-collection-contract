@@ -162,3 +162,19 @@ start_after: Option<String>, limit: Option<u32>)
     
 }
     
+
+
+
+pub (crate) fn internal_get_items_count(deps : Deps , owner : Addr,
+    collection_name : String,collection_symbol : String)
+    ->usize {
+    
+    let _prefix = (owner, collection_id(collection_name, collection_symbol));
+    
+    ITEMS_STORE
+    .prefix(_prefix)
+    .range(deps.storage, None, None, Order::Ascending)
+    .count()
+    
+       
+}
