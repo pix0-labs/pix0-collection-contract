@@ -7,9 +7,9 @@ mod tests {
     // use std::mem::size_of;
     use crate::state::*;
     use cosmwasm_std::testing::{mock_env, mock_info, mock_dependencies_with_balance};
-    use cosmwasm_std::{coins, Addr};
+    use cosmwasm_std::{coins, Addr, Deps, from_binary};
     use crate::msg::*;
-    use crate::nft_ins::DEFAULT_PRICE_DENOM;
+    use crate::nft_ins::{DEFAULT_PRICE_DENOM, Extension};
     use crate::contract::*;
     use crate::ins::mint_item;
 
@@ -118,7 +118,8 @@ mod tests {
         let mut idx = 2; 
     
         let r = mint_item(deps.as_mut(), mock_env(), info.clone(), idx, Addr::unchecked(owner), 
-        collection_name.clone(), collection_symb.clone(), Some(price_type), None);
+        collection_name.clone(), collection_symb.clone(), Some(price_type), 
+        Some("https://some.metadata/x199x.json".to_string()));
 
         println!("Minted.item:{}::res:{:?}", idx,  r);
 
@@ -126,11 +127,51 @@ mod tests {
 
         let r = mint_item(deps.as_mut(), mock_env(), info, idx, 
         Addr::unchecked(owner), collection_name, 
-        collection_symb, Some(price_type), None);
+        collection_symb, Some(price_type), 
+        Some("https://some.metadata/x208y.json".to_string()));
 
         println!("Minted.item:{}::res:{:?}", idx,  r);
 
-
+        print_nfts_by_owner(&deps.as_ref(), owner);
+       
 
     }
+
+    fn print_nfts_by_owner(deps : &Deps, owner : &str) {
+
+        print!("\n======================================\nNfts By {}", owner);
+
+        let msg = QueryMsg::MintedTokensByOwner { owner:
+            owner.to_string(), start_after: None, limit: None };
+
+        let res = query(*deps, mock_env(), msg).expect("failed to unwrap!!");
+
+        let result : cw721::TokensResponse = from_binary(&res).unwrap();
+
+        //println!("Nfts::{:?}",result);
+
+        print_tokens_with_info(&result, &deps);
+     }
+
+
+     fn print_tokens_with_info (res : &cw721::TokensResponse, deps : &Deps) {
+
+        for (i, x) in res.tokens.iter().enumerate() {
+
+            let tid = x.clone();
+
+            print!("\nNFT :{}: ID:{}",(i+1), x.clone());
+
+            let msg = QueryMsg::NftTokenInfo { token_id: tid.to_string() };
+    
+            let res = query(*deps, mock_env(), msg).expect("failed to unwrap!!");
+    
+            let result : cw721::NftInfoResponse<Extension> = from_binary(&res).unwrap();
+            
+            println!("\nInfo:{:?}",result);
+
+        }
+
+     }
+
 }

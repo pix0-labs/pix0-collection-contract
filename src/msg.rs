@@ -105,6 +105,19 @@ pub enum QueryMsg {
         limit : Option<u32>,
     },
 
+    MintedTokensByOwner {
+
+        owner : String,
+
+        start_after : Option<String>,
+        
+        limit : Option<u32>,
+    },
+
+    NftTokenInfo {
+
+        token_id : String, 
+    }
     
 }
 

@@ -7,6 +7,7 @@ use cw2::set_contract_version;
 use crate::error::ContractError;
 use crate::ins::{create_collection, create_item, mint_item_by_name, mint_item};
 use crate::query::{get_all_collections, get_collections, get_collection};
+use crate::nft_query::*;
 use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg, MigrateMsg};
 use crate::state::ContractInfo;
 use crate::indexes::CONTRACT_INFO;
@@ -85,6 +86,11 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::GetAllCollections { limit } =>
         to_binary(&get_all_collections(deps, limit)?),
 
+        QueryMsg::MintedTokensByOwner { owner, start_after, limit } =>
+        get_minted_tokens_by_owner(deps, _env, owner, start_after, limit),
+
+        QueryMsg::NftTokenInfo { token_id} =>
+        get_token_info(deps, _env, token_id),
     }
 }
 

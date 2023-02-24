@@ -15,8 +15,6 @@ pub fn get_minted_tokens_by_owner( deps: Deps, _env : Env, owner : String ,
     let contract = NftContract::default();
 
     contract.query(deps, _env, msg)
-
-    
 }
 
 
@@ -28,5 +26,4 @@ pub fn get_token_info( deps: Deps, _env : Env, token_id : String )
     let contract = NftContract::default();
     
     contract.query(deps, _env, msg)
-
 }
