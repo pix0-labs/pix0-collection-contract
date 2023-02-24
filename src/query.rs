@@ -118,7 +118,7 @@ pub (crate) fn internal_get_item(deps : Deps ,
     }
 }
 
-
+#[allow(dead_code)]
 pub (crate) fn internal_get_items(deps : Deps , 
 owner : Addr,collection_name : String,  
 collection_symbol : String,    
@@ -163,7 +163,42 @@ start_after: Option<String>, limit: Option<u32>)
 }
     
 
-
+pub (crate) fn internal_get_all_items(deps : Deps , 
+    owner : Addr,collection_name : String,  
+    collection_symbol : String) 
+    ->Vec<Item> {
+    
+        let _prefix = (owner, collection_id(collection_name
+            , collection_symbol) );
+        
+        let items : StdResult <Vec<Item>> = 
+        ITEMS_STORE
+        .prefix(_prefix)
+        .range(deps.storage, None, None, Order::Ascending)
+        .map(|itm| {
+            
+            let (_k, i) = itm?;
+    
+            Ok(
+                Item { collection_owner : i.collection_owner, name : i.name, 
+                collection_name : i.collection_name, 
+                collection_symbol : i.collection_symbol, 
+                description: i.description, 
+                traits : i.traits, links : i.links, background_color: i.background_color, 
+                date_created: i.date_created, date_updated: i.date_updated }
+            )
+        }).collect();
+    
+        match items {
+    
+            Ok(itms)=> itms,
+    
+            Err(_) => Vec::new(),
+        }
+        
+}
+        
+    
 
 pub (crate) fn internal_get_items_count(deps : Deps , owner : Addr,
     collection_name : String,collection_symbol : String)
