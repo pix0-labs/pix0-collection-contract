@@ -10,6 +10,13 @@
         "project": "pix0-contract",
         "type": "store",
         "chainId": "constantine-1",
+        "codeId": 167,
+        "txhash": "B66AC4A02224AB8677D6E21AFB678D9B108FD2CCF951660778471E4E89FEA4E7"
+      },
+      {
+        "project": "pix0-contract",
+        "type": "store",
+        "chainId": "constantine-1",
         "codeId": 163,
         "txhash": "8282F3608BC8BCD166826CBA49C375FAD373ADE488616AB12C1896A2292E48A1"
       },
