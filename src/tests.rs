@@ -55,11 +55,21 @@ mod tests {
             date_start : None, date_end : None, 
         }];
 
+        let treasuries : Vec<Treasury> = vec![Treasury {
+            wallet : Addr::unchecked("archway1nxqd7h869sj9pn0xyq0lqqqxjqx6vt550z4aj7".to_string()),
+            percentage : 70,
+            name : None,
+        }, Treasury {
+            wallet : Addr::unchecked("archway122w9rr76aac9pmke9qq6ya5l8245qr44h8jvtm".to_string()),
+            percentage : 30,
+            name : None,
+        }];
+
         let create_collection = ExecuteMsg::CreateCollection {
             name : collection_name.clone(),
             symbol : collection_symb.clone(),
             description : Some("Test collection 1111111".to_string()),
-            treasuries : None,
+            treasuries : Some(treasuries),
             attributes : None, 
             status : Some(COLLECTION_STATUS_ACTIVATED),
             prices : Some(prices),

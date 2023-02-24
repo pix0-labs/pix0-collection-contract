@@ -62,6 +62,32 @@ fn is_status_valid ( status : u8) -> bool {
 
 }
 
+fn are_treasuries_valid (treasuries : &Option<Vec<Treasury>>)  -> Result<bool, ContractError> {
+
+    if treasuries.is_some () {
+
+        let mut total_percentage = 0;
+
+        let ts = treasuries.clone().unwrap();
+
+        ts.iter().for_each(|t| total_percentage += t.percentage);
+
+        if total_percentage > 100 || total_percentage < 100 {
+
+            return Err(ContractError::CustomErrorMesg { message : 
+                format!("Invalid percentage {} for treasuries amount, the total must be 100", total_percentage) } );
+        }
+        else {
+            Ok(true)
+        }
+    }
+    else {
+
+        Ok(false)
+    }
+}
+
+
 pub (crate) fn internal_create_collection(deps: DepsMut, 
     _env : Env, info: MessageInfo,
     name : String, symbol : String, 
@@ -78,6 +104,8 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
         return Err(ContractError::CustomErrorMesg { message: format!("Collection {}-{} already exists!", name, symbol).to_string() } );
     }  
   
+    let _ = are_treasuries_valid(&treasuries)?;
+
     let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
 
     let date_created = _env.block.time;
