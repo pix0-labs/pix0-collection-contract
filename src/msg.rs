@@ -42,25 +42,9 @@ pub enum ExecuteMsg {
     CreateItem {
 
        item : Item, 
-    
-    },
-   
-   
-    RandomMintItem {
-
-        owner : Addr, 
-
-        collection_name : String, 
-
-        collection_symbol : String, 
-
-        price_type : Option<u8>, 
-        
-        token_uri : Option<String>, 
-
     },
 
-    
+
     MintItem {
 
         index : String,
@@ -119,6 +103,18 @@ pub enum QueryMsg {
         
         limit : Option<u32>,
     },
+
+
+    GetItemsCount { 
+
+        owner : Addr, 
+        
+        collection_name : String, 
+
+        collection_symbol : String, 
+    },
+
+
 
     MintedTokensByOwner {
 

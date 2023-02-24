@@ -5,8 +5,8 @@ use cosmwasm_std::{
 };
 use cw2::set_contract_version;
 use crate::error::ContractError;
-use crate::ins::{create_collection, create_item, mint_item_by_name, mint_item, random_mint_item};
-use crate::query::{get_all_collections, get_collections, get_collection};
+use crate::ins::{create_collection, create_item, mint_item_by_name, mint_item};
+use crate::query::{get_all_collections, get_collections, get_collection, get_items_count};
 use crate::nft_query::*;
 use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg, MigrateMsg};
 use crate::state::ContractInfo;
@@ -70,10 +70,6 @@ pub fn execute(
         => mint_item(deps, _env, info, str_to_num(index) , owner, 
         collection_name, collection_symbol,price_type, token_uri),
 
-        ExecuteMsg::RandomMintItem { owner, collection_name, 
-            collection_symbol, price_type, token_uri }
-        => random_mint_item(deps, _env, info,  owner, 
-        collection_name, collection_symbol,price_type, token_uri),
         
     }
 }
@@ -96,6 +92,9 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
 
         QueryMsg::NftTokenInfo { token_id} =>
         get_token_info(deps, _env, token_id),
+
+        QueryMsg::GetItemsCount { owner, collection_name, collection_symbol } =>
+        to_binary(&get_items_count(deps, owner, collection_name, collection_symbol)?),
     }
 }
 

@@ -3,16 +3,12 @@ use crate::state::{Collection, Treasury, Attribute, PriceType, Item, COLLECTION_
 COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
 use crate::indexes::{collections_store,ITEMS_STORE };
 use crate::error::ContractError;
-use crate::query::{internal_get_collection, internal_get_all_items, internal_get_item, internal_get_items_count};
+use crate::query::{internal_get_collection, internal_get_all_items, internal_get_item};
 use crate::nft_ins::init_and_mint_nft;
-use crate::utils::gen_random;
 
 pub fn collection_id ( name : String, symbol : String ) -> String {
     format!("{}-{}", name, symbol)
 }
-
-
-
 
   
 pub fn collection_exists( info: MessageInfo, name : String, symbol : String, deps: &DepsMut ) -> bool {
@@ -199,21 +195,6 @@ pub fn create_item(deps: DepsMut,
     _key.2).as_str(), "create_item", STATUS_OK, None)
 }
 
-
-pub fn random_mint_item (deps : DepsMut , 
-    _env : Env, info: MessageInfo, 
-    owner : Addr,collection_name : String,  
-    collection_symbol : String , 
-    price_type : Option<u8>, 
-    token_uri : Option<String>)-> Result<Response, ContractError> {
-
-    let item_count = internal_get_items_count(deps.as_ref(), owner.clone(), 
-    collection_name.clone(), collection_symbol.clone());
-
-    let index = gen_random(0, (item_count - 1) as u64) as i32;
-
-    mint_item(deps, _env, info, index, owner, collection_name, collection_symbol, price_type, token_uri)
-}
 
 pub fn mint_item (deps : DepsMut , 
     _env : Env, info: MessageInfo, index : i32,

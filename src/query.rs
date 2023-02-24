@@ -1,4 +1,4 @@
-use crate::msg::{CollectionResponse, CollectionsResponse};
+use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse};
 use cosmwasm_std::{Deps, StdResult, Order, Addr };
 use crate::state::{Collection, Item};
 use crate::indexes::{collections_store, ITEMS_STORE};
@@ -210,6 +210,17 @@ pub (crate) fn internal_get_items_count(deps : Deps , owner : Addr,
     .prefix(_prefix)
     .range(deps.storage, None, None, Order::Ascending)
     .count()
+          
+}
+
+
+pub fn get_items_count(deps : Deps , owner : Addr,
+    collection_name : String,collection_symbol : String)
+    ->StdResult<ItemCountResponse>{
+
+    let items_count = internal_get_items_count(deps, owner, collection_name, collection_symbol);
     
-       
+    Ok(ItemCountResponse {
+        count : items_count ,
+    })
 }

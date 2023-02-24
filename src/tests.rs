@@ -115,20 +115,23 @@ mod tests {
           
         }
        
-        
-        let r = random_mint_item(deps.as_mut(), mock_env(), info.clone(),
-         Addr::unchecked(owner), 
+        let mut idx = 2;
+
+        let r = mint_item(deps.as_mut(), mock_env(), info.clone(),
+         idx, Addr::unchecked(owner), 
         collection_name.clone(), collection_symb.clone(), Some(price_type), 
         Some("https://some.metadata/x199x.json".to_string()));
 
-        println!("Minted.item::res:{:?}",   r);
+        println!("Minted.item:{}::res:{:?}",  idx,  r);
 
-        let r = random_mint_item(deps.as_mut(), mock_env(), info,  
-        Addr::unchecked(owner), collection_name, 
+        idx = 19;
+
+        let r = mint_item(deps.as_mut(), mock_env(), info,  
+        idx, Addr::unchecked(owner), collection_name, 
         collection_symb, Some(price_type), 
         Some("https://some.metadata/x208y.json".to_string()));
 
-        println!("Minted.item::res:{:?}", r);
+        println!("Minted.item:{}:res:{:?}",idx, r);
 
         print_nfts_by_owner(&deps.as_ref(), owner);
        

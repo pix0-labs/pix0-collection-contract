@@ -1,6 +1,5 @@
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
-use rand::Rng;
 
 pub fn calculate_hash<T: Hash>(t: &T) -> u64 {
     let mut s = DefaultHasher::new();
@@ -30,9 +29,3 @@ pub fn str_to_u128(num_str : String, null_replace_by : u128) -> u128 {
     num_str.parse().unwrap_or(null_replace_by)
 }
 
-
-pub fn gen_random(from : u64, to :u64) -> u64 {
-
-    let mut rng = rand::thread_rng();
-    rng.gen_range(from..to)
-}
