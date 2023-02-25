@@ -222,7 +222,7 @@ pub fn create_item(deps: DepsMut,
 }
 
 
-pub fn mint_item (deps : DepsMut , 
+pub fn mint_item (mut deps : DepsMut , 
     _env : Env, info: MessageInfo, index : i32,
     owner : Addr,collection_name : String,  
     collection_symbol : String , 
@@ -240,8 +240,8 @@ pub fn mint_item (deps : DepsMut ,
         return Err(ContractError::CustomErrorMesg{message : "Collection is NOT ready for minting!".to_string()});
     }
 
-    let items = internal_get_all_items(deps.as_ref(), owner, collection_name, 
-    collection_symbol);
+    let items = internal_get_all_items(deps.as_ref(), owner.clone(), collection_name.clone(), 
+    collection_symbol.clone());
 
     let index = index as usize;
 
@@ -254,7 +254,7 @@ pub fn mint_item (deps : DepsMut ,
 
             let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
 
-            let res = init_and_mint_nft(deps, _env, info, i.clone(), collection.treasuries(), price, token_uri);
+            let res = init_and_mint_nft(deps.branch(), _env, info, i.clone(), collection.treasuries(), price, token_uri);
 
             /* 
             let _key = (i.collection_owner.clone(), collection_id(i.collection_name.clone()
@@ -262,7 +262,7 @@ pub fn mint_item (deps : DepsMut ,
         
             ITEMS_STORE.remove(deps.storage, _key.clone());
             */
-            //internal_remove_item(owner, collection_name, collection_symbol, i.name, deps);
+            internal_remove_item(owner, collection_name, collection_symbol, i.name.clone(), deps);
 
             res 
         }
