@@ -124,19 +124,42 @@ mod tests {
 
         println!("Minted.item:{}::res:{:?}",  idx,  r);
 
+        print_items_count(&deps.as_ref(), Addr::unchecked(owner.clone()), 
+        collection_name.clone(), collection_symb.clone());
+
         idx = 19;
 
         let r = mint_item(deps.as_mut(), mock_env(), info,  
-        idx, Addr::unchecked(owner), collection_name, 
-        collection_symb, Some(price_type), 
+        idx, Addr::unchecked(owner.clone()), collection_name.clone(), 
+        collection_symb.clone(), Some(price_type), 
         Some("https://some.metadata/x208y.json".to_string()));
 
         println!("Minted.item:{}:res:{:?}",idx, r);
+
+        print_items_count(&deps.as_ref(), Addr::unchecked(owner), 
+        collection_name.clone(), collection_symb.clone());
+       
 
         print_nfts_by_owner(&deps.as_ref(), owner);
        
 
     }
+
+
+    fn print_items_count(deps : &Deps, owner : Addr,  collection_name : String, collection_symbol : String ) {
+
+       
+        let msg = QueryMsg::GetItemsCount { owner:
+            owner.clone(), collection_name: collection_name.clone(), 
+            collection_symbol: collection_symbol.clone() };
+
+        let res = query(*deps, mock_env(), msg).expect("failed to unwrap!!");
+
+        let result : ItemCountResponse = from_binary(&res).unwrap();
+
+        println!("\nNumber of items in {}-{}-{}\n{:?}\n", owner, collection_name, collection_symbol, result);
+     }
+
 
     fn print_nfts_by_owner(deps : &Deps, owner : &str) {
 
