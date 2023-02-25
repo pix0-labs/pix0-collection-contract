@@ -94,9 +94,9 @@ pub fn mint_nft(deps: DepsMut,
                         "some error while paying treasuries".to_string()});
                 }
     
-                let resp = res.expect("Failed to unwrap pay treasuries' response");
+                let res = res.expect("Failed to unwrap pay treasuries' response");
                 
-                Ok(resp.add_attribute("method", "nft-minted"))
+                Ok(res.add_attribute("method", "nft-minted"))
             }
             else {
 

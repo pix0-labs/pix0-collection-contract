@@ -155,6 +155,32 @@ pub fn item_exists( info: MessageInfo,
     stored_item.is_ok()
 }
 
+
+#[allow(dead_code)]
+pub (crate) fn internal_remove_item (
+    owner : Addr, 
+    collection_name : String,
+    collection_symbol : String,
+    name : String, 
+    deps: DepsMut ) -> bool {
+    
+    let _key = (owner, collection_id(collection_name
+        , collection_symbol), name );
+
+    let stored_item = ITEMS_STORE.key(_key.clone());
+
+    let item_result = stored_item.may_load(deps.storage);
+    
+    match item_result {
+
+        Ok(_)=> {ITEMS_STORE.remove(deps.storage, _key.clone()); true},
+
+        Err(_)=> false , 
+    }    
+
+}
+
+
 pub fn create_item(deps: DepsMut, 
     _env : Env, info: MessageInfo,item : Item 
 ) -> Result<Response, ContractError> {
@@ -228,7 +254,17 @@ pub fn mint_item (deps : DepsMut ,
 
             let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
 
-            init_and_mint_nft(deps, _env, info, i.clone(), collection.treasuries(), price, token_uri)
+            let res = init_and_mint_nft(deps, _env, info, i.clone(), collection.treasuries(), price, token_uri);
+
+            /* 
+            let _key = (i.collection_owner.clone(), collection_id(i.collection_name.clone()
+                , i.collection_symbol.clone()), i.name.clone()  );
+        
+            ITEMS_STORE.remove(deps.storage, _key.clone());
+            */
+            //internal_remove_item(owner, collection_name, collection_symbol, i.name, deps);
+
+            res 
         }
         else {
             Err(ContractError::CustomErrorMesg{message : format!("Failed to find item at index :{}", index)})
@@ -282,9 +318,7 @@ message : Option<String>) -> Result<Response, ContractError> {
     if message.is_some() {
 
         let mesg = message.unwrap();
-
-        println!("at@common_response:{}",mesg);
-        
+ 
         Ok(Response::new()
         .add_attribute("key",key)
         .add_attribute("method", method)
