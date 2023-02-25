@@ -256,14 +256,10 @@ pub fn mint_item (mut deps : DepsMut ,
 
             let res = init_and_mint_nft(deps.branch(), _env, info, i.clone(), collection.treasuries(), price, token_uri);
 
-            /* 
-            let _key = (i.collection_owner.clone(), collection_id(i.collection_name.clone()
-                , i.collection_symbol.clone()), i.name.clone()  );
-        
-            ITEMS_STORE.remove(deps.storage, _key.clone());
-            */
-            internal_remove_item(owner, collection_name, collection_symbol, i.name.clone(), deps);
-
+            if res.is_ok() {
+                internal_remove_item(owner, collection_name, collection_symbol, i.name.clone(), deps);
+            }
+           
             res 
         }
         else {
@@ -276,7 +272,7 @@ pub fn mint_item (mut deps : DepsMut ,
        
 }
 
-pub fn mint_item_by_name (deps : DepsMut , 
+pub fn mint_item_by_name (mut deps : DepsMut , 
     _env : Env, info: MessageInfo, item_name : String ,
     owner : Addr,collection_name : String,  
     collection_symbol : String , 
@@ -290,14 +286,21 @@ pub fn mint_item_by_name (deps : DepsMut ,
         return Err(ContractError::CustomErrorMesg{message : "Collection is NOT ready for minting!".to_string()});
     }
 
-    let item = internal_get_item(deps.as_ref(), owner, collection_name, 
-    collection_symbol, item_name.clone());
+    let item = internal_get_item(deps.as_ref(), owner.clone(), collection_name.clone(), 
+    collection_symbol.clone(), item_name.clone());
 
     let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
 
     if item.is_some() {
         let itm = item.unwrap();
-        init_and_mint_nft(deps, _env, info, itm.clone(), collection.treasuries(),price,token_uri)
+        let res = init_and_mint_nft(deps.branch(), _env, info, itm.clone(), collection.treasuries(),price,token_uri);
+
+        if res.is_ok() {
+            internal_remove_item(owner, collection_name, collection_symbol, itm.name.clone(), deps);
+        }
+
+        res 
+       
     }
     else {
         Err(ContractError::CustomErrorMesg{message : format!("Item named {} not found", item_name )})

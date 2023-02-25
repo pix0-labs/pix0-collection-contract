@@ -12,24 +12,6 @@ pub type Extension = Option<Metadata>;
 pub type NftContract<'a> = cw721_base::Cw721Contract<'a, Extension, Empty>;
 
 
-pub fn init_contract(deps: DepsMut,  _env : Env, 
-info: MessageInfo, name : String ,
-symbol : String) -> NftContract {
-    
-    let msg =  cw721_base::InstantiateMsg {
-        name: name,
-        symbol: symbol,
-        minter: String::from(info.sender.clone()),
-    };
-
-    let contract = NftContract::default();
-
-    let _ = contract.instantiate(deps, _env.clone(), info.clone(),msg);
-
-    
-    contract
-}
-
 
 pub fn mint_nft(deps: DepsMut,  
     _env : Env, 
