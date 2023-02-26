@@ -6,7 +6,7 @@ use cosmwasm_std::{
 use cw2::set_contract_version;
 use crate::error::ContractError;
 use crate::ins::{create_collection, create_item, mint_item_by_name, mint_item};
-use crate::query::{get_all_collections, get_collections, get_collection, get_items_count};
+use crate::query::{get_all_collections, get_collections, get_collection, get_items_count, get_items, get_item};
 use crate::nft_query::*;
 use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg, MigrateMsg};
 use crate::state::ContractInfo;
@@ -95,6 +95,14 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
 
         QueryMsg::GetItemsCount { owner, collection_name, collection_symbol } =>
         to_binary(&get_items_count(deps, owner, collection_name, collection_symbol)?),
+        
+        QueryMsg::GetItems { owner, collection_name, collection_symbol, start_after, limit } =>
+        to_binary(&get_items(deps, owner, collection_name, collection_symbol, start_after, limit )?),
+        
+
+        QueryMsg::GetItem { owner, collection_name, collection_symbol, item_name } =>
+        to_binary(&get_item(deps, owner, collection_name, collection_symbol, item_name )?),
+        
     }
 }
 

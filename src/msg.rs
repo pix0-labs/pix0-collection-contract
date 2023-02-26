@@ -105,6 +105,32 @@ pub enum QueryMsg {
     },
 
 
+    GetItem { 
+
+        owner : Addr, 
+        
+        collection_name : String, 
+
+        collection_symbol : String, 
+
+        item_name : String, 
+      
+    },
+    
+    GetItems { 
+
+        owner : Addr, 
+        
+        collection_name : String, 
+
+        collection_symbol : String, 
+      
+        start_after : Option<String>,
+        
+        limit : Option<u32>,
+  
+    },
+
     GetItemsCount { 
 
         owner : Addr, 
@@ -151,7 +177,7 @@ pub struct CollectionsResponse {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ItemResponse {
     
-    pub item : Item,
+    pub item : Option<Item>,
 }
 
 

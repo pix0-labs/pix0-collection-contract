@@ -1,4 +1,4 @@
-use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse};
+use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse};
 use cosmwasm_std::{Deps, StdResult, Order, Addr };
 use crate::state::{Collection, Item};
 use crate::indexes::{collections_store, ITEMS_STORE};
@@ -118,7 +118,6 @@ pub (crate) fn internal_get_item(deps : Deps ,
     }
 }
 
-#[allow(dead_code)]
 pub (crate) fn internal_get_items(deps : Deps , 
 owner : Addr,collection_name : String,  
 collection_symbol : String,    
@@ -127,8 +126,6 @@ start_after: Option<String>, limit: Option<u32>)
 
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
     
-    //let start = start_after.map(|s| Bound::ExclusiveRaw(s.into()));
-
     let start = start_after.map(Bound::exclusive);
     
     let _prefix = (owner, collection_id(collection_name
@@ -224,3 +221,30 @@ pub fn get_items_count(deps : Deps , owner : Addr,
         count : items_count ,
     })
 }
+
+
+pub fn get_items(deps : Deps , 
+    owner : Addr,collection_name : String,  
+    collection_symbol : String,    
+    start_after: Option<String>, limit: Option<u32>) -> StdResult<ItemsResponse>  {
+
+    Ok ( ItemsResponse {
+        items : internal_get_items(deps, owner, collection_name, collection_symbol, start_after, limit)
+    })
+}
+
+
+
+pub fn get_item(deps : Deps , 
+    owner : Addr,collection_name : String,  
+    collection_symbol : String, item_name : String) -> StdResult<ItemResponse>{
+    
+    Ok ( ItemResponse {
+        item : internal_get_item(deps, owner, collection_name, collection_symbol, item_name)
+    })
+
+}
+
+
+
+
