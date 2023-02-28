@@ -144,6 +144,9 @@ mod tests {
         remove_collection(collection_name.clone(), collection_symb.clone(), deps.as_mut(), info);
 
 
+        print_items_count(&deps.as_ref(), Addr::unchecked(owner), 
+        collection_name.clone(), collection_symb.clone());
+       
     }
 
 

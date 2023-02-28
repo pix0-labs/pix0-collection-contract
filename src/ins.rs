@@ -419,6 +419,8 @@ pub (crate) fn remove_all_items(
 
     let deps2 = RefCell::new(deps);
 
+    let mut keys : Vec<(Addr,String,String)> = Vec::new();
+
     {
 
         let borrowed_deps = deps2.borrow();
@@ -434,16 +436,22 @@ pub (crate) fn remove_all_items(
     
                 let _key = (owner.clone(), collection_id(itm.1.collection_name, 
                     itm.1.collection_symbol), itm.1.name);
-                println!("to.remove::Key::{:?}", _key);
+                //println!("to.remove::Key::{:?}", _key);
+
+                keys.push(_key);
                 //ITEMS_STORE.remove(borrowed_mut_deps.storage, _key);
             }
         }
     
     }
 
-    let _borrowed_mut_deps = deps2.borrow_mut();
+    let mut  _borrowed_mut_deps = deps2.borrow_mut();
     
-    
+    for _key in keys.iter() {
+
+        ITEMS_STORE.remove(_borrowed_mut_deps.storage, _key.clone());
+         
+    }
     
 }
 
