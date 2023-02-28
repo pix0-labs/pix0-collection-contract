@@ -436,10 +436,8 @@ pub (crate) fn remove_all_items(
     
                 let _key = (owner.clone(), collection_id(itm.1.collection_name, 
                     itm.1.collection_symbol), itm.1.name);
-                //println!("to.remove::Key::{:?}", _key);
-
+              
                 keys.push(_key);
-                //ITEMS_STORE.remove(borrowed_mut_deps.storage, _key);
             }
         }
     
