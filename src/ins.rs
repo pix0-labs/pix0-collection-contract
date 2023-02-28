@@ -5,7 +5,6 @@ use crate::indexes::{collections_store,ITEMS_STORE };
 use crate::error::ContractError;
 use crate::query::{internal_get_collection, internal_get_all_items, internal_get_item};
 use crate::nft_ins::init_and_mint_nft;
-use std::cell::RefCell;
 
 pub fn collection_id ( name : String, symbol : String ) -> String {
     format!("{}-{}", name, symbol)
@@ -417,17 +416,13 @@ pub (crate) fn remove_all_items(
 
     let _prefix = (owner.clone(), collection_id(collection_name, collection_symbol));
 
-    let deps2 = RefCell::new(deps);
-
+    
     let mut keys : Vec<(Addr,String,String)> = Vec::new();
 
     {
-
-        let borrowed_deps = deps2.borrow();
-
         let mut iter = ITEMS_STORE
             .prefix(_prefix)
-            .range(borrowed_deps.storage, None, None, Order::Ascending)
+            .range(deps.storage, None, None, Order::Ascending)
             .into_iter();
     
       
@@ -443,10 +438,9 @@ pub (crate) fn remove_all_items(
     
     }
 
-    let mut  _borrowed_mut_deps = deps2.borrow_mut();
     
     for _key in keys.iter() {
-        ITEMS_STORE.remove(_borrowed_mut_deps.storage, _key.clone());    
+        ITEMS_STORE.remove(deps.storage, _key.clone());    
     }
     
 }
