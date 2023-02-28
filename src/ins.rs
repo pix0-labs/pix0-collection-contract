@@ -1,4 +1,4 @@
-use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr};
+use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr, Order};
 use crate::state::{Collection, Treasury, Attribute, PriceType, Item, COLLECTION_STATUS_DRAFT,
 COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
 use crate::indexes::{collections_store,ITEMS_STORE };
@@ -380,6 +380,71 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
     }
        
 }
+
+
+
+pub fn remove_collection (
+    name : String,
+    symbol : String,
+    mut deps: DepsMut ,  
+    info: MessageInfo) -> bool {
+    
+    let owner = info.clone().sender;
+
+   
+    let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
+
+    let removed_res = collections_store().remove(deps.branch().storage, _key);
+    
+    match removed_res {
+
+        Ok(_)=> {
+            remove_all_items(owner, name, symbol, deps);
+            true
+        },
+
+        Err(_)=> false , 
+    }    
+
+}
+
+pub (crate) fn remove_all_items( 
+    owner : Addr, 
+    collection_name : String,
+    collection_symbol : String, 
+    mut deps: DepsMut) {
+
+    let _prefix = (owner.clone(), collection_id(collection_name
+        , collection_symbol) );
+
+   
+    ITEMS_STORE
+    .prefix(_prefix)
+    .range(deps.branch().storage, None, None, Order::Ascending)
+    .into_iter()
+    .for_each(|res| {
+
+        match res {
+
+            Ok(itm)=>{
+
+                let _key = (owner.clone(), collection_id(itm.1.collection_name
+                    , itm.1.collection_symbol), itm.1.name );
+
+                //ITEMS_STORE.remove(deps.storage, _key.clone());
+                println!("key::{:?}",_key);
+            },
+
+            Err(_)=>{},
+        }
+    });
+    
+
+
+    
+    
+}
+
 
 
 #[allow(dead_code)]

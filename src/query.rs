@@ -19,9 +19,9 @@ pub (crate) fn internal_get_collection(deps: Deps, owner : Addr, name : String, 
 
     let _key = (owner, collection_id(name, symbol) );
 
-    let stored_user = collections_store().key(_key.clone());
+    let stored_collection = collections_store().key(_key.clone());
     
-    stored_user.may_load(deps.storage).expect("Failed to find the collection").expect(
+    stored_collection.may_load(deps.storage).expect("Failed to find the collection").expect(
         format!("Failed to unwrap, key not found :\"{:?}\"", _key).as_str())
         
 }
