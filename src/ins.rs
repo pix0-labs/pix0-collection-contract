@@ -448,9 +448,7 @@ pub (crate) fn remove_all_items(
     let mut  _borrowed_mut_deps = deps2.borrow_mut();
     
     for _key in keys.iter() {
-
-        ITEMS_STORE.remove(_borrowed_mut_deps.storage, _key.clone());
-         
+        ITEMS_STORE.remove(_borrowed_mut_deps.storage, _key.clone());    
     }
     
 }
