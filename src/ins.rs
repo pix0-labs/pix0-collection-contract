@@ -399,7 +399,7 @@ pub fn remove_collection (
     match removed_res {
 
         Ok(_)=> {
-            remove_all_items(owner, name, symbol, deps);
+            remove_all_items(owner, name, symbol, &deps);
 
             true},
 
@@ -412,34 +412,23 @@ pub (crate) fn remove_all_items(
     owner : Addr, 
     collection_name : String,
     collection_symbol : String, 
-    mut deps: DepsMut) {
+    deps: &DepsMut) {
 
-    let _prefix = (owner.clone(), collection_id(collection_name
-        , collection_symbol) );
+    let _prefix = (owner.clone(), collection_id(collection_name, collection_symbol));
 
-   
-    ITEMS_STORE
-    .prefix(_prefix)
-    .range(deps.branch().storage, None, None, Order::Ascending)
-    .into_iter()
-    .for_each(|res| {
+    let mut iter = ITEMS_STORE
+        .prefix(_prefix)
+        .range(deps.storage, None, None, Order::Ascending)
+        .into_iter();
 
-        match res {
-
-            Ok(itm)=>{
-
-                let _key = (owner.clone(), collection_id(itm.1.collection_name
-                    , itm.1.collection_symbol), itm.1.name );
-
-                //ITEMS_STORE.remove(deps.storage, _key.clone());
-                println!("key::{:?}",_key);
-            },
-
-            Err(_)=>{},
+    while let Some(itm_res) = iter.next() {
+        if let Ok(itm) = itm_res {
+            let _key = (owner.clone(), collection_id(itm.1.collection_name, 
+                itm.1.collection_symbol), itm.1.name);
+            println!("Key::{:?}", _key);
+            //ITEMS_STORE.remove(deps.storage, _key);
         }
-    });
-    
-
+    }
 
     
     
