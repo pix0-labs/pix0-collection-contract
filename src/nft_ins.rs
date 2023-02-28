@@ -72,7 +72,7 @@ pub fn mint_nft(deps: DepsMut,
     
                 if res.is_err() {
     
-                    return Err(ContractError::CustomErrorMesg{message : 
+                    return Err(ContractError::ErrorPayingTreasuries { text : 
                         "some error while paying treasuries".to_string()});
                 }
     

@@ -230,14 +230,14 @@ pub fn mint_item (mut deps : DepsMut ,
     token_uri : Option<String>)-> Result<Response, ContractError> {
 
     if index < 0 {
-        return Err(ContractError::CustomErrorMesg{message : format!("Invalid index :{}", index)});
+        return Err(ContractError::InvalidIndexOfNft { text : format!("Invalid index :{}", index)});
     }
 
     let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
     collection_name.clone(), collection_symbol.clone());
 
     if collection.status != COLLECTION_STATUS_ACTIVATED{
-        return Err(ContractError::CustomErrorMesg{message : "Collection is NOT ready for minting!".to_string()});
+        return Err(ContractError::NftStatusIsNotReadyForMinting { text: "Collection is NOT ready for minting!".to_string()});
     }
 
     let items = internal_get_all_items(deps.as_ref(), owner.clone(), collection_name.clone(), 
@@ -263,11 +263,11 @@ pub fn mint_item (mut deps : DepsMut ,
             res 
         }
         else {
-            Err(ContractError::CustomErrorMesg{message : format!("Failed to find item at index :{}", index)})
+            Err(ContractError::FailedToFindNft { text : format!("Failed to find item at index :{}", index)})
         }
     }
     else {
-        Err(ContractError::CustomErrorMesg{message : format!("Item at index :{} out of bound", index)})
+        Err(ContractError::NftIndexOutOfBound { text: format!("Item at index :{} out of bound", index)})
     }
        
 }

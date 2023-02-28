@@ -13,5 +13,19 @@ pub enum ContractError {
 
     #[error("CustomErrorMesg")]
     CustomErrorMesg { message : String },
-   
+
+    #[error("ErrorPayingTreasuries")]
+    ErrorPayingTreasuries { text : String },
+
+    #[error("FailedToFindNft")]
+    FailedToFindNft { text : String },
+
+    #[error("NftIndexOutOfBound")]
+    NftIndexOutOfBound { text : String },
+
+    #[error("NftStatusIsNotReadyForMinting")]
+    NftStatusIsNotReadyForMinting { text : String },
+     
+    #[error("InvalidIndexOfNft")]
+    InvalidIndexOfNft { text : String },
 }
