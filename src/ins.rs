@@ -419,24 +419,30 @@ pub (crate) fn remove_all_items(
 
     let deps2 = RefCell::new(deps);
 
-    let borrowed_deps = deps2.borrow();
+    {
 
-    let mut iter = ITEMS_STORE
-        .prefix(_prefix)
-        .range(borrowed_deps.storage, None, None, Order::Ascending)
-        .into_iter();
+        let borrowed_deps = deps2.borrow();
 
-    let mut borrowed_mut_deps = deps2.borrow_mut();
-
-    while let Some(itm_res) = iter.next() {
-        if let Ok(itm) = itm_res {
-            let _key = (owner.clone(), collection_id(itm.1.collection_name, 
-                itm.1.collection_symbol), itm.1.name);
-            println!("to.remove::Key::{:?}", _key);
-            ITEMS_STORE.remove(borrowed_mut_deps.storage, _key);
+        let mut iter = ITEMS_STORE
+            .prefix(_prefix)
+            .range(borrowed_deps.storage, None, None, Order::Ascending)
+            .into_iter();
+    
+      
+        while let Some(itm_res) = iter.next() {
+            if let Ok(itm) = itm_res {
+    
+                let _key = (owner.clone(), collection_id(itm.1.collection_name, 
+                    itm.1.collection_symbol), itm.1.name);
+                println!("to.remove::Key::{:?}", _key);
+                //ITEMS_STORE.remove(borrowed_mut_deps.storage, _key);
+            }
         }
+    
     }
 
+    let _borrowed_mut_deps = deps2.borrow_mut();
+    
     
     
 }
