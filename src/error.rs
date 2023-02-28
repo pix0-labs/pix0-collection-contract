@@ -28,4 +28,8 @@ pub enum ContractError {
      
     #[error("InvalidIndexOfNft")]
     InvalidIndexOfNft { text : String },
+
+    #[error("InvalidCollectionStatus")]
+    InvalidCollectionStatus { text : String },
+
 }

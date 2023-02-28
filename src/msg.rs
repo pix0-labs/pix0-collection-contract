@@ -39,6 +39,24 @@ pub enum ExecuteMsg {
 
     },
 
+    UpdateCollection {
+        name : String, 
+
+        symbol : String, 
+
+        description : Option<String>,
+
+        treasuries : Option<Vec<Treasury>>,
+
+        attributes : Option<Vec<Attribute>>,
+    
+        prices : Option<Vec<PriceType>>,
+
+        status : Option<u8>, 
+
+    },
+
+
     CreateItem {
 
        item : Item, 

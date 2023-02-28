@@ -50,6 +50,81 @@ pub fn create_collection (deps: DepsMut,
 }
 
 
+pub fn update_collection(deps: DepsMut, 
+    _env : Env, info: MessageInfo,
+    name : String, symbol : String, 
+    description : Option<String> ,
+    treasuries : Option<Vec<Treasury>>,
+    attributes : Option<Vec<Attribute>>, 
+    prices : Option<Vec<PriceType>>,
+    _status : Option<u8>, 
+    ) -> Result<Response, ContractError> {
+  
+    let owner = info.clone().sender;
+
+    if treasuries.is_some() {
+        let _ = are_treasuries_valid(&treasuries)?;
+    }
+  
+    let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
+  
+    let mut status = COLLECTION_STATUS_DRAFT;
+
+    if _status.is_some() {
+        let stat = _status.unwrap();
+        if !is_status_valid(stat) {
+            return Err(ContractError::InvalidCollectionStatus { text: 
+            format!("Invalid status :{}!", stat ).to_string() } );
+        }
+        status = stat; 
+    }
+    
+    let mut collection_to_update = internal_get_collection(deps.as_ref(), owner, name, symbol);
+
+    let mut to_update : bool = false;
+
+    if description.is_some() {
+        collection_to_update.description = description;
+        to_update = true; 
+    }
+    if treasuries.is_some() {
+        collection_to_update.treasuries = treasuries;
+        to_update = true; 
+    }
+
+    if prices.is_some() {
+        collection_to_update.prices = prices;
+        to_update = true; 
+    }
+
+    if attributes.is_some() {
+        collection_to_update.attributes = attributes;
+        to_update = true; 
+    }
+
+    if _status.is_some() {
+        collection_to_update.status = status; 
+        to_update = true; 
+    }
+
+    if to_update {
+        collection_to_update.date_updated = _env.block.time;
+    }
+
+    if to_update {
+
+        collections_store().save(deps.storage, _key.clone(), &collection_to_update)?;
+        common_response(format!("{}-{}",_key.0, _key.1).as_str(), "update_collection", STATUS_OK, None)
+    }
+    else {
+        common_response(format!("{}-{}",_key.0, _key.1).as_str(), "update_collection", 
+        STATUS_ERROR, Some("Nothing updated!".to_string()))
+    }
+ 
+}
+
+
+
 
 fn is_status_valid ( status : u8) -> bool {
 
@@ -84,7 +159,6 @@ fn are_treasuries_valid (treasuries : &Option<Vec<Treasury>>)  -> Result<bool, C
     }
 }
 
-
 pub (crate) fn internal_create_collection(deps: DepsMut, 
     _env : Env, info: MessageInfo,
     name : String, symbol : String, 
@@ -112,9 +186,8 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
     if _status.is_some() {
         let stat = _status.unwrap();
         if !is_status_valid(stat) {
-            return Err(ContractError::CustomErrorMesg { message: 
-            format!("Invalid status :{}!", stat ).to_string() } );
-    
+            return Err(ContractError::InvalidCollectionStatus { text: 
+                format!("Invalid status :{}!", stat ).to_string() } );
         }
 
         status = stat; 
