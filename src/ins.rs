@@ -5,6 +5,7 @@ use crate::indexes::{collections_store,ITEMS_STORE };
 use crate::error::ContractError;
 use crate::query::{internal_get_collection, internal_get_all_items, internal_get_item};
 use crate::nft_ins::init_and_mint_nft;
+use std::cell::RefCell;
 
 pub fn collection_id ( name : String, symbol : String ) -> String {
     format!("{}-{}", name, symbol)
@@ -399,9 +400,9 @@ pub fn remove_collection (
     match removed_res {
 
         Ok(_)=> {
-            remove_all_items(owner, name, symbol, &deps);
-
-            true},
+            remove_all_items(owner, name, symbol, deps);
+            true
+        },
 
         Err(_)=> false , 
     }    
@@ -412,21 +413,27 @@ pub (crate) fn remove_all_items(
     owner : Addr, 
     collection_name : String,
     collection_symbol : String, 
-    deps: &DepsMut) {
+    deps: DepsMut) {
 
     let _prefix = (owner.clone(), collection_id(collection_name, collection_symbol));
 
+    let deps2 = RefCell::new(deps);
+
+    let borrowed_deps = deps2.borrow();
+
     let mut iter = ITEMS_STORE
         .prefix(_prefix)
-        .range(deps.storage, None, None, Order::Ascending)
+        .range(borrowed_deps.storage, None, None, Order::Ascending)
         .into_iter();
+
+    let mut borrowed_mut_deps = deps2.borrow_mut();
 
     while let Some(itm_res) = iter.next() {
         if let Ok(itm) = itm_res {
             let _key = (owner.clone(), collection_id(itm.1.collection_name, 
                 itm.1.collection_symbol), itm.1.name);
-            println!("Key::{:?}", _key);
-            //ITEMS_STORE.remove(deps.storage, _key);
+            println!("to.remove::Key::{:?}", _key);
+            ITEMS_STORE.remove(borrowed_mut_deps.storage, _key);
         }
     }
 

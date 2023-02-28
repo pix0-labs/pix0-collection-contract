@@ -129,7 +129,7 @@ mod tests {
 
         idx = 19;
 
-        let r = mint_item(deps.as_mut(), mock_env(), info,  
+        let r = mint_item(deps.as_mut(), mock_env(), info.clone(),  
         idx, Addr::unchecked(owner.clone()), collection_name.clone(), 
         collection_symb.clone(), Some(price_type), 
         Some("https://some.metadata/x208y.json".to_string()));
@@ -139,9 +139,10 @@ mod tests {
         print_items_count(&deps.as_ref(), Addr::unchecked(owner), 
         collection_name.clone(), collection_symb.clone());
        
-
         print_nfts_by_owner(&deps.as_ref(), owner);
        
+        remove_collection(collection_name.clone(), collection_symb.clone(), deps.as_mut(), info);
+
 
     }
 
