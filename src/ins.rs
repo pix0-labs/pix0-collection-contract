@@ -400,8 +400,8 @@ pub fn remove_collection (
 
         Ok(_)=> {
             remove_all_items(owner, name, symbol, deps);
-            true
-        },
+
+            true},
 
         Err(_)=> false , 
     }    
