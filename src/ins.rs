@@ -438,7 +438,6 @@ pub (crate) fn remove_all_items(
     
     }
 
-    
     for _key in keys.iter() {
         ITEMS_STORE.remove(deps.storage, _key.clone());    
     }
