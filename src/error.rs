@@ -32,4 +32,7 @@ pub enum ContractError {
     #[error("InvalidCollectionStatus")]
     InvalidCollectionStatus { text : String },
 
+    #[error("CollectionNotFound")]
+    CollectionNotFound { text : String },
+
 }

@@ -180,7 +180,7 @@ pub enum QueryMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct CollectionResponse {
     
-    pub collection : Collection,
+    pub collection : Option<Collection>,
 }
 
 

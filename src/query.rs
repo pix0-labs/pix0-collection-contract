@@ -15,15 +15,26 @@ pub fn get_collection(deps: Deps, owner : Addr, name : String, symbol : String  
 }
 
 
-pub (crate) fn internal_get_collection(deps: Deps, owner : Addr, name : String, symbol : String  ) -> Collection{
+pub (crate) fn internal_get_collection(deps: Deps, owner : Addr, name : String, symbol : String  ) -> Option<Collection>{
 
     let _key = (owner, collection_id(name, symbol) );
 
     let stored_collection = collections_store().key(_key.clone());
     
-    stored_collection.may_load(deps.storage).expect("Failed to find the collection").expect(
-        format!("Failed to unwrap, key not found :\"{:?}\"", _key).as_str())
-        
+    let res = stored_collection.may_load(deps.storage);
+
+    if res.is_ok() {
+
+        let value = res.unwrap_or_else(|_| {
+            None
+        });
+
+        value 
+    }
+    else {
+
+        None
+    }
 }
 
 

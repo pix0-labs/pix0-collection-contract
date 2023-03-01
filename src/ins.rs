@@ -79,7 +79,13 @@ pub fn update_collection(deps: DepsMut,
         status = stat; 
     }
     
-    let mut collection_to_update = internal_get_collection(deps.as_ref(), owner, name, symbol);
+    let collection_to_update = internal_get_collection(deps.as_ref(), owner, name, symbol);
+
+    if collection_to_update.is_none() {
+        return Err(ContractError::CollectionNotFound { text: "Collection is NOT found!".to_string()});
+    }
+
+    let mut collection_to_update = collection_to_update.unwrap();
 
     let mut to_update : bool = false;
 
@@ -309,6 +315,12 @@ pub fn mint_item (mut deps : DepsMut ,
     let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
     collection_name.clone(), collection_symbol.clone());
 
+    if collection.is_none() {
+        return Err(ContractError::CollectionNotFound { text: "Collection is NOT found!".to_string()});
+    }
+
+    let collection = collection.unwrap();
+
     if collection.status != COLLECTION_STATUS_ACTIVATED{
         return Err(ContractError::NftStatusIsNotReadyForMinting { text: "Collection is NOT ready for minting!".to_string()});
     }
@@ -354,9 +366,15 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
 
     let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
     collection_name.clone(), collection_symbol.clone());
+
+    if collection.is_none() {
+        return Err(ContractError::CollectionNotFound { text: "Collection is NOT found!".to_string()});
+    }
+
+    let collection = collection.unwrap();
     
     if collection.status != COLLECTION_STATUS_ACTIVATED{
-        return Err(ContractError::CustomErrorMesg{message : "Collection is NOT ready for minting!".to_string()});
+        return Err(ContractError::NftStatusIsNotReadyForMinting { text: "Collection is NOT ready for minting!".to_string()});
     }
 
     let item = internal_get_item(deps.as_ref(), owner.clone(), collection_name.clone(), 
