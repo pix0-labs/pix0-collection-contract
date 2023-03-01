@@ -141,8 +141,8 @@ mod tests {
        
         print_nfts_by_owner(&deps.as_ref(), owner);
        
-        remove_collection(collection_name.clone(), collection_symb.clone(), deps.as_mut(), info);
-
+        let rs = remove_collection(collection_name.clone(), collection_symb.clone(), deps.as_mut(), info);
+        println!("\n\nremoved.collection.result::{:?}",rs);
 
         print_items_count(&deps.as_ref(), Addr::unchecked(owner), 
         collection_name.clone(), collection_symb.clone());

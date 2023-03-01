@@ -400,28 +400,49 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
 }
 
 
+pub (crate) fn collectionn_allowed_for_removal(owner: Addr, name : String,
+    symbol : String, deps: &DepsMut) -> Result<bool,ContractError> {
+
+    let collection = internal_get_collection(deps.as_ref(), owner.clone(), name.clone(), symbol.clone());
+
+    if collection.is_none() {
+        return Err(ContractError::CollectionNotFound { text: "Collection is NOT found!".to_string()});
+    }
+    else {
+        if collection.unwrap().status == COLLECTION_STATUS_ACTIVATED {
+            return Err(ContractError::InvalidCollectionStatus { text: "Active collection cannot be removed!".to_string()});
+        }
+        else {
+            Ok(true)
+        }
+    }
+}
+
 
 pub fn remove_collection (
     name : String,
     symbol : String,
     mut deps: DepsMut ,  
-    info: MessageInfo) -> bool {
+    info: MessageInfo) -> Result<Response, ContractError> {
     
     let owner = info.clone().sender;
 
-   
+    let _ = collectionn_allowed_for_removal(owner.clone(), name.clone(), symbol.clone(), &deps)?;
+
     let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
 
-    let removed_res = collections_store().remove(deps.branch().storage, _key);
+    let removed_res = collections_store().remove(deps.branch().storage, _key.clone());
     
     match removed_res {
 
         Ok(_)=> {
             remove_all_items(owner, name, symbol, deps);
-            true
+            common_response(format!("{}-{}",_key.0, _key.1).as_str(), "remove_collection", STATUS_OK, None)
         },
 
-        Err(_)=> false , 
+        Err(e)=> {common_response(format!("{}-{}",_key.0, _key.1).as_str(), "remove_collection", 
+        STATUS_ERROR, Some(e.to_string()))}
+         , 
     }    
 
 }

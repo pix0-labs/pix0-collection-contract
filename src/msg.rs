@@ -184,6 +184,7 @@ pub struct CollectionResponse {
 }
 
 
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct CollectionsResponse {
 
