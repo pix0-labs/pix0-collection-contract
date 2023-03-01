@@ -30,7 +30,7 @@ pub fn collections_store<'a>() -> IndexedMap<'a,(Addr,String), Collection, Colle
 
     let indexes = CollectionIndexes {
 
-        collections : UniqueIndex::new(|u| (u.owner.clone().unwrap().clone(),
+        collections : UniqueIndex::new(|u| (u.owner.clone().unwrap_or(Addr::unchecked("unknown")),
         collection_id(u.name.clone(), u.symbol.clone())), "COLLECTIONS"),
 
         name_symbols :  UniqueIndex::new(|u|  
