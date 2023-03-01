@@ -5,7 +5,7 @@ use cosmwasm_std::{
 };
 use cw2::set_contract_version;
 use crate::error::ContractError;
-use crate::ins::{create_collection, update_collection, create_item, mint_item_by_name, mint_item};
+use crate::ins::{create_collection, update_collection, create_item, mint_item_by_name, mint_item, remove_collection};
 use crate::query::{get_all_collections, get_collections, get_collection, get_items_count, get_items, get_item};
 use crate::nft_query::*;
 use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg, MigrateMsg};
@@ -54,13 +54,14 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::CreateCollection { name, symbol, description, treasuries, attributes, prices, status }
-        => create_collection(deps, _env, info, name,symbol, description, treasuries, attributes, prices, status ),
+        ExecuteMsg::CreateCollection {collection }
+        => create_collection(deps, _env, info, collection ),
 
+        ExecuteMsg::UpdateCollection { collection }
+        => update_collection(deps, _env, info, collection ),
 
-        ExecuteMsg::UpdateCollection { name, symbol, description, treasuries, attributes, prices, status }
-        => update_collection(deps, _env, info, name,symbol, description, treasuries, attributes, prices, status ),
-
+        ExecuteMsg::RemoveCollection { name, symbol}
+        => remove_collection(name,symbol, deps,info ),
 
          ExecuteMsg::CreateItem { item }
         => create_item(deps, _env, info, item ),

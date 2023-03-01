@@ -63,7 +63,7 @@ pub struct Attribute {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Collection {
    
-    pub owner : Addr,
+    pub owner : Option<Addr>,
 
     pub name : String,
 
@@ -77,11 +77,13 @@ pub struct Collection {
 
     pub prices : Option<Vec<PriceType>>,
 
-    pub status : u8, 
+    pub royalties : Option<Vec<Royalty>>,
 
-    pub date_created : Timestamp,
+    pub status : Option<u8>, 
 
-    pub date_updated : Timestamp,
+    pub date_created : Option<Timestamp>,
+
+    pub date_updated : Option<Timestamp>,
 
 }
 
@@ -95,8 +97,14 @@ impl Collection {
             let t = self.treasuries.clone().unwrap();
             return t;
         }
+        if self.owner.is_some() {
+            return vec![Treasury{wallet: self.owner.clone().unwrap().clone(), percentage :100, name : None}];
+        }
+        else {
 
-        return vec![Treasury{wallet: self.owner.clone(), percentage :100, name : None}];
+            return vec![Treasury{wallet: Addr::unchecked("unknown"), percentage :0, name : None}];
+            
+        }
     }
 }
 
@@ -122,6 +130,18 @@ impl Collection {
         }
     }
 }
+
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct Royalty{
+
+    pub wallet : Addr, 
+
+    pub percentage : u8, 
+
+    pub name : Option<String>,
+}
+
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Treasury {

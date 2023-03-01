@@ -1,5 +1,5 @@
 use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr, Order};
-use crate::state::{Collection, Treasury, Attribute, PriceType, Item, COLLECTION_STATUS_DRAFT,
+use crate::state::{Collection, Treasury, Attribute, PriceType, Item, Royalty, COLLECTION_STATUS_DRAFT,
 COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
 use crate::indexes::{collections_store,ITEMS_STORE };
 use crate::error::ContractError;
@@ -38,48 +38,40 @@ pub fn collection_exists( info: MessageInfo, name : String, symbol : String, dep
 
 pub fn create_collection (deps: DepsMut, 
     _env : Env, info: MessageInfo,
-    name : String, symbol : String, 
-    description : Option<String> ,
-    treasuries : Option<Vec<Treasury>>,
-    attributes : Option<Vec<Attribute>>, 
-    prices : Option<Vec<PriceType>>,
-    _status : Option<u8>) -> Result<Response, ContractError> {
+    collection : Collection) -> Result<Response, ContractError> {
         
-    internal_create_collection(deps, _env, info, name, symbol, description, treasuries, attributes, prices, _status )
+    internal_create_collection(deps, _env, info, collection.name, 
+        collection.symbol, collection.description, collection.treasuries, 
+        collection.attributes, collection.prices, collection.royalties, collection.status)
    
 }
 
 
 pub fn update_collection(deps: DepsMut, 
     _env : Env, info: MessageInfo,
-    name : String, symbol : String, 
-    description : Option<String> ,
-    treasuries : Option<Vec<Treasury>>,
-    attributes : Option<Vec<Attribute>>, 
-    prices : Option<Vec<PriceType>>,
-    _status : Option<u8>, 
-    ) -> Result<Response, ContractError> {
+    collection : Collection) -> Result<Response, ContractError> {
   
     let owner = info.clone().sender;
 
-    if treasuries.is_some() {
-        let _ = are_treasuries_valid(&treasuries)?;
+    if collection.treasuries.is_some() {
+        let _ = are_treasuries_valid(&collection.treasuries)?;
     }
   
-    let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
+    let _key = (owner.clone(), collection_id(collection.name.clone(), collection.symbol.clone()) );
   
-    let mut status = COLLECTION_STATUS_DRAFT;
+    
+    if collection.status.is_some() {
+        let stat = collection.status.unwrap();
 
-    if _status.is_some() {
-        let stat = _status.unwrap();
         if !is_status_valid(stat) {
             return Err(ContractError::InvalidCollectionStatus { text: 
-            format!("Invalid status :{}!", stat ).to_string() } );
+            format!("Invalid status :{}!",stat ).to_string() } );
         }
-        status = stat; 
+    
     }
     
-    let collection_to_update = internal_get_collection(deps.as_ref(), owner, name, symbol);
+    let collection_to_update = internal_get_collection(deps.as_ref(), owner, collection.name, 
+    collection.symbol);
 
     if collection_to_update.is_none() {
         return Err(ContractError::CollectionNotFound { text: "Collection is NOT found!".to_string()});
@@ -89,32 +81,32 @@ pub fn update_collection(deps: DepsMut,
 
     let mut to_update : bool = false;
 
-    if description.is_some() {
-        collection_to_update.description = description;
+    if collection.description.is_some() {
+        collection_to_update.description = collection.description;
         to_update = true; 
     }
-    if treasuries.is_some() {
-        collection_to_update.treasuries = treasuries;
-        to_update = true; 
-    }
-
-    if prices.is_some() {
-        collection_to_update.prices = prices;
+    if collection.treasuries.is_some() {
+        collection_to_update.treasuries = collection.treasuries;
         to_update = true; 
     }
 
-    if attributes.is_some() {
-        collection_to_update.attributes = attributes;
+    if collection.prices.is_some() {
+        collection_to_update.prices = collection.prices;
         to_update = true; 
     }
 
-    if _status.is_some() {
-        collection_to_update.status = status; 
+    if collection.attributes.is_some() {
+        collection_to_update.attributes = collection.attributes;
+        to_update = true; 
+    }
+
+    if collection.status.is_some() {
+        collection_to_update.status = collection.status; 
         to_update = true; 
     }
 
     if to_update {
-        collection_to_update.date_updated = _env.block.time;
+        collection_to_update.date_updated = Some(_env.block.time);
     }
 
     if to_update {
@@ -172,6 +164,7 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
     treasuries : Option<Vec<Treasury>>,
     attributes : Option<Vec<Attribute>>, 
     prices : Option<Vec<PriceType>>,
+    royalties : Option<Vec<Royalty>>,
     _status : Option<u8>, 
     ) -> Result<Response, ContractError> {
   
@@ -202,14 +195,15 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
     let new_collection = Collection {
         name : name.clone(), 
         symbol : symbol.clone(),
-        owner : owner, 
+        owner : Some(owner), 
         treasuries : treasuries,
         attributes : attributes,
         prices : prices, 
         description : description,
-        status : status,
-        date_created : date_created,
-        date_updated : date_created,
+        status : Some(status),
+        royalties : royalties,
+        date_created : Some(date_created),
+        date_updated : Some(date_created),
     };
 
     collections_store().save(deps.storage, _key.clone(), &new_collection)?;
@@ -321,7 +315,7 @@ pub fn mint_item (mut deps : DepsMut ,
 
     let collection = collection.unwrap();
 
-    if collection.status != COLLECTION_STATUS_ACTIVATED{
+    if collection.status.is_none() || collection.status.unwrap() != COLLECTION_STATUS_ACTIVATED{
         return Err(ContractError::NftStatusIsNotReadyForMinting { text: "Collection is NOT ready for minting!".to_string()});
     }
 
@@ -373,7 +367,7 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
 
     let collection = collection.unwrap();
     
-    if collection.status != COLLECTION_STATUS_ACTIVATED{
+    if collection.status.is_none() || collection.status.unwrap() != COLLECTION_STATUS_ACTIVATED {
         return Err(ContractError::NftStatusIsNotReadyForMinting { text: "Collection is NOT ready for minting!".to_string()});
     }
 
@@ -409,7 +403,8 @@ pub (crate) fn collectionn_allowed_for_removal(owner: Addr, name : String,
         return Err(ContractError::CollectionNotFound { text: "Collection is NOT found!".to_string()});
     }
     else {
-        if collection.unwrap().status == COLLECTION_STATUS_ACTIVATED {
+        let coll = collection.unwrap();
+        if coll.status.is_none() || coll.status.unwrap() == COLLECTION_STATUS_ACTIVATED {
             return Err(ContractError::InvalidCollectionStatus { text: "Active collection cannot be removed!".to_string()});
         }
         else {

@@ -63,7 +63,7 @@ start_after: Option<String>, limit: Option<u32>)
             Collection { owner : c.owner, name : c.name, 
             treasuries : c.treasuries,
             attributes : c.attributes,
-            prices : c.prices, status: c.status, 
+            prices : c.prices, status: c.status, royalties: c.royalties,
             symbol : c.symbol, description: c.description, 
             date_created: c.date_created, date_updated: c.date_updated }
         )
@@ -93,7 +93,7 @@ pub fn get_all_collections(deps : Deps, limit: Option<u32>)
         Ok(
             Collection { owner : c.owner, name : c.name, 
                 treasuries : c.treasuries,
-                attributes : c.attributes,
+                attributes : c.attributes, royalties: c.royalties,
                 prices : c.prices, status: c.status, 
                 symbol : c.symbol, description: c.description, 
                 date_created: c.date_created, date_updated: c.date_updated }

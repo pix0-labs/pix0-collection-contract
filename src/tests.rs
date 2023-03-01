@@ -65,14 +65,21 @@ mod tests {
             name : None,
         }];
 
-        let create_collection = ExecuteMsg::CreateCollection {
-            name : collection_name.clone(),
-            symbol : collection_symb.clone(),
-            description : Some("Test collection 1111111".to_string()),
-            treasuries : Some(treasuries),
-            attributes : None, 
-            status : Some(COLLECTION_STATUS_ACTIVATED),
-            prices : Some(prices),
+        
+        let create_collection = ExecuteMsg::CreateCollection { collection:
+            Collection {
+                name : collection_name.clone(),
+                symbol : collection_symb.clone(),
+                description : Some("Test collection 1111111".to_string()),
+                treasuries : Some(treasuries),
+                attributes : None, 
+                status : Some(COLLECTION_STATUS_ACTIVATED),
+                prices : Some(prices),
+                royalties : None, 
+                date_created : None,
+                date_updated : None, 
+                owner : Some(Addr::unchecked(owner)), 
+            }
         };
 
         let res = execute(deps.as_mut(), mock_env(), info.clone(), 

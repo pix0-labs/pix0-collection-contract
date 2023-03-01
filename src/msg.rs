@@ -1,6 +1,6 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use crate::state::{Collection,Item, Treasury, Attribute, PriceType};
+use crate::state::{Collection,Item};
 use cosmwasm_std::Addr;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -23,39 +23,23 @@ pub struct MigrateMsg {
 pub enum ExecuteMsg {
 
     CreateCollection {
-        name : String, 
-
-        symbol : String, 
-
-        description : Option<String>,
-
-        treasuries : Option<Vec<Treasury>>,
-
-        attributes : Option<Vec<Attribute>>,
-    
-        prices : Option<Vec<PriceType>>,
-
-        status : Option<u8>, 
+       
+       collection : Collection, 
 
     },
 
     UpdateCollection {
-        name : String, 
-
-        symbol : String, 
-
-        description : Option<String>,
-
-        treasuries : Option<Vec<Treasury>>,
-
-        attributes : Option<Vec<Attribute>>,
-    
-        prices : Option<Vec<PriceType>>,
-
-        status : Option<u8>, 
+       
+       collection : Collection, 
 
     },
 
+
+    RemoveCollection {
+        name : String, 
+
+        symbol : String, 
+    },
 
     CreateItem {
 
