@@ -161,7 +161,7 @@ fn pay_treasury (wallet_address : &str, amount : u128 , _denom : Option <String>
 
     let mut denom = String::from(DEFAULT_PRICE_DENOM);
 
-    if _denom != None {
+    if _denom.is_some() {
         denom = _denom.unwrap_or( String::from( DEFAULT_PRICE_DENOM) );
     }
 
