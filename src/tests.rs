@@ -214,7 +214,7 @@ mod tests {
     #[test]
     fn test_rand_gen(){
 
-        let mut rng = RandomNumGen::new(432);
+        let mut rng = RandomNumGen::new(4223232);
 
 
         for i in 0..10 {
