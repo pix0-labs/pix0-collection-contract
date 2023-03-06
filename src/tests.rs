@@ -12,6 +12,7 @@ mod tests {
     use crate::nft_ins::{DEFAULT_PRICE_DENOM, Extension};
     use crate::contract::*;
     use crate::ins::*;
+    use crate::utils::RandomNumGen;
 
     // cargo test test_pay_treasuries -- --show-output
     #[test]
@@ -208,5 +209,21 @@ mod tests {
         }
 
      }
+
+    // cargo test test_rand_gen -- --show-output
+    #[test]
+    fn test_rand_gen(){
+
+        let mut rng = RandomNumGen::new(432);
+
+
+        for i in 0..10 {
+            let rnd = rng.generate_range(1, 12);
+
+            println!("{}.rnd.num.is::{}", i, rnd);
+    
+        }
+       
+    }
 
 }
