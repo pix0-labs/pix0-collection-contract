@@ -1,4 +1,4 @@
-use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr, Order};
+use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr, Order, Coin, Uint128};
 use crate::state::{Collection, Treasury, Attribute, PriceType, Item, Royalty, COLLECTION_STATUS_DRAFT,
 COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
 use crate::indexes::{collections_store,ITEMS_STORE };
@@ -295,6 +295,24 @@ pub fn create_item(deps: DepsMut,
 }
 
 
+fn is_fund_sufficient (info : MessageInfo, required_fund : u64) -> (bool, Uint128) {
+
+    let sent_funds: Vec<Coin> = info.funds.clone();
+
+    if sent_funds.len() == 0 {
+        return (false, Uint128::default());
+    }
+
+    let first_fund = sent_funds.get(0).unwrap();
+
+    if first_fund.amount < Uint128::from(required_fund) {
+        (false,first_fund.amount) 
+    }
+    else {
+        (true,first_fund.amount)
+    }
+}
+
 pub fn mint_item (mut deps : DepsMut , 
     _env : Env, info: MessageInfo, seed : u64,
     owner : Addr,collection_name : String,  
@@ -330,6 +348,14 @@ pub fn mint_item (mut deps : DepsMut ,
         let i = itm.unwrap();
 
         let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
+
+        let fund_checked = is_fund_sufficient(info.clone(), price.unwrap());
+        if !fund_checked.0 {
+            return Err(ContractError::InsufficientFund {
+                text: format!("Insufficient fund: sent:{}, required: {}!", 
+                fund_checked.1, price.unwrap())});
+ 
+        }
 
         let res = init_and_mint_nft(deps.branch(), _env, info, 
         i.clone(), collection.treasuries(), price, token_uri, Some("random-mint".to_string()));

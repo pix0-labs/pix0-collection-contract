@@ -38,4 +38,7 @@ pub enum ContractError {
     #[error("MintByNameIsNotAllowed")]
     MintByNameIsNotAllowed { text : String },
 
+    #[error("InsufficientFund")]
+    InsufficientFund { text : String },
+    
 }
