@@ -49,7 +49,7 @@ pub enum ExecuteMsg {
 
     MintItem {
 
-        index : String,
+        seed : String,
 
         owner : Addr, 
 

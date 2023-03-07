@@ -25,6 +25,11 @@ pub fn str_to_num(num_str : String) -> i32 {
 }
 
 
+pub fn str_to_u64(num_str : String, default : u64) -> u64 {
+    num_str.parse().unwrap_or(default)
+}
+
+
 pub fn str_to_u128(num_str : String, null_replace_by : u128) -> u128 {
     num_str.parse().unwrap_or(null_replace_by)
 }
@@ -50,4 +55,13 @@ impl RandomNumGen {
         self.seed = self.seed.wrapping_mul(1103515245).wrapping_add(12345);
         self.seed
     }
+}
+
+
+pub fn random_num (seed : u64,  min: u64, max: u64) -> u64 {
+
+    let mut rng = RandomNumGen::new(seed);
+    let rnd = rng.generate_range(min, max);
+    rnd
+
 }

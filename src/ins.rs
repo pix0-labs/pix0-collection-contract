@@ -296,15 +296,11 @@ pub fn create_item(deps: DepsMut,
 
 
 pub fn mint_item (mut deps : DepsMut , 
-    _env : Env, info: MessageInfo, index : i32,
+    _env : Env, info: MessageInfo, seed : u64,
     owner : Addr,collection_name : String,  
     collection_symbol : String , 
     price_type : Option<u8>, 
     token_uri : Option<String>)-> Result<Response, ContractError> {
-
-    if index < 0 {
-        return Err(ContractError::InvalidIndexOfNft { text : format!("Invalid index :{}", index)});
-    }
 
     let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
     collection_name.clone(), collection_symbol.clone());
@@ -319,36 +315,32 @@ pub fn mint_item (mut deps : DepsMut ,
         return Err(ContractError::NftStatusIsNotReadyForMinting { text: "Collection is NOT ready for minting!".to_string()});
     }
 
+
     let items = internal_get_all_items(deps.as_ref(), owner.clone(), collection_name.clone(), 
     collection_symbol.clone());
 
-    let index = index as usize;
 
-    if index < items.len() {
+    let index = crate::utils::random_num(seed, 0, (items.len() - 1) as u64) as usize;
 
-        let itm = items.get(index);
-        if itm.is_some() {
+    let itm = items.get(index);
+    if itm.is_some() {
 
-            let i = itm.unwrap();
+        let i = itm.unwrap();
 
-            let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
+        let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
 
-            let res = init_and_mint_nft(deps.branch(), _env, info, i.clone(), collection.treasuries(), price, token_uri);
+        let res = init_and_mint_nft(deps.branch(), _env, info, i.clone(), collection.treasuries(), price, token_uri);
 
-            if res.is_ok() {
-                internal_remove_item(owner, collection_name, collection_symbol, i.name.clone(), deps);
-            }
-           
-            res 
+        if res.is_ok() {
+            internal_remove_item(owner, collection_name, collection_symbol, i.name.clone(), deps);
         }
-        else {
-            Err(ContractError::FailedToFindNft { text : format!("Failed to find item at index :{}", index)})
-        }
+        
+        res 
     }
     else {
-        Err(ContractError::NftIndexOutOfBound { text: format!("Item at index :{} out of bound", index)})
+        Err(ContractError::FailedToFindNft { text : format!("Failed to find item at index :{}", index)})
     }
-       
+    
 }
 
 pub fn mint_item_by_name (mut deps : DepsMut , 

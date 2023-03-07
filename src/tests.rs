@@ -123,26 +123,26 @@ mod tests {
           
         }
        
-        let mut idx = 2;
+        let mut seed = 2293;
 
         let r = mint_item(deps.as_mut(), mock_env(), info.clone(),
-         idx, Addr::unchecked(owner), 
+         seed, Addr::unchecked(owner), 
         collection_name.clone(), collection_symb.clone(), Some(price_type), 
         Some("https://some.metadata/x199x.json".to_string()));
 
-        println!("Minted.item:{}::res:{:?}",  idx,  r);
+        println!("Minted.item:seed::{}::res:{:?}",  seed,  r);
 
         print_items_count(&deps.as_ref(), Addr::unchecked(owner.clone()), 
         collection_name.clone(), collection_symb.clone());
 
-        idx = 19;
+        seed = 1892;
 
         let r = mint_item(deps.as_mut(), mock_env(), info.clone(),  
-        idx, Addr::unchecked(owner.clone()), collection_name.clone(), 
+        seed, Addr::unchecked(owner.clone()), collection_name.clone(), 
         collection_symb.clone(), Some(price_type), 
         Some("https://some.metadata/x208y.json".to_string()));
 
-        println!("Minted.item:{}:res:{:?}",idx, r);
+        println!("Minted.item:seed::{}:res:{:?}", seed, r);
 
         print_items_count(&deps.as_ref(), Addr::unchecked(owner), 
         collection_name.clone(), collection_symb.clone());
