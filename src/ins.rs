@@ -404,6 +404,15 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
 
     let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
 
+    let fund_checked = is_fund_sufficient(info.clone(), price.unwrap());
+    if !fund_checked.0 {
+        return Err(ContractError::InsufficientFund {
+            text: format!("Insufficient fund: sent:{}, required: {}!", 
+            fund_checked.1, price.unwrap())});
+
+    }
+
+
     if item.is_some() {
         let itm = item.unwrap();
         let res = init_and_mint_nft(deps.branch(), 
