@@ -331,7 +331,8 @@ pub fn mint_item (mut deps : DepsMut ,
 
         let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
 
-        let res = init_and_mint_nft(deps.branch(), _env, info, i.clone(), collection.treasuries(), price, token_uri);
+        let res = init_and_mint_nft(deps.branch(), _env, info, 
+        i.clone(), collection.treasuries(), price, token_uri, Some("random-mint".to_string()));
 
         if res.is_ok() {
             internal_remove_item(owner, collection_name, collection_symbol, i.name.clone(), deps);
@@ -365,6 +366,13 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
         return Err(ContractError::NftStatusIsNotReadyForMinting { text: "Collection is NOT ready for minting!".to_string()});
     }
 
+    if !collection.is_mint_by_name_allowed() {
+
+        return Err(ContractError::MintByNameIsNotAllowed { text: 
+            "Collection does NOT allow minting by name!".to_string()});
+  
+    }
+
     let item = internal_get_item(deps.as_ref(), owner.clone(), collection_name.clone(), 
     collection_symbol.clone(), item_name.clone());
 
@@ -372,7 +380,9 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
 
     if item.is_some() {
         let itm = item.unwrap();
-        let res = init_and_mint_nft(deps.branch(), _env, info, itm.clone(), collection.treasuries(),price,token_uri);
+        let res = init_and_mint_nft(deps.branch(), 
+        _env, info, itm.clone(), collection.treasuries(),price,token_uri,
+        Some("mint-by-name".to_string()));
 
         if res.is_ok() {
             internal_remove_item(owner, collection_name, collection_symbol, itm.name.clone(), deps);

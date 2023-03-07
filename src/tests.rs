@@ -65,6 +65,11 @@ mod tests {
             name : None,
         }];
 
+
+        let attbs = vec![Attribute{
+            name : ALLOWED_MINT_ITEMBY_NAME.to_string(),
+            value : "true".to_string()
+        }];
         
         let create_collection = ExecuteMsg::CreateCollection { collection:
             Collection {
@@ -72,7 +77,7 @@ mod tests {
                 symbol : collection_symb.clone(),
                 description : Some("Test collection 1111111".to_string()),
                 treasuries : Some(treasuries),
-                attributes : None, 
+                attributes : Some(attbs), 
                 status : Some(COLLECTION_STATUS_ACTIVATED),
                 prices : Some(prices),
                 royalties : None, 
@@ -136,10 +141,17 @@ mod tests {
 
         //seed = 1892;
 
-        let r = mint_item(deps.as_mut(), mock_env(), info.clone(),  
+        let r =  mint_item_by_name(deps.as_mut(), mock_env(), info.clone(),  
+        format!("Item #00{}",2), Addr::unchecked(owner.clone()), collection_name.clone(), 
+        collection_symb.clone(), Some(price_type), 
+        Some("https://some.metadata/x208y.json".to_string()));
+       
+        /* 
+        mint_item(deps.as_mut(), mock_env(), info.clone(),  
         seed, Addr::unchecked(owner.clone()), collection_name.clone(), 
         collection_symb.clone(), Some(price_type), 
         Some("https://some.metadata/x208y.json".to_string()));
+        */
 
         println!("Minted.item:seed::{}:res:{:?}", seed, r);
 

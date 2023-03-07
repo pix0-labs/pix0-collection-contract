@@ -108,6 +108,8 @@ impl Collection {
     }
 }
 
+pub const ALLOWED_MINT_ITEMBY_NAME : &str = "ALLOWED_MINT_ITEMBY_NAME";
+
 
 impl Collection {
 
@@ -127,6 +129,32 @@ impl Collection {
         }   
         else {
             None 
+        }
+    }
+
+
+    pub fn is_mint_by_name_allowed(&self) -> bool {
+
+        if self.attributes.is_some() {
+
+            let attbs = self.attributes.clone().unwrap();
+
+            let m : Vec<Attribute>= 
+            attbs.into_iter()
+            .filter(|i| i.name == ALLOWED_MINT_ITEMBY_NAME.to_string())
+            .collect();
+
+            if m.len() > 0 {
+                m.first().unwrap().value == "true"
+            }
+            else {
+
+                false
+            }
+        }
+        else {
+
+            false 
         }
     }
 }

@@ -20,7 +20,8 @@ pub fn mint_nft(deps: DepsMut,
     item : Item, 
     treasuries : Option<Vec<Treasury>>,
     price : Option<u64>, 
-    token_uri : Option<String>)-> Result<Response, ContractError>  {
+    token_uri : Option<String>,
+    method : Option<String>)-> Result<Response, ContractError>  {
 
     let new_owner = info.clone().sender;
    
@@ -78,11 +79,11 @@ pub fn mint_nft(deps: DepsMut,
     
                 let res = res.expect("Failed to unwrap pay treasuries' response");
                 
-                Ok(res.add_attribute("method", "nft-minted"))
+                Ok(res.add_attribute("method", method.unwrap_or("mint-nft".to_string()) ))
             }
             else {
 
-                Ok(_res.add_attribute("method", "nft-minted"))
+                Ok(_res.add_attribute("method", method.unwrap_or("mint-nft".to_string())))
             }
            
         },
@@ -99,7 +100,8 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
     info: MessageInfo, 
     item : Item, _treasuries : Vec<Treasury>,
     price : Option<u64>, 
-    token_uri : Option<String>) -> Result<Response, ContractError>{
+    token_uri : Option<String>,
+    method : Option<String>) -> Result<Response, ContractError>{
 
     let msg =  cw721_base::InstantiateMsg {
         name: item.collection_name.clone(),
@@ -111,7 +113,7 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
 
     let _res = contract.instantiate(deps.branch(), _env.clone(), info.clone(),msg);
     
-    mint_nft(deps, _env, info, contract, item, Some(_treasuries), price, token_uri)
+    mint_nft(deps, _env, info, contract, item, Some(_treasuries), price, token_uri, method)
     
 }
 
