@@ -322,7 +322,7 @@ pub fn mint_item (mut deps : DepsMut ,
     let mut rng = crate::utils::RandomNumGen::new(seed);
     let index = rng.generate_range(0, items.len() as u64) as usize;
    
-    println!("minted.at.index::{}", index);
+   // println!("minted.at.index::{}", index);
 
     let itm = items.get(index);
     if itm.is_some() {
