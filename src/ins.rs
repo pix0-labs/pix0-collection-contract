@@ -319,8 +319,10 @@ pub fn mint_item (mut deps : DepsMut ,
     let items = internal_get_all_items(deps.as_ref(), owner.clone(), collection_name.clone(), 
     collection_symbol.clone());
 
-
-    let index = crate::utils::random_num(seed, 0, (items.len() - 1) as u64) as usize;
+    let mut rng = crate::utils::RandomNumGen::new(seed);
+    let index = rng.generate_range(0, items.len() as u64) as usize;
+   
+    println!("minted.at.index::{}", index);
 
     let itm = items.get(index);
     if itm.is_some() {

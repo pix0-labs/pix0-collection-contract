@@ -58,10 +58,3 @@ impl RandomNumGen {
 }
 
 
-pub fn random_num (seed : u64,  min: u64, max: u64) -> u64 {
-
-    let mut rng = RandomNumGen::new(seed);
-    let rnd = rng.generate_range(min, max);
-    rnd
-
-}

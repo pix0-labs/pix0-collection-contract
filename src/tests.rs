@@ -12,8 +12,7 @@ mod tests {
     use crate::nft_ins::{DEFAULT_PRICE_DENOM, Extension};
     use crate::contract::*;
     use crate::ins::*;
-    use crate::utils::RandomNumGen;
-
+   
     // cargo test test_pay_treasuries -- --show-output
     #[test]
     fn test_pay_treasuries(){
@@ -123,7 +122,7 @@ mod tests {
           
         }
        
-        let mut seed = 2293;
+        let seed = 42;
 
         let r = mint_item(deps.as_mut(), mock_env(), info.clone(),
          seed, Addr::unchecked(owner), 
@@ -135,7 +134,7 @@ mod tests {
         print_items_count(&deps.as_ref(), Addr::unchecked(owner.clone()), 
         collection_name.clone(), collection_symb.clone());
 
-        seed = 1892;
+        //seed = 1892;
 
         let r = mint_item(deps.as_mut(), mock_env(), info.clone(),  
         seed, Addr::unchecked(owner.clone()), collection_name.clone(), 
@@ -214,11 +213,11 @@ mod tests {
     #[test]
     fn test_rand_gen(){
 
-        let mut rng = RandomNumGen::new(4223232);
-
-
+        let mut rng = crate::utils::RandomNumGen::new(2390);
+       
         for i in 0..10 {
-            let rnd = rng.generate_range(1, 12);
+           
+            let rnd = rng.generate_range(0, 1234) ;
 
             println!("{}.rnd.num.is::{}", i, rnd);
     
