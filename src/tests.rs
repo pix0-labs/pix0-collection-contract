@@ -41,7 +41,7 @@ mod tests {
         let owner : &str = "archway14l92fdhae4htjtkyla73f262c39cngf2wc65ky";
 
         let mut deps = mock_dependencies_with_balance(&coins(2, DEFAULT_PRICE_DENOM));
-        let info = mock_info(owner, &coins(114000, DEFAULT_PRICE_DENOM));
+        let info = mock_info(owner, &coins(134000, DEFAULT_PRICE_DENOM));
        
         let collection_name =  "Test Collection 111111".to_string();
 
