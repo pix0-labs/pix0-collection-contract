@@ -478,8 +478,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 
 [[package]]
-name = "pix0-contract"
-version = "0.1.7"
+name = "pix0-collection-contract"
+version = "0.1.8"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",

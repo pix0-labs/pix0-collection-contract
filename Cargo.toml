@@ -1,6 +1,6 @@
 [package]
-name = "pix0-contract"
-version = "0.1.7"
+name = "pix0-collection-contract"
+version = "0.1.8"
 authors = ["ketyung <ketyung@techchee.com>"]
 edition = "2018"
 
