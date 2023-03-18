@@ -6,11 +6,14 @@ mod tests {
     // use std::mem::size_of;
     use crate::state::*;
     use cosmwasm_std::testing::{mock_env, mock_info, mock_dependencies_with_balance};
-    use cosmwasm_std::{coins, Addr, Deps, from_binary};
+    use cosmwasm_std::{coins, Addr, Deps, from_binary, Coin, Uint128};
     use crate::msg::*;
-    use crate::nft_ins::{DEFAULT_PRICE_DENOM, Extension};
+    use crate::nft_ins::Extension;
     use crate::contract::*;
     use crate::ins::*;
+
+
+    const DEFAULT_PRICE_DENOM : &str = "uconst";
    
     // cargo test test_create_collection_mint_item -- --show-output
     #[test]
@@ -28,8 +31,8 @@ mod tests {
         let prices = vec![PriceType {
 
             price_type : PRICE_TYPE_STANDARD,
-            value : 123900,
-            denom : Some(DEFAULT_PRICE_DENOM.to_string()),
+            value : Coin {amount :Uint128::from(123900u64),
+            denom : DEFAULT_PRICE_DENOM.to_string()},
             date_start : None, date_end : None, 
         }];
 

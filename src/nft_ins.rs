@@ -1,4 +1,4 @@
-use cosmwasm_std::{Empty, DepsMut, MessageInfo, Env, Response, BankMsg, coins};
+use cosmwasm_std::{Empty, DepsMut, MessageInfo, Env, Response, BankMsg};
 use crate::state::{Item, Collection, PRICE_TYPE_STANDARD};
 use crate::error::ContractError;
 //use std::convert::{TryFrom};
