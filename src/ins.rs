@@ -185,10 +185,7 @@ pub (crate) fn internal_create_collection(mut deps: DepsMut,
             format!("Failed to make payment!").to_string() } );
  
     }
-
-    let bnk_msgs = _msgs.unwrap();
-    
-   
+ 
     let _ = are_treasuries_valid(&treasuries)?;
 
     let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
@@ -223,7 +220,8 @@ pub (crate) fn internal_create_collection(mut deps: DepsMut,
 
     collections_store().save(deps.storage, _key.clone(), &new_collection)?;
 
-    common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, None, Some(bnk_msgs))
+    common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, 
+    None, Some(_msgs.unwrap()))
 
     
 }
@@ -302,10 +300,7 @@ pub fn create_item(mut deps: DepsMut,
         return Err(ContractError::FailedToMakePayment { text: 
             format!("Failed to make payment!").to_string() } );
  
-    }
-
-    let bnk_msgs = _msgs.unwrap();
-    
+    } 
   
     let _key = (item.collection_owner.clone(), 
     collection_id(item.collection_name.clone(), item.collection_symbol.clone()), 
@@ -322,7 +317,7 @@ pub fn create_item(mut deps: DepsMut,
     ITEMS_STORE.save(deps.storage, _key.clone(), &item)?;
     
     common_response( format!("{}-{}={}",_key.0, _key.1,
-    _key.2).as_str(), "create_item", STATUS_OK, None, Some(bnk_msgs))
+    _key.2).as_str(), "create_item", STATUS_OK, None, Some(_msgs.unwrap()))
 }
 
 
