@@ -9,9 +9,9 @@ use crate::ins::{create_collection, update_collection, create_item, mint_item_by
 use crate::query::{get_all_collections, get_collections, get_collection, get_items_count, get_items, get_item};
 use crate::nft_query::*;
 use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg, MigrateMsg};
-use crate::state::ContractInfo;
-use crate::indexes::CONTRACT_INFO;
 use crate::utils::str_to_u64;
+use pix0_contract_common::funcs::{create_contract_info,get_contract_info, get_log_info};
+
 
 // version info for migration info
 const CONTRACT_NAME: &str = "crates.io:pix0-contract";
@@ -27,22 +27,14 @@ pub fn instantiate(
     
 
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
-    let contract_info = ContractInfo {
-
-        allowed_admins : _msg.allowed_admins,
-
-        date_instantiated :_env.block.time,
-
-        name : _msg.name, 
-    };
    
-    CONTRACT_INFO.save(deps.storage, &contract_info)?;
-
+    create_contract_info(deps, _env, info.clone() ,_msg.allowed_admins,
+    _msg.treasuries, _msg.fees, _msg.log_last_payment)?;
+  
 
     Ok(Response::new()
         .add_attribute("method", "instantiate")
         .add_attribute("owner", info.sender)
-        .add_attribute("contract info", contract_info)
     )
 }
 
@@ -105,10 +97,14 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::GetItems { owner, collection_name, collection_symbol, start_after, limit } =>
         to_binary(&get_items(deps, owner, collection_name, collection_symbol, start_after, limit )?),
         
-
         QueryMsg::GetItem { owner, collection_name, collection_symbol, item_name } =>
         to_binary(&get_item(deps, owner, collection_name, collection_symbol, item_name )?),
         
+        QueryMsg::GetContractInfo {} =>
+        to_binary(&get_contract_info(deps)?),
+
+        QueryMsg::GetLogInfo {} =>
+        to_binary(&get_log_info(deps)?),
     }
 }
 

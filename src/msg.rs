@@ -2,13 +2,19 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use crate::state::{Collection,Item};
 use cosmwasm_std::Addr;
+use pix0_contract_common::state::Fee;
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+
 pub struct InstantiateMsg {
 
-    pub name : String, 
+    pub allowed_admins : Option<Vec<Addr>>,
+    
+    pub treasuries : Option<Vec<Addr>>,
 
-    pub allowed_admins : Option<Vec<String>>,
+    pub fees : Option<Vec<Fee>>, 
+
+    pub log_last_payment : Option<bool>, 
+
 }
 
 
@@ -156,7 +162,11 @@ pub enum QueryMsg {
     NftTokenInfo {
 
         token_id : String, 
-    }
+    },
+
+    GetContractInfo{},
+     
+    GetLogInfo{},
     
 }
 

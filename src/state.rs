@@ -3,33 +3,12 @@ use serde::{Deserialize, Serialize};
 use cosmwasm_std::{Addr, Timestamp, Coin};
 use pix0_contract_common::state::PaymentByPercentage;
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct ContractInfo {
-
-    pub name : String, 
-
-    pub allowed_admins : Option<Vec<String>>,
-
-    pub date_instantiated : Timestamp,
-
-}
-
-
-impl Into<String> for ContractInfo {
-    fn into(self) -> String {
-        format!("Name: {}\nAllowed Admins: {:?}\nDate Instantiated: {}", self.name, self.allowed_admins, 
-        self.date_instantiated)
-    }
-}
-
 
 pub const PRICE_TYPE_STANDARD : u8 = 1;
 
 pub const PRICE_TYPE_WL : u8 = 2;
 
 pub const PRICE_TYPE_OG : u8 = 3;
-
-
 
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

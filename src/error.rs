@@ -1,5 +1,6 @@
 use cosmwasm_std::StdError;
 use thiserror::Error;
+use pix0_contract_common::error::CommonContractError;
 
 #[derive(Error, Debug)]
 pub enum ContractError {
@@ -44,4 +45,27 @@ pub enum ContractError {
     #[error("FailedToMakePayment")]
     FailedToMakePayment { text : String },
     
+    #[error("ContractInfoNotFound")]
+    ContractInfoNotFound { message : String },
+
+}
+
+
+impl From<CommonContractError> for ContractError {
+    fn from(error : CommonContractError) -> ContractError {
+        
+        match error {
+
+            CommonContractError::ContractInfoNotFound { message } => 
+            ContractError::ContractInfoNotFound { message: message }
+            ,
+
+            CommonContractError::ErrorMakingPayment { message } => 
+            ContractError::FailedToMakePayment { text : message }
+            ,
+
+            _ => ContractError::CustomErrorMesg { message: "Unknown error".to_string() }
+
+        }
+    }
 }
