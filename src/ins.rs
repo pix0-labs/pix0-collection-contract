@@ -179,6 +179,16 @@ pub (crate) fn internal_create_collection(mut deps: DepsMut,
     let _msgs = pay_treasuries(deps.branch(), info.clone(), 
     _env.block.time, "CREATE_COLLECTION_FEE".to_string());
 
+    if _msgs.is_err() {
+
+        return Err(ContractError::FailedToMakePayment { text: 
+            format!("Failed to make payment!").to_string() } );
+ 
+    }
+
+    let bnk_msgs = _msgs.unwrap();
+    
+   
     let _ = are_treasuries_valid(&treasuries)?;
 
     let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
@@ -213,7 +223,7 @@ pub (crate) fn internal_create_collection(mut deps: DepsMut,
 
     collections_store().save(deps.storage, _key.clone(), &new_collection)?;
 
-    common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, None, None)
+    common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, None, Some(bnk_msgs))
 
     
 }
@@ -261,7 +271,7 @@ pub (crate) fn internal_remove_item (
 }
 
 
-pub fn create_item(deps: DepsMut, 
+pub fn create_item(mut deps: DepsMut, 
     _env : Env, info: MessageInfo,item : Item 
 ) -> Result<Response, ContractError> {
   
@@ -282,6 +292,20 @@ pub fn create_item(deps: DepsMut,
         item.name.clone(),
         item.collection_name.clone()).to_string() } );
     }  
+
+
+    let _msgs = pay_treasuries(deps.branch(), info.clone(), 
+    _env.block.time, "CREATE_ITEM_FEE".to_string());
+
+    if _msgs.is_err() {
+
+        return Err(ContractError::FailedToMakePayment { text: 
+            format!("Failed to make payment!").to_string() } );
+ 
+    }
+
+    let bnk_msgs = _msgs.unwrap();
+    
   
     let _key = (item.collection_owner.clone(), 
     collection_id(item.collection_name.clone(), item.collection_symbol.clone()), 
@@ -298,7 +322,7 @@ pub fn create_item(deps: DepsMut,
     ITEMS_STORE.save(deps.storage, _key.clone(), &item)?;
     
     common_response( format!("{}-{}={}",_key.0, _key.1,
-    _key.2).as_str(), "create_item", STATUS_OK, None, None)
+    _key.2).as_str(), "create_item", STATUS_OK, None, Some(bnk_msgs))
 }
 
 
