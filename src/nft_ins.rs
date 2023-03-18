@@ -14,7 +14,7 @@ pub type NftContract<'a> = cw721_base::Cw721Contract<'a, Extension, Empty>;
 
 
 
-pub fn mint_nft(deps: DepsMut,  
+pub fn mint_nft(mut deps: DepsMut,  
     _env : Env, 
     info: MessageInfo, 
     contract :  NftContract,
@@ -57,7 +57,7 @@ pub fn mint_nft(deps: DepsMut,
 
     let mint_msg = cw721_base::msg::ExecuteMsg::Mint(msg);
 
-    let res = contract.execute(deps, _env.clone(), info, mint_msg);
+    let res = contract.execute(deps.branch(), _env.clone(), info.clone(), mint_msg);
 
     match res {
 
@@ -74,7 +74,12 @@ pub fn mint_nft(deps: DepsMut,
 
             if bank_msgs.is_some() {
 
-                Ok(Response::new().add_attribute("method", "mint-nft")
+                let mut mthd = "mint-nft".to_string();
+                if method.is_some() {
+                    mthd = method.unwrap();
+                }
+
+                Ok(Response::new().add_attribute("method", mthd)
                 .add_messages(bank_msgs.unwrap()))
     
             }

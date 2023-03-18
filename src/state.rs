@@ -137,7 +137,9 @@ impl Collection {
             .filter(|p| p.price_type  ==  _type)
             .collect();
 
-            Some(prcs.first().unwrap().value)
+            let prc_type = prcs.first().unwrap();
+
+            Some(prc_type.clone().value)
 
 
         }   

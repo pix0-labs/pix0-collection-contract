@@ -295,21 +295,22 @@ pub fn create_item(deps: DepsMut,
 }
 
 
-fn is_fund_sufficient (info : MessageInfo, required_fund : u64) -> (bool, Uint128) {
+fn is_fund_sufficient (info : MessageInfo, required_fund : Coin) -> (bool, Coin) {
 
     let sent_funds: Vec<Coin> = info.funds.clone();
 
     if sent_funds.len() == 0 {
-        return (false, Uint128::default());
+        return (false, Coin { amount :Uint128::default(), denom :"uconst".to_string()});
     }
 
     let first_fund = sent_funds.get(0).unwrap();
 
-    if first_fund.amount < Uint128::from(required_fund) {
-        (false,first_fund.amount) 
+    if first_fund.amount < Uint128::from(required_fund.amount) ||
+    first_fund.denom != required_fund.denom {
+        (false,first_fund.clone()) 
     }
     else {
-        (true,first_fund.amount)
+        (true,first_fund.clone())
     }
 }
 
@@ -349,7 +350,7 @@ pub fn mint_item (mut deps : DepsMut ,
 
         let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
 
-        let fund_checked = is_fund_sufficient(info.clone(), price.unwrap());
+        let fund_checked = is_fund_sufficient(info.clone(), price.clone().unwrap());
         if !fund_checked.0 {
             return Err(ContractError::InsufficientFund {
                 text: format!("Insufficient fund: sent:{}, required: {}!", 
@@ -358,7 +359,7 @@ pub fn mint_item (mut deps : DepsMut ,
         }
 
         let res = init_and_mint_nft(deps.branch(), _env, info, 
-        i.clone(), collection.treasuries(), price, token_uri, Some("random-mint".to_string()));
+        i.clone(), collection, price_type, token_uri, Some("random-mint".to_string()));
 
         if res.is_ok() {
             internal_remove_item(owner, collection_name, collection_symbol, i.name.clone(), deps);
@@ -404,10 +405,10 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
 
     let price = collection.price_by_type(price_type.unwrap_or(PRICE_TYPE_STANDARD));
 
-    let fund_checked = is_fund_sufficient(info.clone(), price.unwrap());
+    let fund_checked = is_fund_sufficient(info.clone(), price.clone().unwrap());
     if !fund_checked.0 {
         return Err(ContractError::InsufficientFund {
-            text: format!("Insufficient fund: sent:{}, required: {}!", 
+            text: format!("Insufficient fund: sent:{:?}, required: {:?}!", 
             fund_checked.1, price.unwrap())});
 
     }
@@ -416,7 +417,7 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
     if item.is_some() {
         let itm = item.unwrap();
         let res = init_and_mint_nft(deps.branch(), 
-        _env, info, itm.clone(), collection.treasuries(),price,token_uri,
+        _env, info, itm.clone(), collection,price_type,token_uri,
         Some("mint-by-name".to_string()));
 
         if res.is_ok() {
