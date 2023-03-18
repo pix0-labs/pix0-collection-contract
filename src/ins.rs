@@ -1,10 +1,11 @@
-use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr, Order, Coin, Uint128};
+use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr, Order, Coin, Uint128, BankMsg};
 use crate::state::{Collection, Treasury, Attribute, PriceType, Item, Royalty, COLLECTION_STATUS_DRAFT,
 COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
 use crate::indexes::{collections_store,ITEMS_STORE };
 use crate::error::ContractError;
 use crate::query::{internal_get_collection, internal_get_all_items, internal_get_item};
 use crate::nft_ins::init_and_mint_nft;
+use pix0_contract_common::funcs::pay_treasuries;
 
 pub fn collection_id ( name : String, symbol : String ) -> String {
     format!("{}-{}", name, symbol)
@@ -112,11 +113,11 @@ pub fn update_collection(deps: DepsMut,
     if to_update {
 
         collections_store().save(deps.storage, _key.clone(), &collection_to_update)?;
-        common_response(format!("{}-{}",_key.0, _key.1).as_str(), "update_collection", STATUS_OK, None)
+        common_response(format!("{}-{}",_key.0, _key.1).as_str(), "update_collection", STATUS_OK, None, None)
     }
     else {
         common_response(format!("{}-{}",_key.0, _key.1).as_str(), "update_collection", 
-        STATUS_ERROR, Some("Nothing updated!".to_string()))
+        STATUS_ERROR, Some("Nothing updated!".to_string()), None)
     }
  
 }
@@ -157,7 +158,7 @@ fn are_treasuries_valid (treasuries : &Option<Vec<Treasury>>)  -> Result<bool, C
     }
 }
 
-pub (crate) fn internal_create_collection(deps: DepsMut, 
+pub (crate) fn internal_create_collection(mut deps: DepsMut, 
     _env : Env, info: MessageInfo,
     name : String, symbol : String, 
     description : Option<String> ,
@@ -173,7 +174,11 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
     if collection_exists(info.clone(), name.clone(), symbol.clone(), &deps) {
         return Err(ContractError::CustomErrorMesg { message: format!("Collection {}-{} already exists!", name, symbol).to_string() } );
     }  
-  
+
+
+    let _msgs = pay_treasuries(deps.branch(), info.clone(), 
+    _env.block.time, "CREATE_COLLECTION_FEE".to_string());
+
     let _ = are_treasuries_valid(&treasuries)?;
 
     let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
@@ -208,7 +213,9 @@ pub (crate) fn internal_create_collection(deps: DepsMut,
 
     collections_store().save(deps.storage, _key.clone(), &new_collection)?;
 
-    common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, None)
+    common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, None, None)
+
+    
 }
 
 
@@ -291,7 +298,7 @@ pub fn create_item(deps: DepsMut,
     ITEMS_STORE.save(deps.storage, _key.clone(), &item)?;
     
     common_response( format!("{}-{}={}",_key.0, _key.1,
-    _key.2).as_str(), "create_item", STATUS_OK, None)
+    _key.2).as_str(), "create_item", STATUS_OK, None, None)
 }
 
 
@@ -472,11 +479,10 @@ pub fn remove_collection (
 
         Ok(_)=> {
             remove_all_items(owner, name, symbol, deps);
-            common_response(format!("{}-{}",_key.0, _key.1).as_str(), "remove_collection", STATUS_OK, None)
+            common_response(format!("{}-{}",_key.0, _key.1).as_str(), "remove_collection", STATUS_OK, None, None)
         },
-
         Err(e)=> {common_response(format!("{}-{}",_key.0, _key.1).as_str(), "remove_collection", 
-        STATUS_ERROR, Some(e.to_string()))}
+        STATUS_ERROR, Some(e.to_string()), None ) }
          , 
     }    
 
@@ -527,13 +533,22 @@ const STATUS_OK : i8 = 1;
 
 
 pub (crate) fn common_response (key : &str , method : &str, status : i8,
-message : Option<String>) -> Result<Response, ContractError> {
+message : Option<String>, bank_messages : Option<Vec<BankMsg>>) -> Result<Response, ContractError> {
+
+    let mut bmsgs : Vec<BankMsg> = Vec::new();
+
+    if bank_messages.is_some() {
+
+        bmsgs = bank_messages.unwrap();
+    }
 
     if message.is_some() {
 
         let mesg = message.unwrap();
- 
+        
+      
         Ok(Response::new()
+        .add_messages(bmsgs)
         .add_attribute("key",key)
         .add_attribute("method", method)
         .add_attribute("status", format!("{}", status))
@@ -543,6 +558,7 @@ message : Option<String>) -> Result<Response, ContractError> {
     else {
 
         Ok(Response::new()
+        .add_messages(bmsgs)
         .add_attribute("key",key)
         .add_attribute("method", method)
         .add_attribute("status", format!("{}", status)))
