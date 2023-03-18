@@ -1,8 +1,9 @@
 use cosmwasm_std::{Empty, DepsMut, MessageInfo, Env, Response, BankMsg, coins};
-use crate::state::{Item, Treasury};
+use crate::state::{Item, Collection, PRICE_TYPE_STANDARD};
 use crate::error::ContractError;
 //use std::convert::{TryFrom};
 use crate::utils::nft_token_id;
+use pix0_contract_common::funcs::{pay_by_percentage, to_bank_messages};
 
 // refer to https://docs.opensea.io/docs/metadata-standards
 pub type Metadata = crate::state::Metadata;
@@ -18,8 +19,8 @@ pub fn mint_nft(deps: DepsMut,
     info: MessageInfo, 
     contract :  NftContract,
     item : Item, 
-    treasuries : Option<Vec<Treasury>>,
-    price : Option<u64>, 
+    collection : Collection,
+    price_type : Option<u8>,
     token_uri : Option<String>,
     method : Option<String>)-> Result<Response, ContractError>  {
 
@@ -62,28 +63,23 @@ pub fn mint_nft(deps: DepsMut,
 
         Ok(_res) =>  {
 
-            if treasuries.is_some()  {
+           let mut prc_typ = PRICE_TYPE_STANDARD;
 
-                let _ts = treasuries.unwrap();
+           if price_type.is_some() {
+                prc_typ = price_type.unwrap();
+           }
 
-                let price = price.unwrap_or(0);
+           let bank_msgs = pay_collection_treasuries(deps, _env, 
+            info, collection, prc_typ);
 
-                let res = pay_collection_treasuries(_ts,
-                    price, None);
+            if bank_msgs.is_some() {
+
+                Ok(Response::new().add_attribute("method", "mint-nft")
+                .add_messages(bank_msgs.unwrap()))
     
-                if res.is_err() {
-    
-                    return Err(ContractError::ErrorPayingTreasuries { text : 
-                        "some error while paying treasuries".to_string()});
-                }
-    
-                let res = res.expect("Failed to unwrap pay treasuries' response");
-                
-                Ok(res.add_attribute("method", method.unwrap_or("mint-nft".to_string()) ))
             }
             else {
-
-                Ok(_res.add_attribute("method", method.unwrap_or("mint-nft".to_string())))
+                Err(ContractError::FailedToMakePayment { text: "Failed to make payment when minting NFT".to_string()})
             }
            
         },
@@ -98,8 +94,8 @@ pub fn mint_nft(deps: DepsMut,
 
 pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env, 
     info: MessageInfo, 
-    item : Item, _treasuries : Vec<Treasury>,
-    price : Option<u64>, 
+    item : Item, 
+    collection : Collection, 
     token_uri : Option<String>,
     method : Option<String>) -> Result<Response, ContractError>{
 
@@ -118,42 +114,27 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
 }
 
 pub fn pay_collection_treasuries (
-treasuries : Vec<Treasury>,    
-total_amount : u64, _denom : Option<String>) -> 
-Result<Response, ContractError>{
+deps: DepsMut,  _env : Env, 
+info: MessageInfo,     
+collection : Collection, price_type : u8 ) -> Option<Vec<BankMsg>>{
 
-    let mut error : Option<ContractError> = None ;
+    let payments = collection.treasuries_to_payments();
+    let price = collection.price_by_type( price_type);
 
-    treasuries.iter().for_each( |t| {
+    if price.is_some() {
 
-        let fraction: u64 = (t.percentage as u64) * 100 / 100;
+        let amts = 
+        pay_by_percentage(deps, info, _env.block.time, payments, price.unwrap());
 
-        // two decimal for total_amount 
-        let amount = (total_amount / 100) * fraction / 100;
-      
-        let res =  pay_treasury(t.wallet.as_str(), amount as u128, _denom.clone());
+        let bank_msgs = to_bank_messages(amts);
 
-        match res {
-
-            Ok(_) => error = None  ,
-
-            Err(e) => error = Some(ContractError::CustomErrorMesg{ message : e.to_string()} ),
-
-        }
-
-    });
-
-    if error.is_none() {
-
-        Ok(Response::new().add_attribute("action", "paid-all-teasuries"))
+        bank_msgs
     }
     else {
 
-        let err = error.unwrap_or(ContractError::CustomErrorMesg{message: String::from(
-            "Some Error When Paying All Treasuries!")});
-
-        Err(err) 
+        None
     }
+
 }
 
 pub const DEFAULT_PRICE_DENOM : &str = "uconst";

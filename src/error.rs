@@ -40,5 +40,8 @@ pub enum ContractError {
 
     #[error("InsufficientFund")]
     InsufficientFund { text : String },
+   
+    #[error("FailedToMakePayment")]
+    FailedToMakePayment { text : String },
     
 }

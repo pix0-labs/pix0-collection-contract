@@ -1,6 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use cosmwasm_std::{Addr, Timestamp};
+use cosmwasm_std::{Addr, Timestamp, Coin};
+use pix0_contract_common::state::PaymentByPercentage;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ContractInfo {
@@ -36,9 +37,7 @@ pub struct PriceType {
 
     pub price_type : u8, 
 
-    pub value : u64, 
-
-    pub denom : Option<String>, 
+    pub value : Coin, 
 
     pub date_start : Option<Timestamp>,
 
@@ -106,6 +105,21 @@ impl Collection {
             
         }
     }
+
+
+    pub fn treasuries_to_payments(&self) -> Vec<PaymentByPercentage>{
+
+        let treas = self.treasuries();
+        let mut payments : Vec<PaymentByPercentage> = Vec::new();
+
+        treas.iter()
+        .for_each(|t| {
+            payments.push( PaymentByPercentage { wallet: t.clone().wallet, 
+                percentage: t.percentage });    
+        });
+
+        payments
+    }
 }
 
 pub const ALLOWED_MINT_ITEMBY_NAME : &str = "ALLOWED_MINT_ITEMBY_NAME";
@@ -113,7 +127,7 @@ pub const ALLOWED_MINT_ITEMBY_NAME : &str = "ALLOWED_MINT_ITEMBY_NAME";
 
 impl Collection {
 
-    pub fn price_by_type (&self,  _type : u8) -> Option<u64> {
+    pub fn price_by_type (&self,  _type : u8) -> Option<Coin> {
 
         if self.prices.is_some() {
 
