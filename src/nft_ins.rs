@@ -1,10 +1,8 @@
 use cosmwasm_std::{Empty, DepsMut, MessageInfo, Env, Response, BankMsg};
 use crate::state::{Item, Collection, PRICE_TYPE_STANDARD};
 use crate::error::ContractError;
-//use std::convert::{TryFrom};
 use crate::utils::nft_token_id;
 use pix0_contract_common::funcs::{pay_by_percentage, to_bank_messages};
-
 // refer to https://docs.opensea.io/docs/metadata-standards
 pub type Metadata = crate::state::Metadata;
 
