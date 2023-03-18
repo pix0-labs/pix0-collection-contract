@@ -182,7 +182,7 @@ pub (crate) fn internal_create_collection(mut deps: DepsMut,
     if _msgs.is_err() {
 
         return Err(ContractError::FailedToMakePayment { text: 
-            format!("Failed to make payment!").to_string() } );
+            format!("Failed to make payment: {:?}!", _msgs.unwrap_err() ).to_string() } );
  
     }
  
@@ -298,7 +298,7 @@ pub fn create_item(mut deps: DepsMut,
     if _msgs.is_err() {
 
         return Err(ContractError::FailedToMakePayment { text: 
-            format!("Failed to make payment!").to_string() } );
+            format!("Failed to make payment: {:?}!", _msgs.unwrap_err()).to_string() } );
  
     } 
   
