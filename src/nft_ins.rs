@@ -137,27 +137,3 @@ collection : Collection, price_type : u8 ) -> Option<Vec<BankMsg>>{
     }
 
 }
-
-pub const DEFAULT_PRICE_DENOM : &str = "uconst";
-
-fn pay_treasury (wallet_address : &str, amount : u128 , _denom : Option <String>)
--> Result<Response, ContractError>{
-
-    let mut denom = String::from(DEFAULT_PRICE_DENOM);
-
-    if _denom.is_some() {
-        denom = _denom.unwrap_or( String::from( DEFAULT_PRICE_DENOM) );
-    }
-
-    println!("Going to pay :{},:{}", wallet_address, amount);
-
-    let coin = coins(amount, denom);
-    let bank_mesg = BankMsg::Send {
-        to_address: String::from(wallet_address),
-        amount: coin, 
-    };
-
-   
-    Ok(Response::new().add_attribute("action", "approve").add_message(bank_mesg))
-
-}
