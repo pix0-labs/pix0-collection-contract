@@ -96,6 +96,7 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
     info: MessageInfo, 
     item : Item, 
     collection : Collection, 
+    price_type : Option<u8>,
     token_uri : Option<String>,
     method : Option<String>) -> Result<Response, ContractError>{
 
@@ -109,7 +110,7 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
 
     let _res = contract.instantiate(deps.branch(), _env.clone(), info.clone(),msg);
     
-    mint_nft(deps, _env, info, contract, item, Some(_treasuries), price, token_uri, method)
+    mint_nft(deps, _env, info, contract, item,collection, price_type, token_uri, method)
     
 }
 
