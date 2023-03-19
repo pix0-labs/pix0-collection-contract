@@ -6,6 +6,27 @@ use crate::error::ContractError;
 use crate::query::{internal_get_collection, internal_get_all_items, internal_get_item};
 use crate::nft_ins::init_and_mint_nft;
 use pix0_contract_common::funcs::pay_treasuries;
+use pix0_contract_common::state::Fee;
+
+/*
+Wrapper function
+ */
+pub fn update_contract_info (deps: DepsMut, 
+    _env : Env, info: MessageInfo,
+    _fees : Option<Vec<Fee>>, treasuries : Option<Vec<Addr>>, 
+    _log_last_payment : Option<bool>, 
+ ) -> Result<Response, ContractError> {
+
+    let res =  pix0_contract_common::funcs::update_contract_info(
+        deps, _env, info, _fees, treasuries, _log_last_payment);
+           
+    match res {
+
+        Ok(r)=> Ok(r),
+
+        Err(e)=> Err(ContractError::from(e)),
+    }
+ }
 
 pub fn collection_id ( name : String, symbol : String ) -> String {
     format!("{}-{}", name, symbol)

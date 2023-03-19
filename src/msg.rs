@@ -28,6 +28,15 @@ pub struct MigrateMsg {
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
 
+    UpdateContractInfo {
+
+        fees : Option<Vec<Fee>>, 
+
+        treasuries : Option<Vec<Addr>>,
+
+        log_last_payment : Option<bool>, 
+    },
+
     CreateCollection {
        
        collection : Collection, 
