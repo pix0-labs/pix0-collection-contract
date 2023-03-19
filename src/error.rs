@@ -48,6 +48,9 @@ pub enum ContractError {
     #[error("ContractInfoNotFound")]
     ContractInfoNotFound { message : String },
 
+    #[error("FailedToTransferNft")]
+    FailedToTransferNft { text : String },
+  
 }
 
 

@@ -117,6 +117,36 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
     
 }
 
+
+pub fn transfer_nft ( deps: DepsMut,  _env : Env, 
+    info: MessageInfo, token_id : String, recipient : String ) -> Result<Response, ContractError>  {
+
+    let msg = cw721_base::msg::ExecuteMsg::TransferNft{
+        recipient : recipient ,
+        token_id : token_id,
+    };
+
+    let contract = NftContract::default();
+
+    let res = contract.execute(deps, _env, info, msg);
+
+    match res {
+
+        Ok(_res) =>  {
+
+            Ok(_res)
+        }
+        ,
+        Err(e)=>{
+            Err(ContractError::FailedToTransferNft{text : e.to_string()})
+
+        },
+
+    }
+
+
+}
+
 pub fn pay_collection_treasuries (
 deps: DepsMut,  _env : Env, 
 info: MessageInfo,     
