@@ -184,8 +184,6 @@ mod tests {
 
         let _ = print_nfts_by_owner(&deps.as_ref(), tx_to);
 
-       
-
     }
 
 
