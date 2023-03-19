@@ -119,7 +119,7 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
 
 
 pub fn transfer_nft ( deps: DepsMut,  _env : Env, 
-    info: MessageInfo, token_id : String, recipient : String ) -> Result<Response, ContractError>  {
+    info: MessageInfo,  recipient : String, token_id : String ) -> Result<Response, ContractError>  {
 
     let msg = cw721_base::msg::ExecuteMsg::TransferNft{
         recipient : recipient ,

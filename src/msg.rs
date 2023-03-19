@@ -93,6 +93,13 @@ pub enum ExecuteMsg {
         token_uri : Option<String>, 
 
     },
+
+    TransferNft {
+
+        recipient : String ,
+
+        token_id : String, 
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

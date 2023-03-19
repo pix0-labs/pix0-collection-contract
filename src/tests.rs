@@ -161,14 +161,31 @@ mod tests {
         print_items_count(&deps.as_ref(), Addr::unchecked(owner), 
         collection_name.clone(), collection_symb.clone());
        
-        print_nfts_by_owner(&deps.as_ref(), owner);
+        let first_tokid = print_nfts_by_owner(&deps.as_ref(), owner);
        
-        let rs = remove_collection(collection_name.clone(), collection_symb.clone(), deps.as_mut(), info);
+        let rs = remove_collection(collection_name.clone(), collection_symb.clone(), deps.as_mut(), info.clone());
         println!("\n\nremoved.collection.result::{:?}",rs);
 
         print_items_count(&deps.as_ref(), Addr::unchecked(owner), 
         collection_name.clone(), collection_symb.clone());
        
+        let tx_to : &str = "archway1nxqd7h869sj9pn0xyq0lqqqxjqx6vt550z4aj7";
+
+        let tmsg = ExecuteMsg::TransferNft {
+
+            recipient : tx_to.to_string(),
+
+            token_id : first_tokid.clone(),
+        };
+
+        let res = execute(deps.as_mut(), mock_env(), info, tmsg);
+       
+        println!("Tx.nft:{}.to::{:?}\nRes::\n{:?}", first_tokid, tx_to,res );
+
+        let _ = print_nfts_by_owner(&deps.as_ref(), tx_to);
+
+       
+
     }
 
 
@@ -187,7 +204,7 @@ mod tests {
      }
 
 
-    fn print_nfts_by_owner(deps : &Deps, owner : &str) {
+    fn print_nfts_by_owner(deps : &Deps, owner : &str) -> String{
 
         print!("\n======================================\nNfts By {}", owner);
 
@@ -200,15 +217,19 @@ mod tests {
 
         //println!("Nfts::{:?}",result);
 
-        print_tokens_with_info(&result, &deps);
+        print_tokens_with_info(&result, &deps)
      }
 
 
-     fn print_tokens_with_info (res : &cw721::TokensResponse, deps : &Deps) {
+     fn print_tokens_with_info (res : &cw721::TokensResponse, deps : &Deps) -> String {
+
+        let mut first_tkid = "0001".to_string();
 
         for (i, x) in res.tokens.iter().enumerate() {
 
             let tid = x.clone();
+
+            first_tkid = tid.clone();
 
             print!("\nNFT :{}: ID:{}",(i+1), x.clone());
 
@@ -222,6 +243,7 @@ mod tests {
 
         }
 
+        first_tkid
      }
 
     // cargo test test_rand_gen -- --show-output
