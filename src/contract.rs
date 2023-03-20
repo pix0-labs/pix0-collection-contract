@@ -10,10 +10,10 @@ use crate::ins::{create_collection, update_collection, create_item, mint_item_by
 use crate::nft_ins::transfer_nft;
 use crate::query::{get_all_collections, get_collections, get_collection, get_items_count, get_items, get_item};
 use crate::nft_query::*;
-use crate::msg::{ExecuteMsg,InstantiateMsg, QueryMsg, MigrateMsg};
+use crate::msg::{ExecuteMsg,QueryMsg, MigrateMsg};
 use crate::utils::str_to_u64;
 use pix0_contract_common::funcs::{create_contract_info, get_contract_info, get_log_info};
-
+use pix0_contract_common::msg::InstantiateMsg;
 
 // version info for migration info
 const CONTRACT_NAME: &str = "crates.io:pix0-contract";

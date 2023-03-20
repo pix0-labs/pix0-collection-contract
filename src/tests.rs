@@ -12,6 +12,7 @@ mod tests {
     use crate::contract::*;
     use crate::ins::*;
     use pix0_contract_common::state::Fee;
+    use pix0_contract_common::msg::InstantiateMsg;
 
 
     const DEFAULT_PRICE_DENOM : &str = "uconst";

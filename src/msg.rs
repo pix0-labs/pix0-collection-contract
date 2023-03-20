@@ -5,21 +5,6 @@ use cosmwasm_std::Addr;
 use pix0_contract_common::state::{Fee, Contract};
 
 
-pub struct InstantiateMsg {
-
-    pub allowed_admins : Option<Vec<Addr>>,
-    
-    pub treasuries : Option<Vec<Addr>>,
-
-    pub fees : Option<Vec<Fee>>, 
-
-    pub contracts : Option<Vec<Contract>>, 
-
-    pub log_last_payment : Option<bool>, 
-
-}
-
-
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct MigrateMsg {
     pub message : String,
