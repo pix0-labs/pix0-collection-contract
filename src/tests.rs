@@ -31,6 +31,7 @@ mod tests {
 
             allowed_admins : Some(vec![admin.clone()]),
             treasuries : Some(vec![admin]),
+            contracts : None, 
             fees : Some(vec![ 
                 Fee {name : "CREATE_COLLECTION_FEE".to_string(),
                 value : Coin { amount : Uint128::from(1280u64), denom : "uconst".to_string()}},

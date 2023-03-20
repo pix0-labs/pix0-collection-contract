@@ -2,7 +2,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use crate::state::{Collection,Item};
 use cosmwasm_std::Addr;
-use pix0_contract_common::state::Fee;
+use pix0_contract_common::state::{Fee, Contract};
 
 
 pub struct InstantiateMsg {
@@ -12,6 +12,8 @@ pub struct InstantiateMsg {
     pub treasuries : Option<Vec<Addr>>,
 
     pub fees : Option<Vec<Fee>>, 
+
+    pub contracts : Option<Vec<Contract>>, 
 
     pub log_last_payment : Option<bool>, 
 
@@ -33,6 +35,8 @@ pub enum ExecuteMsg {
         fees : Option<Vec<Fee>>, 
 
         treasuries : Option<Vec<Addr>>,
+
+        contracts : Option<Vec<Contract>>, 
 
         log_last_payment : Option<bool>, 
     },

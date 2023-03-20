@@ -31,7 +31,7 @@ pub fn instantiate(
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
    
     create_contract_info(deps, _env, info.clone() ,_msg.allowed_admins,
-    _msg.treasuries, _msg.fees, _msg.log_last_payment)?;
+    _msg.treasuries, _msg.fees, _msg.contracts,_msg.log_last_payment)?;
   
 
     Ok(Response::new()
@@ -70,8 +70,8 @@ pub fn execute(
         => mint_item(deps, _env, info, str_to_u64(seed, 20502) , owner, 
         collection_name, collection_symbol,price_type, token_uri),
 
-        ExecuteMsg::UpdateContractInfo { fees, treasuries , log_last_payment} =>
-        update_contract_info(deps, _env, info, fees, treasuries, log_last_payment),
+        ExecuteMsg::UpdateContractInfo { fees, treasuries , contracts,  log_last_payment} =>
+        update_contract_info(deps, _env, info, fees, treasuries, contracts,log_last_payment),
 
         ExecuteMsg::TransferNft { recipient, token_id} => 
         transfer_nft(deps, _env, info, recipient, token_id),
