@@ -185,16 +185,18 @@ mod tests {
 
         let sec_tokid = toks[1].clone();
 
+        let to_addr : &str = "archway122w9rr76aac9pmke9qq6ya5l8245qr44h8jvtm";
+
         let smsg = ExecuteMsg::SendNft {
 
             token_id : sec_tokid.clone(),
-            contract_addr : String::from("archway12vunw44km3ee20ph3x96lcecmgtxnkkjdl2smc8enmpe26ajvzaqwnrahr"),
+            contract_addr : String::from(to_addr),
             action : String::from("{\"execute\":{\"action\":\"burn\"}}")
         };
 
         let res = execute(deps.as_mut(), mock_env(), info, smsg);
                
-        println!("Sending.nft:{}.in::{:?}\nRes::\n{:?}", sec_tokid, owner ,res );
+        println!("Sending.nft:{}.in::{:?}\nRes::\n{:?}", sec_tokid, to_addr ,res );
 
 
 
@@ -210,7 +212,7 @@ mod tests {
 
         */
 
-        let _ = print_nfts_by_owner(&deps.as_ref(), owner);
+        let _ = print_nfts_by_owner(&deps.as_ref(), to_addr);
 
 
 
