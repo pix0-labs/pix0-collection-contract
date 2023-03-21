@@ -1,4 +1,4 @@
-use cosmwasm_std::{Empty, DepsMut, MessageInfo, Env, Response, BankMsg};
+use cosmwasm_std::{Empty, DepsMut, MessageInfo, Env, Response, BankMsg, Binary };
 use crate::state::{Item, Collection, PRICE_TYPE_STANDARD};
 use crate::error::ContractError;
 use crate::utils::nft_token_id;
@@ -176,6 +176,40 @@ pub fn burn_nft ( deps: DepsMut,  _env : Env,
         Err(e)=>{
             Err(ContractError::FailedToBurnNft{text : e.to_string()})
 
+        },
+    }
+
+}
+
+
+
+pub fn send_nft ( deps: DepsMut,  _env : Env, 
+    info: MessageInfo,  token_id : String, contract_addr : String,
+    action : String ) -> Result<Response, ContractError>  {
+
+
+    let binary_action = Binary::from(serde_json::to_vec(&action).unwrap());
+
+    let msg = cw721_base::msg::ExecuteMsg::SendNft{
+        token_id : token_id,
+        contract : contract_addr.clone(),
+        msg : binary_action, 
+    };
+
+    let contract = NftContract::default();
+
+    let res = contract.execute(deps, _env, info, msg);
+
+    match res {
+
+        Ok(_res) =>  {
+
+            Ok(_res)
+        }
+        ,
+        Err(e)=>{
+            Err(ContractError::FailedToSendNft{text :format!("Failed to send NFT to :{}\nError:{:?}", contract_addr,
+            e)})
         },
     }
 

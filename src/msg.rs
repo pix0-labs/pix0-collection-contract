@@ -95,6 +95,14 @@ pub enum ExecuteMsg {
     },
 
     BurnNft { token_id: String },
+
+    SendNft {
+        token_id : String, 
+   
+        contract_addr : String,
+
+        action : String , 
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
