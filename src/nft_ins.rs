@@ -174,7 +174,7 @@ pub fn burn_nft ( deps: DepsMut,  _env : Env,
         }
         ,
         Err(e)=>{
-            Err(ContractError::FailedToTransferNft{text : e.to_string()})
+            Err(ContractError::FailedToBurnNft{text : e.to_string()})
 
         },
     }
