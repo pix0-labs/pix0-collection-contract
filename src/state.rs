@@ -280,12 +280,12 @@ impl Item {
 
         if trs
         .iter()
-        .find(|t| t.trait_type == "Collection's name")
+        .find(|t| t.trait_type == "collection-name")
         .is_none() {
 
             trs.push( Trait {
-                trait_type : String::from("Collection's name"),
-                display_type : Some(String::from("Collection's name")),
+                trait_type : String::from("collection-name"),
+                display_type : Some(String::from("collection-name")),
                 value : self.collection_name.clone()
             })
         }
@@ -293,12 +293,12 @@ impl Item {
 
         if trs
         .iter()
-        .find(|t| t.trait_type == "Collection's symbol")
+        .find(|t| t.trait_type == "collection-symbol")
         .is_none() {
 
             trs.push( Trait {
-                trait_type : String::from("Collection's symbol"),
-                display_type : Some(String::from("Collection's symbol")),
+                trait_type : String::from("collection-symbol"),
+                display_type : Some(String::from("collection-symbol")),
                 value : self.collection_symbol.clone()
             })
         }
