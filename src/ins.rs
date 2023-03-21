@@ -367,7 +367,8 @@ pub fn mint_item (mut deps : DepsMut ,
     owner : Addr,collection_name : String,  
     collection_symbol : String , 
     price_type : Option<u8>, 
-    token_uri : Option<String>)-> Result<Response, ContractError> {
+    token_uri : Option<String>,
+    token_id : Option<String> )-> Result<Response, ContractError> {
 
     let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
     collection_name.clone(), collection_symbol.clone());
@@ -407,7 +408,7 @@ pub fn mint_item (mut deps : DepsMut ,
         }
 
         let res = init_and_mint_nft(deps.branch(), _env, info, 
-        i.clone(), collection, price_type, token_uri, Some("random-mint".to_string()));
+        i.clone(), collection, price_type, token_uri, Some("random-mint".to_string()), token_id);
 
         if res.is_ok() {
             internal_remove_item(owner, collection_name, collection_symbol, i.name.clone(), deps);
@@ -426,7 +427,8 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
     owner : Addr,collection_name : String,  
     collection_symbol : String , 
     price_type : Option<u8>, 
-    token_uri : Option<String>)-> Result<Response, ContractError> {
+    token_uri : Option<String>,
+    token_id : Option<String>)-> Result<Response, ContractError> {
 
     let collection = internal_get_collection(deps.as_ref(), owner.clone(), 
     collection_name.clone(), collection_symbol.clone());
@@ -466,7 +468,7 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
         let itm = item.unwrap();
         let res = init_and_mint_nft(deps.branch(), 
         _env, info, itm.clone(), collection,price_type,token_uri,
-        Some("mint-by-name".to_string()));
+        Some("mint-by-name".to_string()),token_id);
 
         if res.is_ok() {
             internal_remove_item(owner, collection_name, collection_symbol, itm.name.clone(), deps);

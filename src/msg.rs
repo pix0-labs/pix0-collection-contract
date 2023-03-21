@@ -65,6 +65,8 @@ pub enum ExecuteMsg {
         
         token_uri : Option<String>, 
 
+        token_id : Option<String>,
+
     },
 
     MintItemByName {
@@ -81,6 +83,8 @@ pub enum ExecuteMsg {
 
         token_uri : Option<String>, 
 
+        token_id : Option<String>,
+
     },
 
     TransferNft {
@@ -88,7 +92,9 @@ pub enum ExecuteMsg {
         recipient : String ,
 
         token_id : String, 
-    }
+    },
+
+    BurnNft { token_id: String },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

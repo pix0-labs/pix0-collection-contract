@@ -7,7 +7,7 @@ use cw2::set_contract_version;
 use crate::error::ContractError;
 use crate::ins::{create_collection, update_collection, create_item, mint_item_by_name, mint_item, 
     remove_collection,update_contract_info};
-use crate::nft_ins::transfer_nft;
+use crate::nft_ins::{transfer_nft, burn_nft};
 use crate::query::{get_all_collections, get_collections, get_collection, get_items_count, get_items, get_item};
 use crate::nft_query::*;
 use crate::msg::{ExecuteMsg,QueryMsg, MigrateMsg};
@@ -61,14 +61,14 @@ pub fn execute(
         => create_item(deps, _env, info, item ),
         
         ExecuteMsg::MintItemByName { name , owner, collection_name, collection_symbol, 
-            price_type, token_uri }
+            price_type, token_uri, token_id }
         => mint_item_by_name(deps, _env, info, name , owner, 
-            collection_name, collection_symbol, price_type,token_uri),
+            collection_name, collection_symbol, price_type,token_uri, token_id),
 
         ExecuteMsg::MintItem { seed , owner, collection_name, 
-            collection_symbol, price_type, token_uri }
+            collection_symbol, price_type, token_uri, token_id }
         => mint_item(deps, _env, info, str_to_u64(seed, 20502) , owner, 
-        collection_name, collection_symbol,price_type, token_uri),
+        collection_name, collection_symbol,price_type, token_uri, token_id),
 
         ExecuteMsg::UpdateContractInfo { fees, treasuries , contracts,  log_last_payment} =>
         update_contract_info(deps, _env, info, fees, treasuries, contracts,log_last_payment),
@@ -76,7 +76,8 @@ pub fn execute(
         ExecuteMsg::TransferNft { recipient, token_id} => 
         transfer_nft(deps, _env, info, recipient, token_id),
 
-   
+        ExecuteMsg::BurnNft { token_id} => 
+        burn_nft(deps, _env, info, token_id),
     }
 }
 

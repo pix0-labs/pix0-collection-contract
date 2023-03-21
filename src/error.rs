@@ -51,6 +51,8 @@ pub enum ContractError {
     #[error("FailedToTransferNft")]
     FailedToTransferNft { text : String },
   
+    #[error("FailedToBurnNft")]
+    FailedToBurnNft { text : String },
 }
 
 

@@ -20,18 +20,27 @@ pub fn mint_nft(mut deps: DepsMut,
     collection : Collection,
     price_type : Option<u8>,
     token_uri : Option<String>,
-    method : Option<String>)-> Result<Response, ContractError>  {
+    method : Option<String>,
+    _token_id : Option<String>)-> Result<Response, ContractError>  {
 
     let new_owner = info.clone().sender;
    
     let ext_url = item.external_link();
 
-    let token_id = nft_token_id(&(
-    item.name.clone(), 
-    item.collection_owner.to_string(),
-    item.collection_name.clone(), 
-    item.collection_symbol.clone()));
+    let mut token_id = _token_id;
 
+    if token_id.is_none () {
+
+        token_id = Some( nft_token_id(&(
+            item.name.clone(), 
+            item.collection_owner.to_string(),
+            item.collection_name.clone(), 
+            item.collection_symbol.clone())));
+    }
+    
+    
+    
+   
     let c_item = item.clone();
 
     let ext = Some(Metadata {
@@ -47,7 +56,7 @@ pub fn mint_nft(mut deps: DepsMut,
 
     
     let msg = cw721_base::msg::MintMsg {
-        token_id: token_id ,
+        token_id: token_id.unwrap() ,
         owner: new_owner.to_string(),
         token_uri: token_uri,
         extension: ext ,
@@ -101,7 +110,8 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
     collection : Collection, 
     price_type : Option<u8>,
     token_uri : Option<String>,
-    method : Option<String>) -> Result<Response, ContractError>{
+    method : Option<String>,
+    _token_id : Option<String>) -> Result<Response, ContractError>{
 
     let msg =  cw721_base::InstantiateMsg {
         name: item.collection_name.clone(),
@@ -113,7 +123,7 @@ pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env,
 
     let _res = contract.instantiate(deps.branch(), _env.clone(), info.clone(),msg);
     
-    mint_nft(deps, _env, info, contract, item,collection, price_type, token_uri, method)
+    mint_nft(deps, _env, info, contract, item,collection, price_type, token_uri, method, _token_id)
     
 }
 
@@ -141,11 +151,36 @@ pub fn transfer_nft ( deps: DepsMut,  _env : Env,
             Err(ContractError::FailedToTransferNft{text : e.to_string()})
 
         },
-
     }
 
+}
+
+pub fn burn_nft ( deps: DepsMut,  _env : Env, 
+    info: MessageInfo,  token_id : String ) -> Result<Response, ContractError>  {
+
+    let msg = cw721_base::msg::ExecuteMsg::Burn{
+        token_id : token_id,
+    };
+
+    let contract = NftContract::default();
+
+    let res = contract.execute(deps, _env, info, msg);
+
+    match res {
+
+        Ok(_res) =>  {
+
+            Ok(_res)
+        }
+        ,
+        Err(e)=>{
+            Err(ContractError::FailedToTransferNft{text : e.to_string()})
+
+        },
+    }
 
 }
+
 
 pub fn pay_collection_treasuries (
 deps: DepsMut,  _env : Env, 
