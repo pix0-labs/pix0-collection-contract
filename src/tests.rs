@@ -72,7 +72,7 @@ mod tests {
 
 
         let attbs = vec![Attribute{
-            name : ALLOWED_MINT_ITEMBY_NAME.to_string(),
+            name : ALLOWED_MINT_ITEM_BY_NAME.to_string(),
             value : "true".to_string()
         }];
         

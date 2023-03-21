@@ -101,7 +101,7 @@ impl Collection {
     }
 }
 
-pub const ALLOWED_MINT_ITEMBY_NAME : &str = "ALLOWED_MINT_ITEMBY_NAME";
+pub const ALLOWED_MINT_ITEM_BY_NAME : &str = "ALLOWED_MINT_ITEM_BY_NAME";
 
 
 impl Collection {
@@ -136,7 +136,7 @@ impl Collection {
 
             let m : Vec<Attribute>= 
             attbs.into_iter()
-            .filter(|i| i.name == ALLOWED_MINT_ITEMBY_NAME.to_string())
+            .filter(|i| i.name == ALLOWED_MINT_ITEM_BY_NAME.to_string())
             .collect();
 
             if m.len() > 0 {
