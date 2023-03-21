@@ -274,34 +274,31 @@ impl Item {
 
 impl Item {
 
+
+    fn add_to_trait_if_not_exist ( traits : &mut Vec<Trait>, trait_type : String,
+    value : String ) {
+
+        if traits 
+        .iter()
+        .find(|t| t.trait_type == trait_type)
+        .is_none() {
+
+            traits.push( Trait {
+                trait_type : trait_type.clone(),
+                display_type : Some(trait_type),
+                value : value 
+            })
+        }
+    }
+
     pub fn traits_add_collection_name_and_symbol(&self) -> Vec<Trait> {
 
         let mut trs = self.traits.clone();
 
-        if trs
-        .iter()
-        .find(|t| t.trait_type == "collection-name")
-        .is_none() {
-
-            trs.push( Trait {
-                trait_type : String::from("collection-name"),
-                display_type : Some(String::from("collection-name")),
-                value : self.collection_name.clone()
-            })
-        }
+        Self::add_to_trait_if_not_exist(&mut trs, String::from("collection-name"), self.collection_name.clone());
 
 
-        if trs
-        .iter()
-        .find(|t| t.trait_type == "collection-symbol")
-        .is_none() {
-
-            trs.push( Trait {
-                trait_type : String::from("collection-symbol"),
-                display_type : Some(String::from("collection-symbol")),
-                value : self.collection_symbol.clone()
-            })
-        }
+        Self::add_to_trait_if_not_exist(&mut trs, String::from("collection-symbol"), self.collection_symbol.clone());
 
 
         trs 
