@@ -272,6 +272,43 @@ impl Item {
 
 }
 
+impl Item {
+
+    pub fn traits_add_collection_name_and_symbol(&self) -> Vec<Trait> {
+
+        let mut trs = self.traits.clone();
+
+        if trs
+        .iter()
+        .find(|t| t.trait_type == "Collection's name")
+        .is_none() {
+
+            trs.push( Trait {
+                trait_type : String::from("Collection's name"),
+                display_type : Some(String::from("Collection's name")),
+                value : self.collection_name.clone()
+            })
+        }
+
+
+        if trs
+        .iter()
+        .find(|t| t.trait_type == "Collection's symbol")
+        .is_none() {
+
+            trs.push( Trait {
+                trait_type : String::from("Collection's symbol"),
+                display_type : Some(String::from("Collection's symbol")),
+                value : self.collection_symbol.clone()
+            })
+        }
+
+
+        trs 
+
+    }
+}
+
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug, Default)]
 pub struct Trait {

@@ -44,13 +44,13 @@ pub fn mint_nft(mut deps: DepsMut,
     let c_item = item.clone();
 
     let ext = Some(Metadata {
-        description: item.description,
-        name: Some(item.name) ,
+        description: item.clone().description,
+        name: Some(item.clone().name) ,
         image : c_item.image_link(), 
         youtube_url : c_item.video_link(),
         animation_url : c_item.animation_link(), 
         external_url : ext_url.clone() ,
-        attributes : Some(item.traits), 
+        attributes : Some(item.traits_add_collection_name_and_symbol()), 
         ..Metadata::default()
     });
 
