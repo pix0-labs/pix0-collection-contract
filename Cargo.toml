@@ -51,7 +51,7 @@ schemars = "0.8"
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 thiserror = "1.0"
 serde_json = "1.0.93"
-pix0-contract-common = { version = "0.2.2", path = "../pix0-contract-common" }
+pix0-contract-common = { version = "0.2.3", path = "../pix0-contract-common" }
 
 
 [dev-dependencies]
