@@ -275,7 +275,9 @@ impl Item {
 impl Item {
 
 
-    fn add_to_trait_if_not_exist ( traits : &mut Vec<Trait>, trait_type : String,
+    fn add_to_trait_if_not_exist ( traits : &mut Vec<Trait>, 
+    trait_type : String,
+    display_type : String,
     value : String ) {
 
         if traits 
@@ -285,7 +287,7 @@ impl Item {
 
             traits.push( Trait {
                 trait_type : trait_type.clone(),
-                display_type : Some(trait_type),
+                display_type : Some(display_type),
                 value : value 
             })
         }
@@ -295,14 +297,15 @@ impl Item {
 
         let mut trs = self.traits.clone();
 
-        Self::add_to_trait_if_not_exist(&mut trs, String::from("collection-name"), self.collection_name.clone());
+        Self::add_to_trait_if_not_exist(&mut trs, String::from("collection-name")
+        , String::from("Collection's name"),
+        self.collection_name.clone());
 
-
-        Self::add_to_trait_if_not_exist(&mut trs, String::from("collection-symbol"), self.collection_symbol.clone());
-
+        Self::add_to_trait_if_not_exist(&mut trs, String::from("collection-symbol"), 
+        String::from("Collection's symbol"),
+        self.collection_symbol.clone());
 
         trs 
-
     }
 }
 
