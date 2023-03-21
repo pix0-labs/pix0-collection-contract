@@ -497,14 +497,13 @@ dependencies = [
 
 [[package]]
 name = "pix0-contract-common"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "cosmwasm-std",
  "cosmwasm-storage",
  "cw-storage-plus 0.14.0",
  "schemars",
  "serde",
- "serde_json",
  "thiserror",
 ]
 
