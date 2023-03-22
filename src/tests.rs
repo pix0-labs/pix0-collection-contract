@@ -43,10 +43,11 @@ mod tests {
 
         };
 
-        let res = instantiate(deps.as_mut(), mock_env(), info.clone(), ins);
+        let res = instantiate(deps.as_mut(), mock_env(), info.clone(), ins.clone());
        
         println!("Instantiated::{:?}\n", res);
     
+      
        
         let collection_name =  "Test Collection 111111".to_string();
 
@@ -194,7 +195,7 @@ mod tests {
             action : String::from("{\"execute\":{\"action\":\"burn\"}}")
         };
 
-        let res = execute(deps.as_mut(), mock_env(), info, smsg);
+        let res = execute(deps.as_mut(), mock_env(), info.clone(), smsg);
                
         println!("Sending.nft:{}.in::{:?}\nRes::\n{:?}", sec_tokid, to_addr ,res );
 
@@ -215,6 +216,10 @@ mod tests {
         let _ = print_nfts_by_owner(&deps.as_ref(), to_addr);
 
 
+        let res2 = instantiate(deps.as_mut(), mock_env(), info, ins);
+       
+        println!("Instantiated.2nd.time::{:?}\n", res2);
+    
 
     }
 
