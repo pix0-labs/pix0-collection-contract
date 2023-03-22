@@ -57,6 +57,9 @@ pub enum ContractError {
 
     #[error("FailedToSendNft")]
     FailedToSendNft { text : String },
+
+    #[error("FailedToSendNft")]
+    ContractAlreadyInstantiated  { text : String },
 }
 
 
@@ -73,6 +76,9 @@ impl From<CommonContractError> for ContractError {
             ContractError::FailedToMakePayment { text : message }
             ,
 
+            CommonContractError::ContractAlreadyInstantiated { message } =>
+            ContractError::ContractAlreadyInstantiated { text: message}
+            ,
             _ => ContractError::CustomErrorMesg { message: "Unknown error".to_string() }
 
         }

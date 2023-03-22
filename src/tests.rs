@@ -11,7 +11,7 @@ mod tests {
     use crate::nft_ins::Extension;
     use crate::contract::*;
     use crate::ins::*;
-    use pix0_contract_common::state::Fee;
+    use pix0_contract_common::state::{Fee, ContractInfoResponse};
     use pix0_contract_common::msg::InstantiateMsg;
 
 
@@ -46,9 +46,10 @@ mod tests {
         let res = instantiate(deps.as_mut(), mock_env(), info.clone(), ins.clone());
        
         println!("Instantiated::{:?}\n", res);
-    
-      
        
+        print_contract_info(&deps.as_ref());
+
+
         let collection_name =  "Test Collection 111111".to_string();
 
         let collection_symb = "Coll.x.111".to_string();
@@ -214,15 +215,25 @@ mod tests {
         */
 
         let _ = print_nfts_by_owner(&deps.as_ref(), to_addr);
-
-
+       
         let res2 = instantiate(deps.as_mut(), mock_env(), info, ins);
        
         println!("Instantiated.2nd.time::{:?}\n", res2);
-    
 
     }
 
+
+    fn print_contract_info(deps : &Deps ) {
+
+       
+        let msg = QueryMsg::GetContractInfo {  };
+
+        let res = query(*deps, mock_env(), msg).expect("failed to unwrap!!");
+
+        let result : ContractInfoResponse = from_binary(&res).unwrap();
+
+        println!("\nContract.info::{:?}\n", result);
+     }
 
     fn print_items_count(deps : &Deps, owner : Addr,  collection_name : String, collection_symbol : String ) {
 
