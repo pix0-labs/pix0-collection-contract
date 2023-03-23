@@ -198,9 +198,7 @@ fn try_pay_contract_treasuries (deps: DepsMut,
     }
     else {
 
-        let msgs = _msgs.ok();
-
-        Ok(msgs)
+        Ok(_msgs.ok())
     }
 }
 
