@@ -180,6 +180,31 @@ fn are_treasuries_valid (treasuries : &Option<Vec<Treasury>>)  -> Result<bool, C
     }
 }
 
+
+
+
+fn try_pay_contract_treasuries (deps: DepsMut, 
+    _env : Env, info: MessageInfo, fee_name : impl Into<String>) -> Result<Option<Vec<BankMsg>>, ContractError> {
+
+
+    let _msgs = pay_treasuries(deps, info.clone(), 
+    _env.block.time, fee_name);
+
+    if _msgs.is_err() {
+
+        return Err(ContractError::FailedToMakePayment { text: 
+            format!("Failed to make payment: {:?}!", _msgs.unwrap_err() ).to_string() } );
+ 
+    }
+    else {
+
+        let msgs = _msgs.ok();
+
+        Ok(msgs)
+    }
+}
+
+
 pub (crate) fn internal_create_collection(mut deps: DepsMut, 
     _env : Env, info: MessageInfo,
     name : String, symbol : String, 
@@ -197,16 +222,8 @@ pub (crate) fn internal_create_collection(mut deps: DepsMut,
         return Err(ContractError::CustomErrorMesg { message: format!("Collection {}-{} already exists!", name, symbol).to_string() } );
     }  
 
-
-    let _msgs = pay_treasuries(deps.branch(), info.clone(), 
-    _env.block.time, "CREATE_COLLECTION_FEE".to_string());
-
-    if _msgs.is_err() {
-
-        return Err(ContractError::FailedToMakePayment { text: 
-            format!("Failed to make payment: {:?}!", _msgs.unwrap_err() ).to_string() } );
- 
-    }
+    let _msgs = try_pay_contract_treasuries(deps.branch(), _env.clone(), 
+    info, "CREATE_COLLECTION_FEE")?;
  
     let _ = are_treasuries_valid(&treasuries)?;
 
@@ -314,16 +331,9 @@ pub fn create_item(mut deps: DepsMut,
     }  
 
 
-    let _msgs = pay_treasuries(deps.branch(), info.clone(), 
-    _env.block.time, "CREATE_ITEM_FEE".to_string());
-
-    if _msgs.is_err() {
-
-        return Err(ContractError::FailedToMakePayment { text: 
-            format!("Failed to make payment: {:?}!", _msgs.unwrap_err()).to_string() } );
+    let _msgs = try_pay_contract_treasuries(deps.branch(), _env.clone(), 
+    info, "CREATE_ITEM_FEE")?;
  
-    } 
-  
     let _key = (item.collection_owner.clone(), 
     collection_id(item.collection_name.clone(), item.collection_symbol.clone()), 
     item.name.clone() );
