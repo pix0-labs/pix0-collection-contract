@@ -16,7 +16,7 @@ use pix0_contract_common::funcs::{create_contract_info, get_contract_info, get_l
 use pix0_contract_common::msg::InstantiateMsg;
 
 // version info for migration info
-const CONTRACT_NAME: &str = "crates.io:pix0-contract";
+const CONTRACT_NAME: &str = "crates.io:pix0-collection-contract";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[cfg_attr(not(feature = "library"), entry_point)]
