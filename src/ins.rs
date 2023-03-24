@@ -8,6 +8,11 @@ use crate::nft_ins::init_and_mint_nft;
 use pix0_contract_common::funcs::{try_paying_contract_treasuries};
 use pix0_contract_common::state::{Fee, Contract};
 
+
+pub fn collection_id ( name : String, symbol : String ) -> String {
+    format!("{}-{}", name, symbol)
+}
+
 /*
 Wrapper function
  */
@@ -27,10 +32,6 @@ pub fn update_contract_info (deps: DepsMut,
 
         Err(e)=> Err(ContractError::from(e)),
     }
- }
-
-pub fn collection_id ( name : String, symbol : String ) -> String {
-    format!("{}-{}", name, symbol)
 }
 
   
