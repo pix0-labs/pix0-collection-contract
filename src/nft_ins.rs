@@ -2,7 +2,7 @@ use cosmwasm_std::{Empty, DepsMut, MessageInfo, Env, Response, BankMsg, Binary }
 use crate::state::{Item, Collection, PRICE_TYPE_STANDARD};
 use crate::error::ContractError;
 use crate::utils::nft_token_id;
-use pix0_contract_common::funcs::{pay_by_percentage, to_bank_messages};
+use pix0_contract_common::funcs::{pay_by_percentage, to_bank_messages, try_paying_contract_treasuries};
 // refer to https://docs.opensea.io/docs/metadata-standards
 pub type Metadata = crate::state::Metadata;
 
@@ -76,7 +76,10 @@ pub fn mint_nft(mut deps: DepsMut,
                 prc_typ = price_type.unwrap();
            }
 
-           let bank_msgs = pay_collection_treasuries(deps, _env, 
+           // let bank_msgs = pay_collection_treasuries(deps, _env, 
+           // info, collection, prc_typ);
+
+           let bank_msgs = pay_all_treasuries(deps, _env, 
             info, collection, prc_typ);
 
             if bank_msgs.is_some() {
@@ -215,6 +218,38 @@ pub fn send_nft ( deps: DepsMut,  _env : Env,
 
 }
 
+
+
+pub fn pay_all_treasuries (mut deps : DepsMut, _env: Env, info : MessageInfo, collection : Collection, price_type : u8) -> 
+Option<Vec<BankMsg>>{
+
+    let bank_msgs = pay_collection_treasuries(deps.branch(), _env.clone(), info.clone(), collection, price_type);
+
+    let mut new_bmsgs : Vec<BankMsg> = Vec::new();
+
+    if bank_msgs.is_some() {
+        new_bmsgs.extend(bank_msgs.unwrap());
+    }
+
+    let _msgs = try_paying_contract_treasuries(deps, _env, 
+    info, "NFT_MINTING_FEE");
+
+    if _msgs.is_ok() {
+
+        let bmsgs = _msgs.ok();
+        if bmsgs.is_some() {
+            new_bmsgs.extend(bmsgs.unwrap());
+        }
+    }
+
+    if new_bmsgs.len() > 0 {
+
+        Some(new_bmsgs)
+    }
+    else {
+        None 
+    }
+}
 
 pub fn pay_collection_treasuries (
 deps: DepsMut,  _env : Env, 
