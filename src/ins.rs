@@ -5,7 +5,7 @@ use crate::indexes::{collections_store,ITEMS_STORE };
 use crate::error::ContractError;
 use crate::query::{internal_get_collection, internal_get_all_items, internal_get_item};
 use crate::nft_ins::init_and_mint_nft;
-use pix0_contract_common::funcs::pay_treasuries;
+use pix0_contract_common::funcs::{try_paying_contract_treasuries};
 use pix0_contract_common::state::{Fee, Contract};
 
 /*
@@ -183,26 +183,6 @@ fn are_treasuries_valid (treasuries : &Option<Vec<Treasury>>)  -> Result<bool, C
 
 
 
-fn try_pay_contract_treasuries (deps: DepsMut, 
-    _env : Env, info: MessageInfo, fee_name : impl Into<String>) -> Result<Option<Vec<BankMsg>>, ContractError> {
-
-
-    let _msgs = pay_treasuries(deps, info.clone(), 
-    _env.block.time, fee_name);
-
-    if _msgs.is_err() {
-
-        return Err(ContractError::FailedToMakePayment { text: 
-            format!("Failed to make payment: {:?}!", _msgs.unwrap_err() ).to_string() } );
- 
-    }
-    else {
-
-        Ok(_msgs.ok())
-    }
-}
-
-
 pub (crate) fn internal_create_collection(mut deps: DepsMut, 
     _env : Env, info: MessageInfo,
     name : String, symbol : String, 
@@ -220,7 +200,7 @@ pub (crate) fn internal_create_collection(mut deps: DepsMut,
         return Err(ContractError::CustomErrorMesg { message: format!("Collection {}-{} already exists!", name, symbol).to_string() } );
     }  
 
-    let _msgs = try_pay_contract_treasuries(deps.branch(), _env.clone(), 
+    let _msgs = try_paying_contract_treasuries(deps.branch(), _env.clone(), 
     info, "CREATE_COLLECTION_FEE")?;
  
     let _ = are_treasuries_valid(&treasuries)?;
@@ -258,7 +238,7 @@ pub (crate) fn internal_create_collection(mut deps: DepsMut,
     collections_store().save(deps.storage, _key.clone(), &new_collection)?;
 
     common_response(format!("{}-{}",_key.0, _key.1).as_str(), "create_collection", STATUS_OK, 
-    None, Some(_msgs.unwrap()))
+    None, Some(_msgs))
 
     
 }
@@ -329,7 +309,7 @@ pub fn create_item(mut deps: DepsMut,
     }  
 
 
-    let _msgs = try_pay_contract_treasuries(deps.branch(), _env.clone(), 
+    let _msgs = try_paying_contract_treasuries(deps.branch(), _env.clone(), 
     info, "CREATE_ITEM_FEE")?;
  
     let _key = (item.collection_owner.clone(), 
@@ -347,7 +327,7 @@ pub fn create_item(mut deps: DepsMut,
     ITEMS_STORE.save(deps.storage, _key.clone(), &item)?;
     
     common_response( format!("{}-{}={}",_key.0, _key.1,
-    _key.2).as_str(), "create_item", STATUS_OK, None, Some(_msgs.unwrap()))
+    _key.2).as_str(), "create_item", STATUS_OK, None, Some(_msgs))
 }
 
 
