@@ -378,8 +378,6 @@ mod tests {
     fn extract_amount_from_bank_msg(msg: &BankMsg) -> Option<Uint128> {
         match msg {
             BankMsg::Send { amount, .. } => {
-                // `amount` is a vector of `Coin` structs
-                // In this example, we're just taking the first coin in the vector
                 amount.get(0).map(|coin| coin.amount)
             },
             _ => None, 
