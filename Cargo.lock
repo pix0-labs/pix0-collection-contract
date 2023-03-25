@@ -497,7 +497,7 @@ dependencies = [
 
 [[package]]
 name = "pix0-contract-common"
-version = "0.4.5"
+version = "0.4.6"
 dependencies = [
  "cosmwasm-std",
  "cosmwasm-storage",

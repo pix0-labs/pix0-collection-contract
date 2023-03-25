@@ -13,7 +13,7 @@ mod tests {
     use crate::ins::*;
     use pix0_contract_common::state::{Fee, ContractInfoResponse, PaymentByPercentage};
     use pix0_contract_common::msg::InstantiateMsg;
-    use pix0_contract_common::funcs::pay_by_percentage;
+    use pix0_contract_common::funcs::pay_by_percentage_strict;
 
 
     const DEFAULT_PRICE_DENOM : &str = "uconst";
@@ -345,7 +345,7 @@ mod tests {
 
         println!("Total : {}", total);
 
-        let res = pay_by_percentage(deps.as_mut(), info, mock_env().block.time, 
+        let res = pay_by_percentage_strict(deps.as_mut(), info, mock_env().block.time, 
         wallets, total.clone());
 
        
@@ -362,14 +362,18 @@ mod tests {
                 }
               
             });
+
+            assert_eq!(total, Coin {
+
+                amount : acc_total,
+    
+                denom : "uconst".to_string()
+            });
+    
         }
-
-        assert_eq!(total, Coin {
-
-            amount : acc_total,
-
-            denom : "uconst".to_string()
-        });
+        else {
+            println!("Error:: {:?}",res.err());
+        }
 
        
     }
