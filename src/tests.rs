@@ -6,13 +6,14 @@ mod tests {
     // use std::mem::size_of;
     use crate::state::*;
     use cosmwasm_std::testing::{mock_env, mock_info, mock_dependencies_with_balance};
-    use cosmwasm_std::{coins, Addr, Deps, from_binary, Coin, Uint128};
+    use cosmwasm_std::{coins, Addr, Deps, from_binary, Coin, Uint128, BankMsg};
     use crate::msg::*;
     use crate::nft_ins::Extension;
     use crate::contract::*;
     use crate::ins::*;
-    use pix0_contract_common::state::{Fee, ContractInfoResponse};
+    use pix0_contract_common::state::{Fee, ContractInfoResponse, PaymentByPercentage};
     use pix0_contract_common::msg::InstantiateMsg;
+    use pix0_contract_common::funcs::pay_by_percentage;
 
 
     const DEFAULT_PRICE_DENOM : &str = "uconst";
@@ -314,6 +315,75 @@ mod tests {
     
         }
        
+    }
+
+    // cargo test test_pay_by_percentage -- --show-output
+    #[test]
+    fn test_pay_by_percentage(){
+
+        let owner : &str = "archway14l92fdhae4htjtkyla73f262c39cngf2wc65ky";
+
+        let mut deps = mock_dependencies_with_balance(&coins(2, DEFAULT_PRICE_DENOM));
+        let info = mock_info(owner, &coins(2134000, DEFAULT_PRICE_DENOM));
+
+
+        let wallets = vec![PaymentByPercentage {
+            wallet : Addr::unchecked("Michael"),
+            percentage: 25,
+        },PaymentByPercentage {
+            wallet : Addr::unchecked("Nick"),
+            percentage: 35,
+        },PaymentByPercentage {
+            wallet : Addr::unchecked("Jack"),
+            percentage: 40,
+        }];
+
+        let total = Coin {
+            amount : Uint128::from(13500000u64),
+            denom : "uconst".to_string()
+        };
+
+        println!("Total : {}", total);
+
+        let res = pay_by_percentage(deps.as_mut(), info, mock_env().block.time, 
+        wallets, total.clone());
+
+       
+        let mut acc_total = Uint128::from(0u64);
+
+        if res.is_ok() {
+
+            res.ok().unwrap().iter().for_each(|p|{
+
+                let amt = extract_amount_from_bank_msg(&p.message);
+                if amt.is_some() {
+                    acc_total = acc_total + amt.unwrap() ;
+            
+                }
+              
+            });
+        }
+
+        assert_eq!(total, Coin {
+
+            amount : acc_total,
+
+            denom : "uconst".to_string()
+        });
+
+       
+    }
+
+
+    fn extract_amount_from_bank_msg(msg: &BankMsg) -> Option<Uint128> {
+        match msg {
+            BankMsg::Send { amount, .. } => {
+                // `amount` is a vector of `Coin` structs
+                // In this example, we're just taking the first coin in the vector
+                amount.get(0).map(|coin| coin.amount)
+            },
+            _ => None, 
+        }
     }
 
 }
