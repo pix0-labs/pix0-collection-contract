@@ -225,6 +225,8 @@ Option<Vec<BankMsg>>{
 
     let bank_msgs = pay_collection_treasuries(deps.branch(), _env.clone(), info.clone(), collection, price_type);
 
+    bank_msgs
+    /*
     let mut new_bmsgs : Vec<BankMsg> = Vec::new();
 
     if bank_msgs.is_some() {
@@ -248,7 +250,7 @@ Option<Vec<BankMsg>>{
     }
     else {
         None 
-    }
+    } */
 }
 
 pub fn pay_collection_treasuries (
