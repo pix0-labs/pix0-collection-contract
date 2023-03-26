@@ -1,7 +1,7 @@
 use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse};
 use cosmwasm_std::{Deps, StdResult, Order, Addr };
 use crate::state::{Collection, Item};
-use crate::indexes::{collections_store, ITEMS_STORE};
+use crate::indexes::{collections_store, COLLECTION_ITEMS_STORE};
 use cw_storage_plus::Bound;
 use crate::ins::collection_id;
 
@@ -117,7 +117,7 @@ pub (crate) fn internal_get_item(deps : Deps ,
     collection_id(collection_name, collection_symbol), 
     item_name.clone());
 
-    let stored_item = ITEMS_STORE.key(_key.clone());
+    let stored_item = COLLECTION_ITEMS_STORE.key(_key.clone());
     
     let item_result = stored_item.may_load(deps.storage);
     
@@ -143,7 +143,7 @@ start_after: Option<String>, limit: Option<u32>)
         , collection_symbol) );
     
     let items : StdResult <Vec<Item>> = 
-    ITEMS_STORE
+    COLLECTION_ITEMS_STORE
     .prefix(_prefix)
     .range(deps.storage, start, None, Order::Ascending)
     .take(limit)
@@ -180,7 +180,7 @@ pub (crate) fn internal_get_all_items(deps : Deps ,
             , collection_symbol) );
         
         let items : StdResult <Vec<Item>> = 
-        ITEMS_STORE
+        COLLECTION_ITEMS_STORE
         .prefix(_prefix)
         .range(deps.storage, None, None, Order::Ascending)
         .map(|itm| {
@@ -214,7 +214,7 @@ pub (crate) fn internal_get_items_count(deps : Deps , owner : Addr,
     
     let _prefix = (owner, collection_id(collection_name, collection_symbol));
     
-    ITEMS_STORE
+    COLLECTION_ITEMS_STORE
     .prefix(_prefix)
     .range(deps.storage, None, None, Order::Ascending)
     .count()

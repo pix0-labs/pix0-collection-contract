@@ -1,7 +1,7 @@
 use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr, Order, Coin, Uint128, BankMsg};
 use crate::state::{Collection, Treasury, Attribute, PriceType, Item, Royalty, COLLECTION_STATUS_DRAFT,
 COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
-use crate::indexes::{collections_store,ITEMS_STORE };
+use crate::indexes::{collections_store,COLLECTION_ITEMS_STORE };
 use crate::error::ContractError;
 use crate::query::{internal_get_collection, internal_get_all_items, internal_get_item};
 use crate::nft_ins::init_and_mint_nft;
@@ -256,7 +256,7 @@ pub fn item_exists( info: MessageInfo,
     let _key = (owner, collection_id(collection_name
         , collection_symbol), name );
 
-    let stored_item = ITEMS_STORE.load(deps.storage,_key);
+    let stored_item = COLLECTION_ITEMS_STORE.load(deps.storage,_key);
     
     stored_item.is_ok()
 }
@@ -273,16 +273,29 @@ pub (crate) fn internal_remove_item (
     let _key = (owner, collection_id(collection_name
         , collection_symbol), name );
 
-    let stored_item = ITEMS_STORE.key(_key.clone());
+    let stored_item = COLLECTION_ITEMS_STORE.key(_key.clone());
 
-    let item_result = stored_item.may_load(deps.storage);
+    let item_result = stored_item.load(deps.storage);
     
-    match item_result {
+    if item_result.is_ok() {
 
-        Ok(_)=> {ITEMS_STORE.remove(deps.storage, _key.clone()); true},
+        let loaded_item : Item = item_result.ok().unwrap();
+        
+        let akey = (loaded_item.collection_owner, collection_id(
+            loaded_item.collection_name,loaded_item.collection_symbol),
+            loaded_item.name);
 
-        Err(_)=> false , 
-    }    
+        assert_eq!(akey, _key);  
+        //println!("akey:{:?}::key:{:?}", akey, _key);
+
+        COLLECTION_ITEMS_STORE.remove(deps.storage, _key.clone());
+
+        true 
+    }
+    else {
+
+        false 
+    }
 
 }
 
@@ -325,7 +338,7 @@ pub fn create_item(mut deps: DepsMut,
 
     item.date_updated = item.date_created;
 
-    ITEMS_STORE.save(deps.storage, _key.clone(), &item)?;
+    COLLECTION_ITEMS_STORE.save(deps.storage, _key.clone(), &item)?;
     
     common_response( format!("{}-{}={}",_key.0, _key.1,
     _key.2).as_str(), "create_item", STATUS_OK, None, Some(_msgs))
@@ -532,7 +545,7 @@ pub (crate) fn remove_all_items(
     let mut keys : Vec<(Addr,String,String)> = Vec::new();
 
     {
-        let mut iter = ITEMS_STORE
+        let mut iter = COLLECTION_ITEMS_STORE
             .prefix(_prefix)
             .range(deps.storage, None, None, Order::Ascending)
             .into_iter();
@@ -551,7 +564,7 @@ pub (crate) fn remove_all_items(
     }
 
     for _key in keys.iter() {
-        ITEMS_STORE.remove(deps.storage, _key.clone());    
+        COLLECTION_ITEMS_STORE.remove(deps.storage, _key.clone());    
     }
     
 }
