@@ -197,7 +197,7 @@ pub struct Link {
 
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct NftItem {
+pub struct Item {
    
     pub collection_owner : Addr,
 
@@ -222,7 +222,7 @@ pub struct NftItem {
 }
 
 
-impl NftItem {
+impl Item {
 
     pub fn link_by_type (&self, link_type : u8) -> Vec<Link> {
 
@@ -272,7 +272,7 @@ impl NftItem {
 
 }
 
-impl NftItem {
+impl Item {
 
 
     fn add_to_trait_if_not_exist ( traits : &mut Vec<Trait>, 

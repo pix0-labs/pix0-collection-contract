@@ -1,6 +1,6 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use crate::state::{Collection,NftItem};
+use crate::state::{Collection,Item};
 use cosmwasm_std::Addr;
 use pix0_contract_common::state::{Fee, Contract};
 
@@ -47,7 +47,7 @@ pub enum ExecuteMsg {
 
     CreateItem {
 
-       item : NftItem, 
+       item : Item, 
     },
 
 
@@ -209,14 +209,14 @@ pub struct CollectionsResponse {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ItemResponse {
     
-    pub item : Option<NftItem>,
+    pub item : Option<Item>,
 }
 
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ItemsResponse {
     
-    pub items : Vec<NftItem>,
+    pub items : Vec<Item>,
 }
 
 
