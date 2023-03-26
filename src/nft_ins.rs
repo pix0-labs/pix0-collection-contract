@@ -1,5 +1,5 @@
 use cosmwasm_std::{Empty, DepsMut, MessageInfo, Env, Response, BankMsg, Binary };
-use crate::state::{Item, Collection, PRICE_TYPE_STANDARD};
+use crate::state::{NftItem, Collection, PRICE_TYPE_STANDARD};
 use crate::error::ContractError;
 use crate::utils::nft_token_id;
 use pix0_contract_common::funcs::{pay_by_percentage_checked, to_bank_messages, try_paying_contract_treasuries};
@@ -16,7 +16,7 @@ pub fn mint_nft(mut deps: DepsMut,
     _env : Env, 
     info: MessageInfo, 
     contract :  NftContract,
-    item : Item, 
+    item : NftItem, 
     collection : Collection,
     price_type : Option<u8>,
     token_uri : Option<String>,
@@ -109,7 +109,7 @@ pub fn mint_nft(mut deps: DepsMut,
 
 pub fn init_and_mint_nft(mut deps: DepsMut,  _env : Env, 
     info: MessageInfo, 
-    item : Item, 
+    item : NftItem, 
     collection : Collection, 
     price_type : Option<u8>,
     token_uri : Option<String>,

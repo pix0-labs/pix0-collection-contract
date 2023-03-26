@@ -1,6 +1,6 @@
 use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse};
 use cosmwasm_std::{Deps, StdResult, Order, Addr };
-use crate::state::{Collection, Item};
+use crate::state::{Collection, NftItem};
 use crate::indexes::{collections_store, COLLECTION_ITEMS_STORE};
 use cw_storage_plus::Bound;
 use crate::ins::collection_id;
@@ -111,7 +111,7 @@ pub fn get_all_collections(deps : Deps, limit: Option<u32>)
 
 pub (crate) fn internal_get_item(deps : Deps , 
     owner : Addr,collection_name : String,  
-    collection_symbol : String, item_name : String) ->Option<Item> {
+    collection_symbol : String, item_name : String) ->Option<NftItem> {
 
     let _key = (owner, 
     collection_id(collection_name, collection_symbol), 
@@ -133,7 +133,7 @@ pub (crate) fn internal_get_items(deps : Deps ,
 owner : Addr,collection_name : String,  
 collection_symbol : String,    
 start_after: Option<String>, limit: Option<u32>) 
-->Vec<Item> {
+->Vec<NftItem> {
 
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
     
@@ -142,7 +142,7 @@ start_after: Option<String>, limit: Option<u32>)
     let _prefix = (owner, collection_id(collection_name
         , collection_symbol) );
     
-    let items : StdResult <Vec<Item>> = 
+    let items : StdResult <Vec<NftItem>> = 
     COLLECTION_ITEMS_STORE
     .prefix(_prefix)
     .range(deps.storage, start, None, Order::Ascending)
@@ -152,7 +152,7 @@ start_after: Option<String>, limit: Option<u32>)
         let (_k, i) = itm?;
 
         Ok(
-            Item { collection_owner : i.collection_owner, name : i.name, 
+            NftItem { collection_owner : i.collection_owner, name : i.name, 
             collection_name : i.collection_name, 
             collection_symbol : i.collection_symbol, 
             description: i.description, 
@@ -174,12 +174,12 @@ start_after: Option<String>, limit: Option<u32>)
 pub (crate) fn internal_get_all_items(deps : Deps , 
     owner : Addr,collection_name : String,  
     collection_symbol : String) 
-    ->Vec<Item> {
+    ->Vec<NftItem> {
     
         let _prefix = (owner, collection_id(collection_name
             , collection_symbol) );
         
-        let items : StdResult <Vec<Item>> = 
+        let items : StdResult <Vec<NftItem>> = 
         COLLECTION_ITEMS_STORE
         .prefix(_prefix)
         .range(deps.storage, None, None, Order::Ascending)
@@ -188,7 +188,7 @@ pub (crate) fn internal_get_all_items(deps : Deps ,
             let (_k, i) = itm?;
     
             Ok(
-                Item { collection_owner : i.collection_owner, name : i.name, 
+                NftItem { collection_owner : i.collection_owner, name : i.name, 
                 collection_name : i.collection_name, 
                 collection_symbol : i.collection_symbol, 
                 description: i.description, 

@@ -1,5 +1,5 @@
 use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr, Order, Coin, Uint128, BankMsg};
-use crate::state::{Collection, Treasury, Attribute, PriceType, Item, Royalty, COLLECTION_STATUS_DRAFT,
+use crate::state::{Collection, Treasury, Attribute, PriceType, NftItem, Royalty, COLLECTION_STATUS_DRAFT,
 COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
 use crate::indexes::{collections_store,COLLECTION_ITEMS_STORE };
 use crate::error::ContractError;
@@ -279,7 +279,7 @@ pub (crate) fn internal_remove_item (
     
     if item_result.is_ok() {
 
-        let loaded_item : Item = item_result.ok().unwrap();
+        let loaded_item : NftItem = item_result.ok().unwrap();
         
         let akey = (loaded_item.collection_owner, collection_id(
             loaded_item.collection_name,loaded_item.collection_symbol),
@@ -301,7 +301,7 @@ pub (crate) fn internal_remove_item (
 
 
 pub fn create_item(mut deps: DepsMut, 
-    _env : Env, info: MessageInfo,item : Item 
+    _env : Env, info: MessageInfo,item : NftItem 
 ) -> Result<Response, ContractError> {
   
     let mut item = item; 
@@ -480,7 +480,7 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
        
     }
     else {
-        Err(ContractError::CustomErrorMesg{message : format!("Item named {} not found", item_name )})
+        Err(ContractError::CustomErrorMesg{message : format!("NftItem named {} not found", item_name )})
     }
        
 }

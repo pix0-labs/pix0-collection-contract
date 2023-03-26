@@ -1,10 +1,10 @@
-use crate::state::{Collection, Item};
+use crate::state::{Collection, NftItem};
 use cosmwasm_std::Addr;
 use cw_storage_plus::{UniqueIndex, Index, IndexList, IndexedMap, Map};
 use crate::ins::collection_id;
 
 
-pub const COLLECTION_ITEMS_STORE : Map<(Addr,String,String), Item> = Map::new("COLLECTION_ITEMS_STORE");
+pub const COLLECTION_ITEMS_STORE : Map<(Addr,String,String), NftItem> = Map::new("COLLECTION_ITEMS_STORE");
 
 pub struct CollectionIndexes<'a> {
 

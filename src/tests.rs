@@ -108,11 +108,11 @@ mod tests {
            let links = vec![Link{link_type: LINK_TYPE_IMAGE_URL, 
                value:format!("https://rm.img/img_000{}.png",x) }];
 
-           let itm = Item {
+           let itm = NftItem {
                collection_owner :  Addr::unchecked(owner.to_string()),
                collection_name : collection_name.clone(),
                collection_symbol : collection_symb.clone(),
-               name : format!("Item #00{}",(x+1)),
+               name : format!("NftItem #00{}",(x+1)),
                traits : Vec::new(),
                links : links,
                description : None,
@@ -150,7 +150,7 @@ mod tests {
         //seed = 1892;
 
         let r =  mint_item_by_name(deps.as_mut(), mock_env(), info.clone(),  
-        format!("Item #00{}",2), Addr::unchecked(owner.clone()), collection_name.clone(), 
+        format!("NftItem #00{}",2), Addr::unchecked(owner.clone()), collection_name.clone(), 
         collection_symb.clone(), Some(price_type), 
         Some("https://some.metadata/x208y.json".to_string()), None );
        
