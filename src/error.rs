@@ -60,6 +60,11 @@ pub enum ContractError {
 
     #[error("FailedToSendNft")]
     ContractAlreadyInstantiated  { text : String },
+
+    #[error("OverOrUnderAllocationError")]
+    OverOrUnderAllocationError { message : String },
+
+
 }
 
 
@@ -79,6 +84,11 @@ impl From<CommonContractError> for ContractError {
             CommonContractError::ContractAlreadyInstantiated { message } =>
             ContractError::ContractAlreadyInstantiated { text: message}
             ,
+
+            CommonContractError::OverOrUnderAllocationError { message } =>
+            ContractError::OverOrUnderAllocationError { message: message }
+            ,
+
             _ => ContractError::CustomErrorMesg { message: "Unknown error".to_string() }
 
         }

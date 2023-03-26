@@ -2,7 +2,7 @@ use cosmwasm_std::{Empty, DepsMut, MessageInfo, Env, Response, BankMsg, Binary }
 use crate::state::{Item, Collection, PRICE_TYPE_STANDARD};
 use crate::error::ContractError;
 use crate::utils::nft_token_id;
-use pix0_contract_common::funcs::{pay_by_percentage, to_bank_messages, try_paying_contract_treasuries};
+use pix0_contract_common::funcs::{pay_by_percentage_checked, to_bank_messages, try_paying_contract_treasuries};
 // refer to https://docs.opensea.io/docs/metadata-standards
 pub type Metadata = crate::state::Metadata;
 
@@ -262,7 +262,7 @@ collection : Collection, price_type : u8 ) -> Option<Vec<BankMsg>>{
     if price.is_some() {
 
         let amts = 
-        pay_by_percentage(deps, info, _env.block.time, payments, price.unwrap());
+        pay_by_percentage_checked(deps, info, _env.block.time, payments, price.unwrap());
 
         let bank_msgs = to_bank_messages(amts);
 
