@@ -7,6 +7,13 @@
     },
     "deployments": [
       {
+        "project": "pix0-collection-contract",
+        "type": "store",
+        "chainId": "constantine-1",
+        "codeId": 272,
+        "txhash": "BA956E64B48E5046F0B6EDF95D86591DD8EDF1638724A3EDEB9E548D78764A29"
+      },
+      {
         "type": "instantiate",
         "chainId": "constantine-1",
         "codeId": 271,
