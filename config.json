@@ -7,6 +7,28 @@
     },
     "deployments": [
       {
+        "type": "instantiate",
+        "chainId": "constantine-1",
+        "codeId": 271,
+        "txhash": "47746A59D3459AFE48A4D768B3241C34337E73163F5C6C5890AAAD41D2CEFCDC",
+        "address": "archway1m34cg2y0w027p9jkpa590seq0u3n79x9yjcdl44e5ff8468xc7sqt796hr",
+        "admin": "archway14l92fdhae4htjtkyla73f262c39cngf2wc65ky"
+      },
+      {
+        "type": "instantiate",
+        "chainId": "constantine-1",
+        "codeId": 271,
+        "txhash": "1F2E6057CC70060D86408E4F02CAFC075ED93C6C79F88809EB311C92D856D2C3",
+        "address": "archway12wjll58pz7kdswpj4v49khva70awdwd5rkmaglf065k46aekpq8qx0g34z",
+        "admin": "archway14l92fdhae4htjtkyla73f262c39cngf2wc65ky"
+      },
+      {
+        "type": "store",
+        "chainId": "constantine-1",
+        "codeId": 271,
+        "txhash": "106F8176318061E1692815420098B6CC76824EACDF761713E1A2FA72446531D4"
+      },
+      {
         "project": "pix0-collection-contract",
         "type": "instantiate",
         "chainId": "constantine-1",
