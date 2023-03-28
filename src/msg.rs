@@ -128,9 +128,18 @@ pub enum QueryMsg {
 
     GetAllCollections { 
         
+        start_after : Option<String>,
+        
         limit : Option<u32>,
     },
 
+    GetActiveCollections { 
+        
+           
+        start_after : Option<String>,
+        
+        limit : Option<u32>,
+    },
 
     GetItem { 
 

@@ -1,6 +1,6 @@
 use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse};
 use cosmwasm_std::{Deps, StdResult, Order, Addr };
-use crate::state::{Collection, Item};
+use crate::state::{Collection, Item, COLLECTION_STATUS_ACTIVATED};
 use crate::indexes::{collections_store, COLLECTION_ITEMS_STORE};
 use cw_storage_plus::Bound;
 use crate::ins::collection_id;
@@ -75,16 +75,20 @@ start_after: Option<String>, limit: Option<u32>)
 }
 
 
-pub fn get_all_collections(deps : Deps, limit: Option<u32>) 
+
+pub fn get_all_collections(deps : Deps, start_after: Option<String>, limit: Option<u32>) 
     ->StdResult<CollectionsResponse> {
         
     
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
-
+  
+    let start = start_after.map(|s| Bound::ExclusiveRaw(s.into()));
+  
     let colls : StdResult <Vec<Collection>> = 
    
+   
     collections_store().idx.collections
-    .range(deps.storage, None, None, Order::Ascending)
+    .range(deps.storage, start, None, Order::Ascending)
     .take(limit)
     .map(|col| {
         
@@ -106,6 +110,39 @@ pub fn get_all_collections(deps : Deps, limit: Option<u32>)
     })
 }
 
+
+pub fn get_active_collections(deps : Deps, start_after: Option<String>, limit: Option<u32>) 
+    ->StdResult<CollectionsResponse> {
+        
+    
+    let all_colls = get_all_collections(deps, start_after, limit);
+
+    if all_colls.is_ok() {
+
+        let res = all_colls.ok();
+
+        if res.is_some() {
+
+            let colls = res.unwrap().collections.into_iter().filter(|c| c.status 
+                == Some(COLLECTION_STATUS_ACTIVATED)).collect::<Vec<Collection>>();
+                
+            Ok(CollectionsResponse {
+                collections: colls,
+            })
+        }
+        else {
+
+            Ok(CollectionsResponse {
+                collections: vec![],
+            })
+        }
+    }
+    else {
+        Ok(CollectionsResponse {
+            collections: vec![],
+        })
+    }
+}
 
 
 

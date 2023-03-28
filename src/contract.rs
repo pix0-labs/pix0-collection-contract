@@ -8,7 +8,8 @@ use crate::error::ContractError;
 use crate::ins::{create_collection, update_collection, create_item, mint_item_by_name, mint_item, 
     remove_collection,update_contract_info};
 use crate::nft_ins::{transfer_nft, burn_nft, send_nft};
-use crate::query::{get_all_collections, get_collections, get_collection, get_items_count, get_items, get_item};
+use crate::query::{get_all_collections, get_collections,get_active_collections, 
+get_collection, get_items_count, get_items, get_item};
 use crate::nft_query::*;
 use crate::msg::{ExecuteMsg,QueryMsg, MigrateMsg};
 use crate::utils::str_to_u64;
@@ -95,8 +96,12 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::GetCollections { owner, start_after, limit } =>
         to_binary(&get_collections(deps,owner, start_after, limit)?),
 
-        QueryMsg::GetAllCollections { limit } =>
-        to_binary(&get_all_collections(deps, limit)?),
+        QueryMsg::GetActiveCollections {start_after, limit } =>
+        to_binary(&get_active_collections(deps, start_after, limit)?),
+
+
+        QueryMsg::GetAllCollections { start_after, limit } =>
+        to_binary(&get_all_collections(deps, start_after, limit)?),
 
         QueryMsg::MintedTokensByOwner { owner, start_after, limit } =>
         get_minted_tokens_by_owner(deps, _env, owner, start_after, limit),
