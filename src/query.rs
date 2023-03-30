@@ -111,7 +111,9 @@ pub fn get_all_collections(deps : Deps, start_after: Option<String>, limit: Opti
 }
 
 
-pub fn get_active_collections(deps : Deps, start_after: Option<String>, limit: Option<u32>) 
+pub fn get_active_collections(deps : Deps,
+    keyword : Option<String>,  
+    start_after: Option<String>, limit: Option<u32>) 
     ->StdResult<CollectionsResponse> {
         
     
@@ -123,9 +125,27 @@ pub fn get_active_collections(deps : Deps, start_after: Option<String>, limit: O
 
         if res.is_some() {
 
-            let colls = res.unwrap().collections.into_iter().filter(|c| c.status 
-                == Some(COLLECTION_STATUS_ACTIVATED)).collect::<Vec<Collection>>();
-                
+            let mut colls : Vec<Collection> = Vec::new();
+
+            if keyword.is_some(){
+
+                let kw = keyword.unwrap();
+
+                colls = res.unwrap().collections.into_iter().filter(|c| 
+                    c.status == Some(COLLECTION_STATUS_ACTIVATED) 
+                    && (c.name.contains(&kw) ||
+                    c.description.clone().unwrap_or("".to_string()).contains(&kw) ) 
+                    ).collect::<Vec<Collection>>();
+              
+            }
+            else {
+
+                colls = res.unwrap().collections.into_iter().filter(|c| c.status 
+                    == Some(COLLECTION_STATUS_ACTIVATED)).collect::<Vec<Collection>>();
+                 
+            }
+
+               
             Ok(CollectionsResponse {
                 collections: colls,
             })

@@ -135,7 +135,8 @@ pub enum QueryMsg {
 
     GetActiveCollections { 
         
-           
+        keyword : Option<String>,
+        
         start_after : Option<String>,
         
         limit : Option<u32>,

@@ -438,4 +438,40 @@ mod tests {
 
     }
 
+    // cargo test test_create_collection_mint_item -- --show-output
+    #[test]
+    fn test_loop_create_collections(){
+
+        let owner : &str = "archway14l92fdhae4htjtkyla73f262c39cngf2wc65ky";
+
+        let mut deps = mock_dependencies_with_balance(&coins(2, DEFAULT_PRICE_DENOM));
+        let info = mock_info(owner, &coins(134000, DEFAULT_PRICE_DENOM));
+
+        let admin =  Addr::unchecked(owner.to_string());
+        let admin2 =  Addr::unchecked("archway1upspu5660q39adv768z8ffk44ta6lzd4nfw2zw".to_string());
+        let admin3 =  Addr::unchecked("archway1cz5a70ja86ak40de7r6vgm2lr9mtgvue5sj5kp".to_string());
+
+        let ins = InstantiateMsg {
+
+            allowed_admins : Some(vec![admin.clone()]),
+            treasuries : Some(vec![admin,admin2, admin3]),
+            contracts : None, 
+            fees : Some(vec![ 
+                Fee {name : "CREATE_COLLECTION_FEE".to_string(),
+                value : Coin { amount : Uint128::from(1500u64), denom : "uconst".to_string()}},
+                Fee {name : "CREATE_ITEM_FEE".to_string(),
+                value : Coin { amount : Uint128::from(3500u64), denom : "uconst".to_string()}},
+                Fee {name : "NFT_MINTING_FEE".to_string(),
+                value : Coin { amount : Uint128::from(6400u64), denom : "uconst".to_string()}},
+            ]) ,
+            log_last_payment : Some(true)
+
+        };
+
+        let res = instantiate(deps.as_mut(), mock_env(), info.clone(), ins.clone());
+        
+        println!("Instantiated::{:?}\n", res);
+        
+
+    }
 }
