@@ -156,20 +156,26 @@ pub fn get_active_collections(deps : Deps,
 }
 
 
-fn is_category_of(collection : Collection, category : String) -> bool {
+pub (crate) fn collection_category(collection : Collection) -> String {
 
     let a = collection.attributes.unwrap_or(vec![])
     .into_iter()
     .find(|a|a .name == ATTRB_CATEGORY);
 
-    if a.is_some() {
-
-        return a.unwrap().value == category;
+    if a.is_some(){
+        a.unwrap().value
     }
     else {
 
-        return false ;
+        "".to_string()
     }
+}
+
+fn is_category_of(collection : Collection, category : String) -> bool {
+
+    let cat = collection_category(collection);
+
+    return cat == category;
 }
 
 

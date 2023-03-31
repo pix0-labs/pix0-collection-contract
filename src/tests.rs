@@ -11,6 +11,7 @@ mod tests {
     use crate::nft_ins::Extension;
     use crate::contract::*;
     use crate::ins::*;
+    use crate::query::collection_category;
     use pix0_contract_common::state::{Fee, ContractInfoResponse, PaymentByPercentage};
     use pix0_contract_common::msg::InstantiateMsg;
     use pix0_contract_common::funcs::{pay_by_percentage_checked, try_paying_contract_treasuries};
@@ -472,12 +473,20 @@ mod tests {
         
         println!("Instantiated::{:?}\n", res);
 
+        let cats = vec!["art", "music", "game assets"];
 
+        let mut rng = crate::utils::RandomNumGen::new(3390);
+       
         for i in 0..7000 {
+
+
+            let cat = cats.get(
+                rng.generate_range(0, (cats.len() - 1) as u64) as usize);
+
            
             let attbs = vec![Attribute{
                 name : ATTRB_CATEGORY.to_string(),
-                value : "Art".to_string()
+                value : cat.unwrap().to_string()
             }];
 
             let prices = vec![PriceType {
@@ -525,8 +534,8 @@ mod tests {
 
         let msg = QueryMsg::GetActiveCollections { 
 
-            keyword : Some(format!("0032")),
-            category : None,
+            keyword : Some("0032".to_string()),
+            category : Some("music".to_string()),
             start_after :None, //Some("Test Collection 0030".to_string()),
             limit : Some(20)
         };
@@ -537,7 +546,7 @@ mod tests {
 
         result.collections.iter().for_each(|c|{
 
-            println!("Collection ::{:?}\n",c.name);
+            println!("Collection ::{}::catgeory::{}\n",c.name,collection_category(c.clone()) );
         });
         
         println!("Found.collections.count::{}", result.collections.len());
