@@ -294,21 +294,6 @@ impl Item {
         }
     }
 
-    pub fn traits_add_collection_name_and_symbol(&self) -> Vec<Trait> {
-
-        let mut trs = self.traits.clone();
-
-        Self::add_to_trait_if_not_exist(&mut trs, String::from("collection-name")
-        , String::from("Collection's name"),
-        self.collection_name.clone());
-
-        Self::add_to_trait_if_not_exist(&mut trs, String::from("collection-symbol"), 
-        String::from("Collection's symbol"),
-        self.collection_symbol.clone());
-
-        trs 
-    }
-
 
     pub fn add_simple_collection_info_to_traits(&self) -> Vec<Trait> {
 
