@@ -101,8 +101,9 @@ impl Collection {
     }
 }
 
-pub const ALLOWED_MINT_ITEM_BY_NAME : &str = "ALLOWED_MINT_ITEM_BY_NAME";
+pub const ATTRB_ALLOWED_MINT_ITEM_BY_NAME : &str = "ALLOWED_MINT_ITEM_BY_NAME";
 
+pub const ATTRB_CATEGORY : &str = "CATEGORY";
 
 impl Collection {
 
@@ -136,7 +137,7 @@ impl Collection {
 
             let m : Vec<Attribute>= 
             attbs.into_iter()
-            .filter(|i| i.name == ALLOWED_MINT_ITEM_BY_NAME.to_string())
+            .filter(|i| i.name == ATTRB_ALLOWED_MINT_ITEM_BY_NAME.to_string())
             .collect();
 
             if m.len() > 0 {

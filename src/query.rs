@@ -116,54 +116,72 @@ pub fn get_active_collections(deps : Deps,
     start_after: Option<String>, limit: Option<u32>) 
     ->StdResult<CollectionsResponse> {
         
+    let start = start_after.map(|s| Bound::ExclusiveRaw(s.into()));
+
+    let all_colls : StdResult<Vec<Collection>> = 
     
-    let all_colls = get_all_collections(deps, start_after, limit);
+    collections_store().idx.collections
+    .range(deps.storage, start, None, Order::Ascending)
+    .map(|col| {
+        
+        let (_k, c) = col?;
+        Ok (
+            Collection { owner : c.owner, name : c.name, 
+            treasuries : c.treasuries,
+            attributes : c.attributes, royalties: c.royalties,
+            prices : c.prices, status: c.status, 
+            symbol : c.symbol, description: c.description, 
+            date_created: c.date_created, date_updated: c.date_updated }
+        )
+    }).collect();
 
-    if all_colls.is_ok() {
 
-        let res = all_colls.ok();
+    if all_colls.is_err() {
 
-        if res.is_some() {
-
-            let mut colls : Vec<Collection> = Vec::new();
-
-            if keyword.is_some(){
-
-                let kw = keyword.unwrap();
-
-                colls = res.unwrap().collections.into_iter().filter(|c| 
-                    c.status == Some(COLLECTION_STATUS_ACTIVATED) 
-                    && (c.name.contains(&kw) ||
-                    c.description.clone().unwrap_or("".to_string()).contains(&kw) ) 
-                    ).collect::<Vec<Collection>>();
-              
-            }
-            else {
-
-                colls = res.unwrap().collections.into_iter().filter(|c| c.status 
-                    == Some(COLLECTION_STATUS_ACTIVATED)).collect::<Vec<Collection>>();
-                 
-            }
-
-               
-            Ok(CollectionsResponse {
-                collections: colls,
-            })
-        }
-        else {
-
-            Ok(CollectionsResponse {
-                collections: vec![],
-            })
-        }
-    }
-    else {
-        Ok(CollectionsResponse {
+        return Ok(CollectionsResponse {
             collections: vec![],
         })
+    
     }
+
+    let all_colls = all_colls.unwrap();
+
+    let colls : Vec<Collection> = filter_collection_result(all_colls, keyword, limit);
+
+    Ok(CollectionsResponse {
+        collections: colls,
+    })
+    
 }
 
+
+fn filter_collection_result(all_colls : Vec<Collection>, keyword : Option<String>, limit: Option<u32> ) -> Vec<Collection>{
+
+    let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
+
+    if keyword.is_some(){
+
+        let kw = keyword.unwrap();
+
+        all_colls.into_iter().filter(|c| 
+            c.status == Some(COLLECTION_STATUS_ACTIVATED) 
+            && (c.name.contains(&kw) ||
+            c.description.clone().unwrap_or("".to_string()).contains(&kw) ) 
+            )
+            .take(limit)
+            .collect::<Vec<Collection>>()
+    }
+    else {
+
+        all_colls.into_iter().filter(|c| c.status 
+            == Some(COLLECTION_STATUS_ACTIVATED))
+            .take(limit)
+            .collect::<Vec<Collection>>()
+            
+    }
+
+
+}
 
 
 pub (crate) fn internal_get_item(deps : Deps , 

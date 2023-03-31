@@ -79,7 +79,7 @@ mod tests {
 
 
         let attbs = vec![Attribute{
-            name : ALLOWED_MINT_ITEM_BY_NAME.to_string(),
+            name : ATTRB_ALLOWED_MINT_ITEM_BY_NAME.to_string(),
             value : "true".to_string()
         }];
         
@@ -438,7 +438,7 @@ mod tests {
 
     }
 
-    // cargo test test_create_collection_mint_item -- --show-output
+    // cargo test test_loop_create_collections -- --show-output
     #[test]
     fn test_loop_create_collections(){
 
@@ -471,6 +471,57 @@ mod tests {
         let res = instantiate(deps.as_mut(), mock_env(), info.clone(), ins.clone());
         
         println!("Instantiated::{:?}\n", res);
+
+
+        for i in 0..5000 {
+           
+            let attbs = vec![Attribute{
+                name : ATTRB_CATEGORY.to_string(),
+                value : "Art".to_string()
+            }];
+
+            let prices = vec![PriceType {
+
+                price_type : PRICE_TYPE_STANDARD,
+                value : Coin {amount :Uint128::from(123900u64),
+                denom : DEFAULT_PRICE_DENOM.to_string()},
+                date_start : None, date_end : None, 
+            }];
+
+            let treasuries : Vec<Treasury> = vec![Treasury {
+                wallet : Addr::unchecked("archway1nxqd7h869sj9pn0xyq0lqqqxjqx6vt550z4aj7".to_string()),
+                percentage : 70,
+                name : None,
+            }, Treasury {
+                wallet : Addr::unchecked("archway122w9rr76aac9pmke9qq6ya5l8245qr44h8jvtm".to_string()),
+                percentage : 30,
+                name : None,
+            }];
+            
+            let create_collection = ExecuteMsg::CreateCollection { collection:
+                Collection {
+                    name : format!("Test Collection 00{}", i),
+                    symbol : format!("TC{}",i),
+                    description : Some(format!("Description of test collection 00{}",i )),
+                    treasuries : Some(treasuries),
+                    attributes : Some(attbs), 
+                    status : Some(COLLECTION_STATUS_ACTIVATED),
+                    prices : Some(prices),
+                    royalties : None, 
+                    date_created : None,
+                    date_updated : None, 
+                    owner : Some(Addr::unchecked(owner)), 
+                }
+            };
+
+            let res = execute(deps.as_mut(), mock_env(), info.clone(), 
+            create_collection.clone());
+        
+            println!("{}.res.created.collection::{:?}\n",i, res);
+
+
+        }
+
         
 
     }
