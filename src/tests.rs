@@ -525,7 +525,7 @@ mod tests {
 
         let msg = QueryMsg::GetActiveCollections { 
 
-            keyword : Some(format!("005")),
+            keyword : Some(format!("0032")),
             category : None,
             start_after :None, //Some("Test Collection 0030".to_string()),
             limit : Some(20)
