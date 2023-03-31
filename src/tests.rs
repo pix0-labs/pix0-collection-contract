@@ -535,13 +535,12 @@ mod tests {
 
         let result : CollectionsResponse = from_binary(&res).unwrap();
 
-        println!("Found.collections.count::{}", result.collections.len());
-
         result.collections.iter().for_each(|c|{
 
             println!("Collection ::{:?}\n",c.name);
-        })
+        });
         
+        println!("Found.collections.count::{}", result.collections.len());
 
     }
 }
