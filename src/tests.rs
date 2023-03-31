@@ -535,21 +535,21 @@ mod tests {
         let msg = QueryMsg::GetActiveCollections { 
 
             keyword : Some("0032".to_string()),
-            category : None, //Some("music".to_string()),
+            category : Some("music".to_string()),
             start : Some(21), //Some("Test Collection 0025".to_string()),
             limit : Some(20)
         };
 
         let res = query(deps.as_ref(), mock_env(), msg).expect("failed to unwrap!!");
 
-        let result : CollectionsResponse = from_binary(&res).unwrap();
+        let result : FilteredCollectionsResponse = from_binary(&res).unwrap();
 
         result.collections.iter().for_each(|c|{
 
             println!("Collection ::{}::catgeory::{}\n",c.name,collection_category(c.clone()) );
         });
         
-        println!("Found.collections.count::{}", result.collections.len());
-
+        println!("Return.collections.count::{}", result.collections.len());
+        println!("Total.collections.count::{:?}", result.total);
     }
 }
