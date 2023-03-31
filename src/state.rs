@@ -105,6 +105,8 @@ pub const ATTRB_ALLOWED_MINT_ITEM_BY_NAME : &str = "ALLOWED_MINT_ITEM_BY_NAME";
 
 pub const ATTRB_CATEGORY : &str = "CATEGORY";
 
+pub const ATTRB_MINT_CAP : &str = "MINT_CAP";
+
 impl Collection {
 
     pub fn price_by_type (&self,  _type : u8) -> Option<Coin> {
