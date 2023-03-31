@@ -1,4 +1,6 @@
-use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse};
+use std::convert::TryInto;
+
+use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse, FilteredCollectionsResponse};
 use cosmwasm_std::{Deps, StdResult, Order, Addr };
 use crate::state::{Collection, Item, COLLECTION_STATUS_ACTIVATED, ATTRB_CATEGORY};
 use crate::indexes::{collections_store, COLLECTION_ITEMS_STORE};
@@ -106,7 +108,7 @@ pub fn get_all_collections(deps : Deps, start_after: Option<String>, limit: Opti
 
     
     Ok(CollectionsResponse {
-        collections: colls?,
+        collections: colls?
     })
 }
 
@@ -115,7 +117,7 @@ pub fn get_active_collections(deps : Deps,
     keyword : Option<String>,  
     category : Option<String>, 
     start: Option<u32>, limit: Option<u32>) 
-    ->StdResult<CollectionsResponse> {
+    ->StdResult<FilteredCollectionsResponse> {
         
    // let start = start_after.map(Bound::exclusive);
    
@@ -139,18 +141,19 @@ pub fn get_active_collections(deps : Deps,
 
     if all_colls.is_err() {
 
-        return Ok(CollectionsResponse {
-            collections: vec![],
-        })
+        return Ok(FilteredCollectionsResponse::empty_response())
     
     }
 
     let all_colls = all_colls.unwrap();
 
-    let colls : Vec<Collection> = filter_collection_result(all_colls, keyword, category, start, limit);
+    let colls : (Vec<Collection>,usize) = filter_collection_result(all_colls, keyword, category, start, limit);
 
-    Ok(CollectionsResponse {
-        collections: colls,
+    Ok(FilteredCollectionsResponse {
+        collections: colls.0,
+        total : Some(colls.1.try_into().unwrap_or(0)),
+        start : start,
+        limit : limit
     })
     
 }
@@ -186,16 +189,31 @@ fn contains_keyword(collection : Collection, keyword : String) -> bool {
 
 }
 
+
 fn filter_collection_result(all_colls : Vec<Collection>, 
     keyword : Option<String>, 
     category : Option<String>, 
     start : Option<u32>,
-    limit: Option<u32> ) -> Vec<Collection>{
+    limit: Option<u32>) -> (Vec<Collection>,usize){
 
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
 
     let skip = start.unwrap_or(0) as usize ;
+    
+    let res = filter_collection_result_all(all_colls, keyword, category);
 
+    (res.clone()
+    .into_iter()
+    .skip(skip)
+    .take(limit)
+    .collect::<Vec<Collection>>(), res.len())
+}
+
+fn filter_collection_result_all(all_colls : Vec<Collection>, 
+    keyword : Option<String>, 
+    category : Option<String>) -> Vec<Collection>{
+
+   
     if keyword.is_some() && category.is_some(){
 
         let kw = keyword.unwrap();
@@ -205,8 +223,6 @@ fn filter_collection_result(all_colls : Vec<Collection>,
             && contains_keyword(c.clone(), kw.clone()) 
             && is_category_of(c.clone(), category.clone().unwrap())
             )
-            .skip(skip)
-            .take(limit)
             .collect::<Vec<Collection>>()
     }
 
@@ -217,17 +233,13 @@ fn filter_collection_result(all_colls : Vec<Collection>,
         all_colls.into_iter().filter(|c| 
             c.status == Some(COLLECTION_STATUS_ACTIVATED) 
             && contains_keyword(c.clone(), kw.clone()) )
-            .skip(skip)
-            .take(limit)
             .collect::<Vec<Collection>>()
     }
     else {
 
         all_colls.into_iter().filter(|c| c.status 
             == Some(COLLECTION_STATUS_ACTIVATED))
-            .skip(skip)
-            .take(limit)
-            .collect::<Vec<Collection>>()
+          .collect::<Vec<Collection>>()
             
     }
 
