@@ -473,7 +473,7 @@ mod tests {
         println!("Instantiated::{:?}\n", res);
 
 
-        for i in 0..500 {
+        for i in 0..7000 {
            
             let attbs = vec![Attribute{
                 name : ATTRB_CATEGORY.to_string(),
@@ -514,10 +514,10 @@ mod tests {
                 }
             };
 
-            let res = execute(deps.as_mut(), mock_env(), info.clone(), 
+            let _res = execute(deps.as_mut(), mock_env(), info.clone(), 
             create_collection.clone());
         
-            println!("{}.res.created.collection::{:?}\n",i, res);
+            //println!("{}.res.created.collection::{:?}\n",i, _res);
 
 
 
