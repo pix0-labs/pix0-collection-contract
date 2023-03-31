@@ -535,7 +535,7 @@ mod tests {
         let msg = QueryMsg::GetActiveCollections { 
 
             keyword : Some("0032".to_string()),
-            category : Some("music".to_string()),
+            category : Some("art".to_string()),
             start : Some(21), //Some("Test Collection 0025".to_string()),
             limit : Some(20)
         };
@@ -550,6 +550,6 @@ mod tests {
         });
         
         println!("Return.collections.count::{}", result.collections.len());
-        println!("Total.collections.count::{:?}", result.total);
+        println!("Total.collections.count::{:?}:{:?}", result.total, result.start);
     }
 }
