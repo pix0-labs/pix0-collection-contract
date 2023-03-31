@@ -1,6 +1,6 @@
 use std::convert::TryInto;
 
-use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse, FilteredCollectionsResponse};
+use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse, CollectionsWithParamsResponse};
 use cosmwasm_std::{Deps, StdResult, Order, Addr };
 use crate::state::{Collection, Item, COLLECTION_STATUS_ACTIVATED, ATTRB_CATEGORY};
 use crate::indexes::{collections_store, COLLECTION_ITEMS_STORE};
@@ -117,9 +117,7 @@ pub fn get_active_collections(deps : Deps,
     keyword : Option<String>,  
     category : Option<String>, 
     start: Option<u32>, limit: Option<u32>) 
-    ->StdResult<FilteredCollectionsResponse> {
-        
-   // let start = start_after.map(Bound::exclusive);
+    ->StdResult<CollectionsWithParamsResponse> {    
    
     let all_colls : StdResult<Vec<Collection>> = 
     
@@ -141,7 +139,7 @@ pub fn get_active_collections(deps : Deps,
 
     if all_colls.is_err() {
 
-        return Ok(FilteredCollectionsResponse::empty_response())
+        return Ok(CollectionsWithParamsResponse::empty_response())
     
     }
 
@@ -149,7 +147,7 @@ pub fn get_active_collections(deps : Deps,
 
     let colls : (Vec<Collection>,usize) = filter_collection_result(all_colls, keyword, category, start, limit);
 
-    Ok(FilteredCollectionsResponse {
+    Ok(CollectionsWithParamsResponse {
         collections: colls.0,
         total : Some(colls.1.try_into().unwrap_or(0)),
         start : start,

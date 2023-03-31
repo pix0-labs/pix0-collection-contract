@@ -220,7 +220,7 @@ pub struct CollectionsResponse {
 
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct FilteredCollectionsResponse {
+pub struct CollectionsWithParamsResponse {
 
     pub collections : Vec<Collection>,
 
@@ -231,11 +231,11 @@ pub struct FilteredCollectionsResponse {
     pub limit : Option<u32>,
 }
 
-impl FilteredCollectionsResponse {
+impl CollectionsWithParamsResponse {
 
     pub fn empty_response() -> Self {
 
-        FilteredCollectionsResponse {
+        CollectionsWithParamsResponse {
             collections: vec![],
             total : None,
             start : None,

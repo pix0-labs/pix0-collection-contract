@@ -542,7 +542,7 @@ mod tests {
 
         let res = query(deps.as_ref(), mock_env(), msg).expect("failed to unwrap!!");
 
-        let result : FilteredCollectionsResponse = from_binary(&res).unwrap();
+        let result : CollectionsWithParamsResponse = from_binary(&res).unwrap();
 
         result.collections.iter().for_each(|c|{
 
