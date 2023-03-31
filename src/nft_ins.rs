@@ -136,7 +136,6 @@ pub fn init_and_simple_mint(mut deps: DepsMut,  _env : Env,
     info: MessageInfo, 
     item : Item, 
     token_uri : Option<String>,
-    method : Option<String>,
     _token_id : Option<String>) -> Result<Response, ContractError>{
 
     let msg =  cw721_base::InstantiateMsg {
@@ -149,7 +148,7 @@ pub fn init_and_simple_mint(mut deps: DepsMut,  _env : Env,
 
     let _res = contract.instantiate(deps.branch(), _env.clone(), info.clone(),msg);
     
-    simple_mint(deps, _env, info, contract, item,token_uri, method, _token_id)
+    simple_mint(deps, _env, info, contract, item,token_uri, None, _token_id)
     
 }
 

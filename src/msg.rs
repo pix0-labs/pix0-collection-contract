@@ -87,6 +87,16 @@ pub enum ExecuteMsg {
 
     },
 
+    SimpleMint {
+
+        item : Item , 
+
+        token_uri : Option<String>, 
+
+        token_id : Option<String>,
+
+    },
+    
     TransferNft {
 
         recipient : String ,

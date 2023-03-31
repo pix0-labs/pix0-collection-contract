@@ -7,7 +7,7 @@ use cw2::set_contract_version;
 use crate::error::ContractError;
 use crate::ins::{create_collection, update_collection, create_item, mint_item_by_name, mint_item, 
     remove_collection,update_contract_info};
-use crate::nft_ins::{transfer_nft, burn_nft, send_nft};
+use crate::nft_ins::{transfer_nft, burn_nft, send_nft, init_and_simple_mint};
 use crate::query::{get_all_collections, get_collections,get_active_collections, 
 get_collection, get_items_count, get_items, get_item};
 use crate::nft_query::*;
@@ -82,6 +82,10 @@ pub fn execute(
 
         ExecuteMsg::SendNft { token_id, contract_addr, action} => 
         send_nft(deps, _env, info, token_id, contract_addr, action),
+
+        ExecuteMsg::SimpleMint { item, token_uri, token_id }=> 
+        init_and_simple_mint(deps, _env, info, item, token_uri, token_id),
+
 
     }
 }
