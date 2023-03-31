@@ -473,7 +473,7 @@ mod tests {
         println!("Instantiated::{:?}\n", res);
 
 
-        for i in 0..5000 {
+        for i in 0..500 {
            
             let attbs = vec![Attribute{
                 name : ATTRB_CATEGORY.to_string(),
@@ -520,8 +520,27 @@ mod tests {
             println!("{}.res.created.collection::{:?}\n",i, res);
 
 
+
         }
 
+        let msg = QueryMsg::GetActiveCollections { 
+
+            keyword : Some(format!("005")),
+            category : None,
+            start_after :None, //Some("Test Collection 0030".to_string()),
+            limit : Some(20)
+        };
+
+        let res = query(deps.as_ref(), mock_env(), msg).expect("failed to unwrap!!");
+
+        let result : CollectionsResponse = from_binary(&res).unwrap();
+
+        println!("Found.collections.count::{}", result.collections.len());
+
+        result.collections.iter().for_each(|c|{
+
+            println!("Collection ::{:?}\n",c.name);
+        })
         
 
     }
