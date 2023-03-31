@@ -1,6 +1,6 @@
 use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse};
 use cosmwasm_std::{Deps, StdResult, Order, Addr };
-use crate::state::{Collection, Item, COLLECTION_STATUS_ACTIVATED};
+use crate::state::{Collection, Item, COLLECTION_STATUS_ACTIVATED, ATTRB_CATEGORY};
 use crate::indexes::{collections_store, COLLECTION_ITEMS_STORE};
 use cw_storage_plus::Bound;
 use crate::ins::collection_id;
@@ -113,6 +113,7 @@ pub fn get_all_collections(deps : Deps, start_after: Option<String>, limit: Opti
 
 pub fn get_active_collections(deps : Deps,
     keyword : Option<String>,  
+    category : Option<String>, 
     start_after: Option<String>, limit: Option<u32>) 
     ->StdResult<CollectionsResponse> {
         
@@ -146,7 +147,7 @@ pub fn get_active_collections(deps : Deps,
 
     let all_colls = all_colls.unwrap();
 
-    let colls : Vec<Collection> = filter_collection_result(all_colls, keyword, limit);
+    let colls : Vec<Collection> = filter_collection_result(all_colls, keyword, category, limit);
 
     Ok(CollectionsResponse {
         collections: colls,
@@ -155,19 +156,57 @@ pub fn get_active_collections(deps : Deps,
 }
 
 
-fn filter_collection_result(all_colls : Vec<Collection>, keyword : Option<String>, limit: Option<u32> ) -> Vec<Collection>{
+fn is_category_of(collection : Collection, category : String) -> bool {
+
+    let a = collection.attributes.unwrap_or(vec![])
+    .into_iter()
+    .find(|a|a .name == ATTRB_CATEGORY);
+
+    if a.is_some() {
+
+        return a.unwrap().value == category;
+    }
+    else {
+
+        return false ;
+    }
+}
+
+
+fn contains_keyword(collection : Collection, keyword : String) -> bool {
+
+    return collection.name.contains(&keyword) ||
+    collection.description.clone().unwrap_or("".to_string()).contains(&keyword);
+
+}
+
+fn filter_collection_result(all_colls : Vec<Collection>, 
+    keyword : Option<String>, 
+    category : Option<String>, 
+    limit: Option<u32> ) -> Vec<Collection>{
 
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
 
-    if keyword.is_some(){
+    if keyword.is_some() && category.is_some(){
 
         let kw = keyword.unwrap();
 
         all_colls.into_iter().filter(|c| 
             c.status == Some(COLLECTION_STATUS_ACTIVATED) 
-            && (c.name.contains(&kw) ||
-            c.description.clone().unwrap_or("".to_string()).contains(&kw) ) 
+            && contains_keyword(c.clone(), kw.clone()) 
+            && is_category_of(c.clone(), category.clone().unwrap())
             )
+            .take(limit)
+            .collect::<Vec<Collection>>()
+    }
+
+    else if keyword.is_some(){
+
+        let kw = keyword.unwrap();
+
+        all_colls.into_iter().filter(|c| 
+            c.status == Some(COLLECTION_STATUS_ACTIVATED) 
+            && contains_keyword(c.clone(), kw.clone()) )
             .take(limit)
             .collect::<Vec<Collection>>()
     }

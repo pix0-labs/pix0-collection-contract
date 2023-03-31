@@ -137,6 +137,8 @@ pub enum QueryMsg {
         
         keyword : Option<String>,
         
+        category : Option<String>,
+        
         start_after : Option<String>,
         
         limit : Option<u32>,
