@@ -145,11 +145,11 @@ pub fn get_active_collections(deps : Deps,
 
     let all_colls = all_colls.unwrap();
 
-    let colls : (Vec<Collection>,usize) = filter_collection_result(all_colls, keyword, category, start, limit);
+    let res : (Vec<Collection>,usize) = filter_collection_result(all_colls, keyword, category, start, limit);
 
     Ok(CollectionsWithParamsResponse {
-        collections: colls.0,
-        total : Some(colls.1.try_into().unwrap_or(0)),
+        collections: res.0,
+        total : Some(res.1.try_into().unwrap_or(0)),
         start : start,
         limit : limit
     })

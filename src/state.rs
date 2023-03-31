@@ -308,6 +308,25 @@ impl Item {
 
         trs 
     }
+
+
+    pub fn add_simple_collection_info_to_traits(&self) -> Vec<Trait> {
+
+        let mut trs = self.traits.clone();
+
+        let sinfo = SimpleCollectionInfo {
+
+            owner : self.collection_owner.clone(),
+            collection_name : self.collection_name.clone(),
+            collection_symbol : self.collection_symbol.clone(),
+        };
+
+        Self::add_to_trait_if_not_exist(&mut trs, String::from("collection-info"), 
+        String::from("Collection Info"), serde_json::to_string(&sinfo).unwrap_or("".to_string()));
+
+        return trs;
+
+    }
 }
 
 
@@ -318,6 +337,17 @@ pub struct Trait {
     pub value: String,
 }
 
+
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct SimpleCollectionInfo {
+
+    pub owner : Addr,
+
+    pub collection_name : String,
+
+    pub collection_symbol : String, 
+}
 
 // see: https://docs.opensea.io/docs/metadata-standards
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug, Default)]

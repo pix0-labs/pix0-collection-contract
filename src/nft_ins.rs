@@ -50,7 +50,7 @@ pub fn mint_nft(mut deps: DepsMut,
         youtube_url : c_item.video_link(),
         animation_url : c_item.animation_link(), 
         external_url : ext_url.clone() ,
-        attributes : Some(item.traits_add_collection_name_and_symbol()), 
+        attributes : Some(item.add_simple_collection_info_to_traits()), 
         ..Metadata::default()
     });
 
