@@ -114,19 +114,15 @@ pub fn get_all_collections(deps : Deps, start_after: Option<String>, limit: Opti
 pub fn get_active_collections(deps : Deps,
     keyword : Option<String>,  
     category : Option<String>, 
-    start_after: Option<String>, limit: Option<u32>) 
+    start: Option<u32>, limit: Option<u32>) 
     ->StdResult<CollectionsResponse> {
         
-    let start = start_after.map(|s| Bound::ExclusiveRaw(s.into()));
-
-    println!("start:{:?}", start);
-
    // let start = start_after.map(Bound::exclusive);
    
     let all_colls : StdResult<Vec<Collection>> = 
     
     collections_store().idx.collections
-    .range(deps.storage, start, None, Order::Ascending)
+    .range(deps.storage, None, None, Order::Ascending)
     .map(|col| {
         
         let (_k, c) = col?;
@@ -151,7 +147,7 @@ pub fn get_active_collections(deps : Deps,
 
     let all_colls = all_colls.unwrap();
 
-    let colls : Vec<Collection> = filter_collection_result(all_colls, keyword, category, limit);
+    let colls : Vec<Collection> = filter_collection_result(all_colls, keyword, category, start, limit);
 
     Ok(CollectionsResponse {
         collections: colls,
@@ -193,9 +189,12 @@ fn contains_keyword(collection : Collection, keyword : String) -> bool {
 fn filter_collection_result(all_colls : Vec<Collection>, 
     keyword : Option<String>, 
     category : Option<String>, 
+    start : Option<u32>,
     limit: Option<u32> ) -> Vec<Collection>{
 
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
+
+    let skip = start.unwrap_or(0) as usize ;
 
     if keyword.is_some() && category.is_some(){
 
@@ -206,6 +205,7 @@ fn filter_collection_result(all_colls : Vec<Collection>,
             && contains_keyword(c.clone(), kw.clone()) 
             && is_category_of(c.clone(), category.clone().unwrap())
             )
+            .skip(skip)
             .take(limit)
             .collect::<Vec<Collection>>()
     }
@@ -217,6 +217,7 @@ fn filter_collection_result(all_colls : Vec<Collection>,
         all_colls.into_iter().filter(|c| 
             c.status == Some(COLLECTION_STATUS_ACTIVATED) 
             && contains_keyword(c.clone(), kw.clone()) )
+            .skip(skip)
             .take(limit)
             .collect::<Vec<Collection>>()
     }
@@ -224,6 +225,7 @@ fn filter_collection_result(all_colls : Vec<Collection>,
 
         all_colls.into_iter().filter(|c| c.status 
             == Some(COLLECTION_STATUS_ACTIVATED))
+            .skip(skip)
             .take(limit)
             .collect::<Vec<Collection>>()
             

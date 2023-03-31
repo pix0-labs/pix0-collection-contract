@@ -96,8 +96,8 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::GetCollections { owner, start_after, limit } =>
         to_binary(&get_collections(deps,owner, start_after, limit)?),
 
-        QueryMsg::GetActiveCollections {keyword, category, start_after, limit } =>
-        to_binary(&get_active_collections(deps, keyword, category, start_after, limit)?),
+        QueryMsg::GetActiveCollections {keyword, category, start, limit } =>
+        to_binary(&get_active_collections(deps, keyword, category, start, limit)?),
 
 
         QueryMsg::GetAllCollections { start_after, limit } =>

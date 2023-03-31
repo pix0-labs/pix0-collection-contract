@@ -535,8 +535,8 @@ mod tests {
         let msg = QueryMsg::GetActiveCollections { 
 
             keyword : Some("0032".to_string()),
-            category : Some("music".to_string()),
-            start_after : None, //Some("Test Collection 0025".to_string()),
+            category : None, //Some("music".to_string()),
+            start : Some(21), //Some("Test Collection 0025".to_string()),
             limit : Some(20)
         };
 

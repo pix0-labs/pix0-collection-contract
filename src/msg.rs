@@ -139,7 +139,7 @@ pub enum QueryMsg {
         
         category : Option<String>,
         
-        start_after : Option<String>,
+        start : Option<u32>,
         
         limit : Option<u32>,
     },
