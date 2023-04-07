@@ -7,11 +7,12 @@ use pix0_market_handlers::nft_ins::NftContract;
 use pix0_market_handlers::state::Metadata;
 use pix0_market_handlers::handlers::process_nft_action;
 use cw721::Cw721ReceiveMsg;
+use crate::error::MContractError;
 
 pub fn receive_nft(deps : DepsMut, _env : Env, info : MessageInfo, nft_msg: Cw721ReceiveMsg) 
 -> Result<Response, ContractError> {
 
-    let res = process_nft_action(deps, _env, info, nft_msg);
+    let res : Result<Response, MContractError> = process_nft_action(deps, _env, info, nft_msg);
 
     match res {
 
@@ -21,7 +22,7 @@ pub fn receive_nft(deps : DepsMut, _env : Env, info : MessageInfo, nft_msg: Cw72
         }
         ,
         Err(e)=>{
-            Err(ContractError::FailedToReceiveNft{text : e.to_string()})
+            Err(ContractError::from(e))  
         },
     }
 
@@ -263,7 +264,7 @@ pub fn transfer_nft ( deps: DepsMut,  _env : Env,
         }
         ,
         Err(e)=>{
-            Err(ContractError::FailedToTransferNft{text : e.to_string()})
+            Err(ContractError::from(e))
         },
     }
 
