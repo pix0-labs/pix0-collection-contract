@@ -36,6 +36,9 @@ pub enum ContractError {
     #[error("CollectionNotFound")]
     CollectionNotFound { text : String },
 
+    #[error("CollectionAlreadyExists")]
+    CollectionAlreadyExists { text : String },
+
     #[error("MintByNameIsNotAllowed")]
     MintByNameIsNotAllowed { text : String },
 

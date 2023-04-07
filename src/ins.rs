@@ -1,13 +1,13 @@
 use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr, Order, Coin, Uint128, BankMsg};
-use crate::state::{Collection, Treasury, Attribute, PriceType, Item, Royalty, COLLECTION_STATUS_DRAFT,
-COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, PRICE_TYPE_STANDARD};
+use crate::state::{Collection, Treasury, Attribute, PriceType, Item, Royalty, 
+COLLECTION_STATUS_ACTIVATED, PRICE_TYPE_STANDARD};
 use crate::indexes::{collections_store,COLLECTION_ITEMS_STORE };
 use crate::error::ContractError;
 use crate::query::{internal_get_collection, internal_get_all_items, internal_get_item};
 use crate::nft_ins::init_and_mint_nft;
 use pix0_contract_common::funcs::{try_paying_contract_treasuries};
 use pix0_contract_common::state::{Fee, Contract};
-
+use crate::checks::*;
 
 pub fn collection_id ( name : String, symbol : String ) -> String {
     format!("{}-{}", name, symbol)
@@ -35,30 +35,6 @@ pub fn update_contract_info (deps: DepsMut,
 }
 
   
-pub fn collection_exists( info: MessageInfo, name : String, symbol : String, deps: &DepsMut ) -> bool {
-
-    let owner = info.clone().sender;
-    
-    let _key = (owner, collection_id(name, symbol));
-
-    let loaded_collection = collections_store()
-    .idx.collections.item(deps.storage, _key);
-    
-    let mut exists = false; 
-
-    match loaded_collection {
-
-        Ok (c) => {
-            if c.is_some() {
-                exists = true
-            }
-        },
-
-        Err(_)=> exists = false, 
-    }
-
-    return exists;
-}
 
 pub fn create_collection (deps: DepsMut, 
     _env : Env, info: MessageInfo,
@@ -83,16 +59,7 @@ pub fn update_collection(deps: DepsMut,
   
     let _key = (owner.clone(), collection_id(collection.name.clone(), collection.symbol.clone()) );
   
-    
-    if collection.status.is_some() {
-        let stat = collection.status.unwrap();
-
-        if !is_status_valid(stat) {
-            return Err(ContractError::InvalidCollectionStatus { text: 
-            format!("Invalid status :{}!",stat ).to_string() } );
-        }
-    
-    }
+    check_if_collection_status_valid(collection.status)?;
     
     let collection_to_update = internal_get_collection(deps.as_ref(), owner, collection.name, 
     collection.symbol);
@@ -148,41 +115,6 @@ pub fn update_collection(deps: DepsMut,
 
 
 
-fn is_status_valid ( status : u8) -> bool {
-
-    status == COLLECTION_STATUS_DRAFT ||
-    status == COLLECTION_STATUS_ACTIVATED ||
-    status == COLLECTION_STATUS_DEACTIVATED
-
-}
-
-fn are_treasuries_valid (treasuries : &Option<Vec<Treasury>>)  -> Result<bool, ContractError> {
-
-    if treasuries.is_some () {
-
-        let mut total_percentage = 0;
-
-        let ts = treasuries.clone().unwrap();
-
-        ts.iter().for_each(|t| total_percentage += t.percentage);
-
-        if total_percentage > 100 || total_percentage < 100 {
-
-            return Err(ContractError::CustomErrorMesg { message : 
-                format!("Invalid percentage {} for treasuries amount, the total must be 100", total_percentage) } );
-        }
-        else {
-            Ok(true)
-        }
-    }
-    else {
-
-        Ok(false)
-    }
-}
-
-
-
 
 pub (crate) fn internal_create_collection(mut deps: DepsMut, 
     _env : Env, info: MessageInfo,
@@ -197,30 +129,18 @@ pub (crate) fn internal_create_collection(mut deps: DepsMut,
   
     let owner = info.clone().sender;
 
-    if collection_exists(info.clone(), name.clone(), symbol.clone(), &deps) {
-        return Err(ContractError::CustomErrorMesg { message: format!("Collection {}-{} already exists!", name, symbol).to_string() } );
-    }  
+    check_if_collection_exists(&deps, info.clone(), name.clone(), symbol.clone())?;
 
     let _msgs = try_paying_contract_treasuries(deps.branch(), _env.clone(), 
     info, "CREATE_COLLECTION_FEE")?;
  
-    let _ = are_treasuries_valid(&treasuries)?;
+    are_treasuries_valid(&treasuries)?;
 
     let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
 
     let date_created = _env.block.time;
     
-    let mut status = COLLECTION_STATUS_DRAFT;
-
-    if _status.is_some() {
-        let stat = _status.unwrap();
-        if !is_status_valid(stat) {
-            return Err(ContractError::InvalidCollectionStatus { text: 
-                format!("Invalid status :{}!", stat ).to_string() } );
-        }
-
-        status = stat; 
-    }
+    let status = check_if_collection_status_valid(_status)?;
     
     let new_collection = Collection {
         name : name.clone(), 
@@ -244,22 +164,6 @@ pub (crate) fn internal_create_collection(mut deps: DepsMut,
     
 }
 
-
-pub fn item_exists( info: MessageInfo, 
-    collection_name : String,
-    collection_symbol : String,
-    name : String, 
-    deps: &DepsMut ) -> bool {
-
-    let owner = info.clone().sender;
-    
-    let _key = (owner, collection_id(collection_name
-        , collection_symbol), name );
-
-    let stored_item = COLLECTION_ITEMS_STORE.load(deps.storage,_key);
-    
-    stored_item.is_ok()
-}
 
 
 #[allow(dead_code)]
@@ -308,20 +212,11 @@ pub fn create_item(mut deps: DepsMut,
 
     let owner = info.clone().sender;
 
-    if !collection_exists(info.clone(), item.collection_name.clone() ,item.collection_symbol.clone(),&deps) {
-        return Err(ContractError::CustomErrorMesg { message: format!("The collection '{}' does NOT exist!", 
-        item.collection_name.clone()).to_string() } );
-    }  
+    check_if_collection_exists(&deps, info.clone(), item.collection_name.clone(), 
+    item.collection_symbol.clone())?;
 
-
-    if item_exists(info.clone(), item.collection_name.clone() ,
-    item.collection_symbol.clone(),
-    item.name.clone(), &deps) {
-        return Err(ContractError::CustomErrorMesg { message: format!("The item {} in collection '{}' already exists!", 
-        item.name.clone(),
-        item.collection_name.clone()).to_string() } );
-    }  
-
+    check_if_item_exists(&deps, info.clone(), item.collection_name.clone(), 
+    item.collection_symbol.clone(), item.name.clone())?;
 
     let _msgs = try_paying_contract_treasuries(deps.branch(), _env.clone(), 
     info, "CREATE_ITEM_FEE")?;
