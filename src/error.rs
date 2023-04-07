@@ -97,3 +97,4 @@ impl From<CommonContractError> for ContractError {
         }
     }
 }
+

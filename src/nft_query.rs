@@ -1,7 +1,6 @@
 use cosmwasm_std::{Deps, Env, StdResult, Binary};
-use crate::nft_ins::NftContract;
-//use cw721::{TokensResponse,NftInfoResponse};
-//use crate::collections::nft_ins::Extension;
+use pix0_market_handlers::nft_ins::NftContract;
+
 
 pub fn get_minted_tokens_by_owner( deps: Deps, _env : Env, owner : String ,
     start_after: Option<String>, limit: Option<u32>) -> StdResult<Binary> {

@@ -1,16 +1,10 @@
-use cosmwasm_std::{Empty, DepsMut, MessageInfo, Env, Response, BankMsg, Binary };
+use cosmwasm_std::{DepsMut, MessageInfo, Env, Response, BankMsg, Binary };
 use crate::state::{Item, Collection, PRICE_TYPE_STANDARD};
 use crate::error::ContractError;
 use crate::utils::nft_token_id;
 use pix0_contract_common::funcs::{pay_by_percentage_checked, to_bank_messages, try_paying_contract_treasuries};
-// refer to https://docs.opensea.io/docs/metadata-standards
-pub type Metadata = crate::state::Metadata;
-
-pub type Extension = Option<Metadata>;
-
-pub type NftContract<'a> = cw721_base::Cw721Contract<'a, Extension, Empty>;
-
-
+use pix0_market_handlers::nft_ins::NftContract;
+use pix0_market_handlers::state::Metadata;
 
 pub fn mint_nft(mut deps: DepsMut,  
     _env : Env, 
@@ -234,17 +228,11 @@ fn simple_mint(mut deps: DepsMut,
 }
 
 
+
 pub fn transfer_nft ( deps: DepsMut,  _env : Env, 
-    info: MessageInfo,  recipient : String, token_id : String ) -> Result<Response, ContractError>  {
+    info: MessageInfo,  recipient : String, token_id : String ) -> Result<Response, ContractError> {
 
-    let msg = cw721_base::msg::ExecuteMsg::TransferNft{
-        recipient : recipient ,
-        token_id : token_id,
-    };
-
-    let contract = NftContract::default();
-
-    let res = contract.execute(deps, _env, info, msg);
+    let res = pix0_market_handlers::nft_ins::transfer_nft( deps, _env, info, recipient, token_id);
 
     match res {
 
@@ -255,7 +243,6 @@ pub fn transfer_nft ( deps: DepsMut,  _env : Env,
         ,
         Err(e)=>{
             Err(ContractError::FailedToTransferNft{text : e.to_string()})
-
         },
     }
 

@@ -8,7 +8,7 @@ mod tests {
     use cosmwasm_std::testing::{mock_env, mock_info, mock_dependencies_with_balance};
     use cosmwasm_std::{coins, Addr, Deps, from_binary, Coin, Uint128, BankMsg};
     use crate::msg::*;
-    use crate::nft_ins::Extension;
+    use pix0_market_handlers::nft_ins::Extension;
     use crate::contract::*;
     use crate::ins::*;
     use crate::query::collection_category;

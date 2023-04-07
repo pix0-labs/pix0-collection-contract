@@ -96,13 +96,13 @@ pub enum ExecuteMsg {
         token_id : Option<String>,
 
     },
-    
+   
     TransferNft {
 
         recipient : String ,
 
         token_id : String, 
-    },
+    }, 
 
     BurnNft { token_id: String },
 
