@@ -54,6 +54,9 @@ pub enum ContractError {
     #[error("FailedToTransferNft")]
     FailedToTransferNft { text : String },
   
+    #[error("FailedToReceiveNft")]
+    FailedToReceiveNft { text : String },
+  
     #[error("FailedToBurnNft")]
     FailedToBurnNft { text : String },
 
@@ -67,6 +70,11 @@ pub enum ContractError {
     #[error("OverOrUnderAllocationError")]
     OverOrUnderAllocationError { message : String },
 
+    #[error("Invalid Sending Contract")]
+    UnauthorizedSendingContract {},
+
+    #[error("Sending Contract Is Not Defined")]
+    SendingContractIsNotDefined {},
 
 }
 
@@ -98,3 +106,29 @@ impl From<CommonContractError> for ContractError {
     }
 }
 
+pub type MContractError = pix0_market_handlers::error::ContractError;
+
+impl From<MContractError> for ContractError {
+    fn from(error : MContractError) -> ContractError {
+        
+        match error {
+
+            
+            MContractError::FailedToTransferNft { text } => 
+            ContractError::FailedToTransferNft { text :  text }
+            ,
+
+
+            MContractError::UnauthorizedSendingContract {} => 
+            ContractError::UnauthorizedSendingContract {}
+            ,
+
+            MContractError::SendingContractIsNotDefined {} => 
+            ContractError::SendingContractIsNotDefined {}
+            ,
+            
+            _ => ContractError::CustomErrorMesg { message: "Custom error".to_string() }
+
+        }
+    }
+}
