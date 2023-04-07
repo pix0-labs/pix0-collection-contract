@@ -381,25 +381,6 @@ pub fn mint_item_by_name (mut deps : DepsMut ,
 }
 
 
-pub (crate) fn collectionn_allowed_for_removal(owner: Addr, name : String,
-    symbol : String, deps: &DepsMut) -> Result<bool,ContractError> {
-
-    let collection = internal_get_collection(deps.as_ref(), owner.clone(), name.clone(), symbol.clone());
-
-    if collection.is_none() {
-        return Err(ContractError::CollectionNotFound { text: "Collection is NOT found!".to_string()});
-    }
-    else {
-        let coll = collection.unwrap();
-        if coll.status.is_none() || coll.status.unwrap() == COLLECTION_STATUS_ACTIVATED {
-            return Err(ContractError::InvalidCollectionStatus { text: "Active collection cannot be removed!".to_string()});
-        }
-        else {
-            Ok(true)
-        }
-    }
-}
-
 
 pub fn remove_collection (
     name : String,
@@ -409,7 +390,7 @@ pub fn remove_collection (
     
     let owner = info.clone().sender;
 
-    let _ = collectionn_allowed_for_removal(owner.clone(), name.clone(), symbol.clone(), &deps)?;
+    collectionn_allowed_for_removal(owner.clone(), name.clone(), symbol.clone(), &deps)?;
 
     let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
 

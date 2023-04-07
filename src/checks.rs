@@ -1,6 +1,7 @@
-use cosmwasm_std::{DepsMut, MessageInfo};
+use cosmwasm_std::{DepsMut, MessageInfo, Addr};
 use crate::indexes::{collections_store, COLLECTION_ITEMS_STORE};
 use crate::ins::collection_id;
+use crate::query::internal_get_collection;
 use crate::error::ContractError;
 use crate::state::{COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, COLLECTION_STATUS_DRAFT, Treasury};
 
@@ -128,4 +129,24 @@ pub (crate) fn check_if_item_exists(deps: &DepsMut,info: MessageInfo,
     }  
 
     Ok(())
+}
+
+
+pub (crate) fn collectionn_allowed_for_removal(owner: Addr, name : String,
+    symbol : String, deps: &DepsMut) -> Result<bool,ContractError> {
+
+    let collection = internal_get_collection(deps.as_ref(), owner.clone(), name.clone(), symbol.clone());
+
+    if collection.is_none() {
+        return Err(ContractError::CollectionNotFound { text: "Collection is NOT found!".to_string()});
+    }
+    else {
+        let coll = collection.unwrap();
+        if coll.status.is_none() || coll.status.unwrap() == COLLECTION_STATUS_ACTIVATED {
+            return Err(ContractError::InvalidCollectionStatus { text: "Active collection cannot be removed!".to_string()});
+        }
+        else {
+            Ok(true)
+        }
+    }
 }
