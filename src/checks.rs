@@ -1,4 +1,4 @@
-use cosmwasm_std::{DepsMut, MessageInfo, Addr};
+use cosmwasm_std::{DepsMut, MessageInfo, Addr, Coin, Uint128};
 use crate::indexes::{collections_store, COLLECTION_ITEMS_STORE};
 use crate::ins::collection_id;
 use crate::query::internal_get_collection;
@@ -34,15 +34,31 @@ bool {
 
 pub (crate) fn check_if_collection_exists(
     deps: &DepsMut,info: MessageInfo, name : String, symbol : String, 
+    error_on_exists : bool, 
 ) -> Result<(), ContractError>{
 
-    if collection_exists(deps, info, name.clone(), symbol.clone()) {
-        return Err(ContractError::CollectionAlreadyExists { 
-            text: format!("Collection {}-{} already exists!", name, symbol).to_string() } );
-      
+    let exists = collection_exists(deps, info, name.clone(), symbol.clone());
+    if error_on_exists {
+
+        if exists {
+            return Err(ContractError::CollectionAlreadyExists { 
+                text: format!("Collection {}-{} already exists!", name, symbol).to_string() } );
+          
+        }
+       
+    }
+    else {
+
+        if !exists {
+            return Err(ContractError::CollectionNotFound { 
+                text: format!("Collection {}-{} NOT found!", name, symbol).to_string() } );
+          
+        }
+       
     }
     
     Ok(())
+
 }
 
 
@@ -149,4 +165,39 @@ pub (crate) fn collectionn_allowed_for_removal(owner: Addr, name : String,
             Ok(true)
         }
     }
+}
+
+
+fn is_fund_sufficient (info : MessageInfo, required_fund : Coin) -> (bool, Coin) {
+
+    let sent_funds: Vec<Coin> = info.funds.clone();
+
+    if sent_funds.len() == 0 {
+        return (false, Coin { amount :Uint128::default(), denom :"uconst".to_string()});
+    }
+
+    let first_fund = sent_funds.get(0).unwrap();
+
+    if first_fund.amount < Uint128::from(required_fund.amount) ||
+    first_fund.denom != required_fund.denom {
+        (false,first_fund.clone()) 
+    }
+    else {
+        (true,first_fund.clone())
+    }
+}
+
+
+pub (crate) fn check_if_fund_sufficient(info : MessageInfo, required_fund : Coin) 
+-> Result<(),ContractError> {
+
+    let fund_checked = is_fund_sufficient(info.clone(), required_fund.clone());
+    if !fund_checked.0 {
+        return Err(ContractError::InsufficientFund {
+            text: format!("Insufficient fund: sent:{}, required: {}!", 
+            fund_checked.1, required_fund)});
+
+    }
+
+    Ok(())
 }
