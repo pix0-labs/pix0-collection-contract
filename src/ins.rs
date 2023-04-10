@@ -54,10 +54,10 @@ pub fn update_collection(deps: DepsMut,
   
     let owner = info.clone().sender;
 
-    if collection.treasuries.is_some() {
-        let _ = are_treasuries_valid(&collection.treasuries)?;
-    }
-  
+    are_treasuries_valid(&collection.treasuries)?;
+    
+    are_royalties_valid(&collection.royalties)?;
+
     let _key = (owner.clone(), collection_id(collection.name.clone(), collection.symbol.clone()) );
   
     check_if_collection_status_valid(collection.status)?;
@@ -136,6 +136,8 @@ pub (crate) fn internal_create_collection(mut deps: DepsMut,
     info, "CREATE_COLLECTION_FEE")?;
  
     are_treasuries_valid(&treasuries)?;
+
+    are_royalties_valid(&royalties)?;
 
     let _key = (owner.clone(), collection_id(name.clone(), symbol.clone()) );
 

@@ -4,6 +4,7 @@ use crate::ins::collection_id;
 use crate::query::internal_get_collection;
 use crate::error::ContractError;
 use crate::state::{COLLECTION_STATUS_ACTIVATED, COLLECTION_STATUS_DEACTIVATED, COLLECTION_STATUS_DRAFT, Treasury};
+use pix0_market_handlers::state::Royalty;
 
 fn collection_exists( deps: &DepsMut, info: MessageInfo, name : String, symbol : String ) -> 
 bool {
@@ -100,8 +101,36 @@ pub (crate) fn are_treasuries_valid (treasuries : &Option<Vec<Treasury>>)  -> Re
 
         if total_percentage > 100 || total_percentage < 100 {
 
-            return Err(ContractError::CustomErrorMesg { message : 
+            return Err(ContractError::InvalidAllocationsForTreasuries { message:  
                 format!("Invalid percentage {} for treasuries amount, the total must be 100", total_percentage) } );
+        }
+        else {
+            Ok(true)
+        }
+    }
+    else {
+
+        Ok(false)
+    }
+}
+
+
+
+pub (crate) fn are_royalties_valid (royalties : &Option<Vec<Royalty>>)  -> Result<bool, ContractError> {
+
+    if royalties.is_some () {
+
+        let mut total_percentage = 0;
+
+        let rs =  royalties.clone().unwrap();
+
+        rs.iter().for_each(|t| total_percentage += t.percentage);
+
+        // allow max total royalty of 15 percent only
+        if total_percentage > 15 {
+
+            return Err(ContractError::InvalidAllocationsForRoyalties { message : 
+                format!("Invalid percentage {} for treasuries amount, the total must be 15% only", total_percentage) } );
         }
         else {
             Ok(true)

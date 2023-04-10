@@ -60,7 +60,6 @@ pub enum ContractError {
     #[error("FailedToBurnNft")]
     FailedToBurnNft { text : String },
 
-
     #[error("FailedToSendNft")]
     FailedToSendNft { text : String },
 
@@ -75,6 +74,12 @@ pub enum ContractError {
 
     #[error("Sending Contract Is Not Defined")]
     SendingContractIsNotDefined {},
+
+    #[error("Invalid allocations for treasuries")]
+    InvalidAllocationsForTreasuries {message : String},
+
+    #[error("Invalid allocations for royalties")]
+    InvalidAllocationsForRoyalties { message : String },
 
 }
 
