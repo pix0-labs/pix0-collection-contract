@@ -82,6 +82,11 @@ pub fn update_collection(deps: DepsMut,
         to_update = true; 
     }
 
+    if collection.royalties.is_some() {
+        collection_to_update.royalties = collection.royalties;
+        to_update = true; 
+    }
+
     if collection.prices.is_some() {
         collection_to_update.prices = collection.prices;
         to_update = true; 
