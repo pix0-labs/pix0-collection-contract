@@ -156,6 +156,24 @@ impl Collection {
             false 
         }
     }
+
+
+
+    pub fn category(&self) -> Option<String> {
+
+        let a = self.attributes.clone().unwrap_or(vec![])
+        .into_iter()
+        .find(|a|a .name == ATTRB_CATEGORY);
+
+        if a.is_some(){
+            Some(a.unwrap().value)
+
+        }
+        else {
+
+            None 
+        }
+    }
 }
 
 
@@ -298,7 +316,8 @@ impl Item {
     }
 
 
-    pub fn add_simple_collection_info_to_traits(&self) -> Vec<Trait> {
+    pub fn add_simple_collection_info_to_traits(&self, category : Option<String>,
+    royalties : Option<Vec<Royalty>>) -> Vec<Trait> {
 
         let mut trs = self.traits.clone();
 
@@ -307,6 +326,9 @@ impl Item {
             owner : self.collection_owner.clone(),
             collection_name : self.collection_name.clone(),
             collection_symbol : self.collection_symbol.clone(),
+            category : category,
+            royalties : royalties, 
+
         };
 
         Self::add_to_trait_if_not_exist(&mut trs, String::from("collection-info"), 
@@ -327,5 +349,9 @@ pub struct SimpleCollectionInfo {
     pub collection_name : String,
 
     pub collection_symbol : String, 
+
+    pub category : Option<String>,
+
+    pub royalties : Option<Vec<Royalty>>,
 }
 

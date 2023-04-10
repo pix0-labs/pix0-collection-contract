@@ -2,7 +2,7 @@ use std::convert::TryInto;
 
 use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse, CollectionsWithParamsResponse};
 use cosmwasm_std::{Deps, StdResult, Order, Addr };
-use crate::state::{Collection, Item, COLLECTION_STATUS_ACTIVATED, ATTRB_CATEGORY};
+use crate::state::{Collection, Item, COLLECTION_STATUS_ACTIVATED};
 use crate::indexes::{collections_store, COLLECTION_ITEMS_STORE};
 use cw_storage_plus::Bound;
 use crate::ins::collection_id;
@@ -159,17 +159,7 @@ pub fn get_active_collections(deps : Deps,
 
 pub (crate) fn collection_category(collection : Collection) -> String {
 
-    let a = collection.attributes.unwrap_or(vec![])
-    .into_iter()
-    .find(|a|a .name == ATTRB_CATEGORY);
-
-    if a.is_some(){
-        a.unwrap().value
-    }
-    else {
-
-        "".to_string()
-    }
+    collection.category().unwrap_or(String::from(""))
 }
 
 fn is_category_of(collection : Collection, category : String) -> bool {
