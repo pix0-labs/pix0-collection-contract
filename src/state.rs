@@ -3,7 +3,8 @@ use serde::{Deserialize, Serialize};
 use cosmwasm_std::{Addr, Timestamp, Coin};
 use pix0_contract_common::state::PaymentByPercentage;
 use pix0_market_handlers::state::Trait;
-
+use pix0_market_handlers::state::Royalty;
+use pix0_market_handlers::state::SimpleCollectionInfo;
 
 pub const PRICE_TYPE_STANDARD : u8 = 1;
 
@@ -178,17 +179,6 @@ impl Collection {
 
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct Royalty{
-
-    pub wallet : Addr, 
-
-    pub percentage : u8, 
-
-    pub name : Option<String>,
-}
-
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Treasury {
 
     pub wallet : Addr, 
@@ -340,18 +330,4 @@ impl Item {
 }
 
 
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct SimpleCollectionInfo {
-
-    pub owner : Addr,
-
-    pub collection_name : String,
-
-    pub collection_symbol : String, 
-
-    pub category : Option<String>,
-
-    pub royalties : Option<Vec<Royalty>>,
-}
 

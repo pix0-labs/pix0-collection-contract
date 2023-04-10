@@ -1,6 +1,7 @@
 use cosmwasm_std::{DepsMut, Env, Response, MessageInfo, Addr, Order, BankMsg};
-use crate::state::{Collection, Treasury, Attribute, PriceType, Item, Royalty, 
+use crate::state::{Collection, Treasury, Attribute, PriceType, Item, 
 COLLECTION_STATUS_ACTIVATED, PRICE_TYPE_STANDARD};
+use pix0_market_handlers::state::Royalty;
 use crate::indexes::{collections_store,COLLECTION_ITEMS_STORE };
 use crate::error::ContractError;
 use crate::query::{internal_get_collection, internal_get_all_items, internal_get_item};
