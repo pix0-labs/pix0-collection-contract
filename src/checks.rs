@@ -127,7 +127,8 @@ pub (crate) fn are_royalties_valid (royalties : &Option<Vec<Royalty>>)  -> Resul
         rs.iter().for_each(|t| total_percentage += t.percentage);
 
         // allow max total royalty of 15 percent only
-        if total_percentage > 15 {
+        // royalty is 2-decimal, which means 1250 is 12.50 percent
+        if total_percentage > 1500 {
 
             return Err(ContractError::InvalidAllocationsForRoyalties { message : 
                 format!("Invalid percentage {} for treasuries amount, the total must be 15% only", total_percentage) } );
