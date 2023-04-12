@@ -106,9 +106,15 @@ pub fn get_all_collections(deps : Deps, start_after: Option<String>, limit: Opti
         )
     }).collect();
 
+    let mut collections : Vec<Collection> = vec![];
+
+    if colls.is_ok() {
+        collections = colls.ok().unwrap();
+        collections.sort_by(|a, b| b.date_updated.cmp(&a.date_updated));
+    }
     
     Ok(CollectionsResponse {
-        collections: colls?
+        collections: collections
     })
 }
 
@@ -143,8 +149,11 @@ pub fn get_active_collections(deps : Deps,
     
     }
 
-    let all_colls = all_colls.unwrap();
+    let mut all_colls = all_colls.unwrap();
 
+    all_colls.sort_by(|a, b| b.date_created.cmp(&a.date_created));
+    
+    
     let res : (Vec<Collection>,usize) = filter_collection_result(all_colls, keyword, category, start, limit);
 
     Ok(CollectionsWithParamsResponse {
