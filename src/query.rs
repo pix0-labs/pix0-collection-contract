@@ -71,8 +71,15 @@ start_after: Option<String>, limit: Option<u32>)
         )
     }).collect();
 
+    let mut collections : Vec<Collection> = vec![];
+
+    if colls.is_ok() {
+        collections = colls.ok().unwrap();
+        collections.sort_by(|a, b| b.date_updated.cmp(&a.date_updated));
+    }
+
     Ok(CollectionsResponse {
-        collections: colls?,
+        collections: collections,
     })
 }
 
