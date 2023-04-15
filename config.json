@@ -9,6 +9,22 @@
       {
         "project": "pix0-collection-contract",
         "type": "instantiate",
+        "chainId": "constantine-2",
+        "codeId": 519,
+        "txhash": "6D8EFA1D95D461D2168B26B9EAA22CD70155EFE7EEB27A702796139A7220BD6C",
+        "address": "archway1nx4h3myn4azsy9mqjfnz57uvjysv9pwhgn5ggc2l6tlh2y5cx9uquhh0rd",
+        "admin": "archway14l92fdhae4htjtkyla73f262c39cngf2wc65ky"
+      },
+      {
+        "project": "pix0-collection-contract",
+        "type": "store",
+        "chainId": "constantine-2",
+        "codeId": 519,
+        "txhash": "F76261F00E409779BD8922B019737014B39D1356680EBFA39A5BA3E8BE8A3357"
+      },
+      {
+        "project": "pix0-collection-contract",
+        "type": "instantiate",
         "chainId": "constantine-1",
         "codeId": 322,
         "txhash": "E55417CFDB4862D162969E06C0EE15D8481030D9E6B4FA6D7ED2936B8295AE65",
@@ -171,7 +187,7 @@
   },
   "network": {
     "name": "constantine",
-    "chainId": "constantine-1",
+    "chainId": "constantine-2",
     "type": "testnet",
     "fees": {
       "feeDenom": "uconst"
@@ -189,11 +205,11 @@
     },
     "urls": {
       "rpc": {
-        "url": "https://rpc.constantine-1.archway.tech",
+        "url": "https://rpc.constantine-2.archway.tech",
         "port": 443
       },
       "faucets": [
-        "https://faucet.constantine-1.archway.tech"
+        "https://faucet.constantine-2.archway.tech"
       ]
     }
   }
