@@ -4,5 +4,7 @@
 ## Query the contract info
 ```archway query contract-state smart --args '{"get_contract_info": {}}'  ```
 
+## Update contract info with market contract
+```archway tx -a '{"update_contract_info":{"contracts":[{"name":"MARKET_CONTRACT","address":"archway1ayzvv9zcx3vedz8d24g5kx5w5s0vff7pjws4ntjgcwln0qhlln9q8606hc"}]}}' ```     
 
 
