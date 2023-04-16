@@ -12,7 +12,7 @@ use crate::error::MContractError;
 pub fn receive_nft(deps : DepsMut, _env : Env, info : MessageInfo, nft_msg: Cw721ReceiveMsg) 
 -> Result<Response, ContractError> {
 
-    let res : Result<Response, MContractError> = process_nft_action(deps, _env, info, nft_msg);
+    let res : Result<Response, MContractError> = process_nft_action(deps, _env, info, nft_msg, None);
 
     match res {
 
