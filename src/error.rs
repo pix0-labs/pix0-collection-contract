@@ -69,7 +69,7 @@ pub enum ContractError {
     #[error("OverOrUnderAllocationError")]
     OverOrUnderAllocationError { message : String },
 
-    #[error("Invalid Sending Contract")]
+    #[error("Unauthorized Sending Contract")]
     UnauthorizedSendingContract {},
 
     #[error("Sending Contract Is Not Defined")]
