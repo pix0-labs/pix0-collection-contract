@@ -479,7 +479,7 @@ checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 
 [[package]]
 name = "pix0-collection-contract"
-version = "0.7.9"
+version = "0.8.0"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -498,7 +498,7 @@ dependencies = [
 
 [[package]]
 name = "pix0-contract-common"
-version = "0.4.9"
+version = "0.5.0"
 dependencies = [
  "cosmwasm-std",
  "cosmwasm-storage",
@@ -510,7 +510,7 @@ dependencies = [
 
 [[package]]
 name = "pix0-market-handlers"
-version = "0.3.8"
+version = "0.3.9"
 dependencies = [
  "cosmwasm-std",
  "cosmwasm-storage",
