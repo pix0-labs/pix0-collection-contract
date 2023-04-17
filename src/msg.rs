@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::state::{Collection,Item};
 use cosmwasm_std::Addr;
 use pix0_contract_common::state::{Fee, Contract};
+use pix0_market_handlers::state::SellOffer;
 use cw721::Cw721ReceiveMsg;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -115,6 +116,10 @@ pub enum ExecuteMsg {
     },
 
     ReceiveNft(Cw721ReceiveMsg),
+
+    CreateSellOffer {
+        offer : SellOffer,
+    },
 
 }
 

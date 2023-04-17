@@ -4,10 +4,24 @@ use crate::error::ContractError;
 use crate::utils::nft_token_id;
 use pix0_contract_common::funcs::{pay_by_percentage_checked, to_bank_messages, try_paying_contract_treasuries};
 use pix0_market_handlers::nft_ins::NftContract;
-use pix0_market_handlers::state::Metadata;
+use pix0_market_handlers::state::{Metadata, SellOffer};
 use pix0_market_handlers::handlers::process_nft_action;
 use cw721::Cw721ReceiveMsg;
 use crate::error::MContractError;
+
+pub fn create_sell_offer(deps : DepsMut, _env : Env, info : MessageInfo, offer : SellOffer) -> Result<Response, ContractError> {
+
+    let res = pix0_market_handlers::triggers::create_sell_offer(deps, _env,
+    info, offer, None);
+
+    if res.is_err() {
+
+        return Err(ContractError::from(res.err().unwrap()));
+    }
+
+    Ok(res.ok().unwrap())
+
+}
 
 pub fn receive_nft(deps : DepsMut, _env : Env, info : MessageInfo, nft_msg: Cw721ReceiveMsg) 
 -> Result<Response, ContractError> {
