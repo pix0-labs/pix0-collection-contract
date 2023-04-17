@@ -10,6 +10,22 @@
         "project": "pix0-collection-contract",
         "type": "instantiate",
         "chainId": "constantine-2",
+        "codeId": 543,
+        "txhash": "FE4F781C37ABFD7C90C442906D4431564CFD5F32789D0C18A59B70B1500F48FE",
+        "address": "archway1ntjt3yf560nt8578kvl6y57se3khucp9xxlmmdhrzrpe5txxjc2qapdjq5",
+        "admin": "archway12pcytur9del2t5wm93t8kuqakvf9yk9wzt4w0x"
+      },
+      {
+        "project": "pix0-collection-contract",
+        "type": "store",
+        "chainId": "constantine-2",
+        "codeId": 543,
+        "txhash": "85D06E0E16D5031F6F35BA303AE779AABD24B1E2280932BEAED0397BEEAD6398"
+      },
+      {
+        "project": "pix0-collection-contract",
+        "type": "instantiate",
+        "chainId": "constantine-2",
         "codeId": 528,
         "txhash": "AD8283950DAD085B80003FDDB1A4BA131690CB44FFB8278DD4440E71FE1E45EE",
         "address": "archway1sfangxz3syk76024fr3z878ymfuul4pfqznjxqwjgqmnspqt240scac5fn",
