@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use crate::state::{Collection,Item};
-use cosmwasm_std::Addr;
+use cosmwasm_std::{Addr, Coin};
 use pix0_contract_common::state::{Fee, Contract};
 use pix0_market_handlers::state::SellOffer;
 use cw721::Cw721ReceiveMsg;
@@ -118,7 +118,10 @@ pub enum ExecuteMsg {
     ReceiveNft(Cw721ReceiveMsg),
 
     CreateSellOffer {
+        
         offer : SellOffer,
+
+        create_sell_offer_fee : Option<Coin>,
     },
 
 }

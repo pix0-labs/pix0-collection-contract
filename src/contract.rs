@@ -89,8 +89,8 @@ pub fn execute(
         ExecuteMsg::ReceiveNft(msg) =>
         receive_nft(deps, _env, info, msg),
 
-        ExecuteMsg::CreateSellOffer { offer } =>
-        create_sell_offer(deps, _env, info, offer),
+        ExecuteMsg::CreateSellOffer { offer , create_sell_offer_fee} =>
+        create_sell_offer(deps, _env, info, offer, create_sell_offer_fee),
     }
 }
 

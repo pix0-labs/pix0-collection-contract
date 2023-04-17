@@ -1,4 +1,4 @@
-use cosmwasm_std::{DepsMut, MessageInfo, Env, Response, BankMsg, Binary };
+use cosmwasm_std::{DepsMut, MessageInfo, Env, Response, BankMsg, Binary, Coin };
 use crate::state::{Item, Collection, PRICE_TYPE_STANDARD};
 use crate::error::ContractError;
 use crate::utils::nft_token_id;
@@ -9,10 +9,11 @@ use pix0_market_handlers::handlers::process_nft_action;
 use cw721::Cw721ReceiveMsg;
 use crate::error::MContractError;
 
-pub fn create_sell_offer(deps : DepsMut, _env : Env, info : MessageInfo, offer : SellOffer) -> Result<Response, ContractError> {
+pub fn create_sell_offer(deps : DepsMut, _env : Env, info : MessageInfo, offer : SellOffer, 
+create_sell_offer_fee :Option<Coin>) -> Result<Response, ContractError> {
 
     let res = pix0_market_handlers::triggers::create_sell_offer(deps, _env,
-    info, offer, None);
+    info, offer,create_sell_offer_fee, None);
 
     if res.is_err() {
 
