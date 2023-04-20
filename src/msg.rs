@@ -201,19 +201,31 @@ pub enum QueryMsg {
     },
 
 
-
-    MintedTokensByOwner {
-
-        owner : String,
-
-        start_after : Option<String>,
-        
-        limit : Option<u32>,
+    NumTokens {},
+    
+    OwnerOf {
+        token_id: String,
+        include_expired: Option<bool>,
     },
 
-    NftTokenInfo {
+    NftInfo {
+        token_id: String,
+    },
 
-        token_id : String, 
+    AllNftInfo {
+        token_id: String,
+        include_expired: Option<bool>,
+    },
+    
+    Tokens {
+        owner: String,
+        start_after: Option<String>,
+        limit: Option<u32>,
+    },
+    
+    AllTokens {
+        start_after: Option<String>,
+        limit: Option<u32>,
     },
 
     GetContractInfo{},

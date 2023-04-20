@@ -111,11 +111,24 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::GetAllCollections { start_after, limit } =>
         to_binary(&get_all_collections(deps, start_after, limit)?),
 
-        QueryMsg::MintedTokensByOwner { owner, start_after, limit } =>
+        QueryMsg::Tokens { owner, start_after, limit } =>
         get_minted_tokens_by_owner(deps, _env, owner, start_after, limit),
 
-        QueryMsg::NftTokenInfo { token_id} =>
+        QueryMsg::AllTokens {start_after, limit } =>
+        all_tokens(deps, _env, start_after, limit),
+
+        QueryMsg::NftInfo { token_id} =>
         get_token_info(deps, _env, token_id),
+
+        QueryMsg::AllNftInfo { token_id, include_expired} =>
+        all_nft_info(deps, _env, token_id, include_expired),
+
+        QueryMsg::NumTokens {} =>
+        num_tokens(deps, _env),
+
+        QueryMsg::OwnerOf { token_id, include_expired} =>
+        owner_of(deps, _env, token_id, include_expired),
+
 
         QueryMsg::GetItemsCount { owner, collection_name, collection_symbol } =>
         to_binary(&get_items_count(deps, owner, collection_name, collection_symbol)?),
