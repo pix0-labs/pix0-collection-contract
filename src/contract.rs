@@ -114,10 +114,16 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::Tokens { owner, start_after, limit } =>
         get_minted_tokens_by_owner(deps, _env, owner, start_after, limit),
 
+        QueryMsg::MintedTokensByOwner { owner, start_after, limit } =>
+        get_minted_tokens_by_owner(deps, _env, owner, start_after, limit),
+       
         QueryMsg::AllTokens {start_after, limit } =>
         all_tokens(deps, _env, start_after, limit),
 
         QueryMsg::NftInfo { token_id} =>
+        get_token_info(deps, _env, token_id),
+
+        QueryMsg::NftTokenInfo { token_id} =>
         get_token_info(deps, _env, token_id),
 
         QueryMsg::AllNftInfo { token_id, include_expired} =>

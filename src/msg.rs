@@ -212,10 +212,23 @@ pub enum QueryMsg {
         token_id: String,
     },
 
+    // for backward compatiblity
+    NftTokenInfo {
+        token_id: String,
+    },
+
     AllNftInfo {
         token_id: String,
         include_expired: Option<bool>,
     },
+
+    // for backward compatiblity
+    MintedTokensByOwner {
+        owner: String,
+        start_after: Option<String>,
+        limit: Option<u32>,
+    },
+    
     
     Tokens {
         owner: String,
