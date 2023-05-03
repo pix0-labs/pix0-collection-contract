@@ -244,6 +244,8 @@ pub enum QueryMsg {
     GetContractInfo{},
      
     GetLogInfo{},
+
+   // OutstandingRewards {},
     
 }
 
@@ -308,4 +310,12 @@ pub struct ItemsResponse {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ItemCountResponse {
     pub count : usize,
+}
+
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct OutstandingRewardsResponse {
+    pub rewards_balance: archway_bindings::Coins,
+
+    pub total_records: u64,
 }

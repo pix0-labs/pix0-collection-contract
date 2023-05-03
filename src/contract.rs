@@ -9,7 +9,7 @@ use crate::ins::{create_collection, update_collection, create_item, mint_item_by
     remove_collection,update_contract_info};
 use crate::nft_ins::{burn_nft, send_nft, init_and_simple_mint, transfer_nft, receive_nft, create_sell_offer};
 use crate::query::{get_all_collections, get_collections,get_active_collections, 
-get_collection, get_items_count, get_items, get_item};
+get_collection, get_items_count, get_items, get_item, /* outstanding_rewards */ };
 use crate::nft_query::*;
 use crate::msg::{ExecuteMsg,QueryMsg, MigrateMsg};
 use crate::utils::str_to_u64;
@@ -150,6 +150,8 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
 
         QueryMsg::GetLogInfo {} =>
         to_binary(&get_log_info(deps)?),
+
+        // QueryMsg::OutstandingRewards {} => to_binary(&outstanding_rewards(deps, _env)?),
     }
 }
 

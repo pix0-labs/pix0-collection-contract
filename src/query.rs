@@ -1,11 +1,16 @@
 use std::convert::TryInto;
 
-use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse, CollectionsWithParamsResponse};
-use cosmwasm_std::{Deps, StdResult, Order, Addr };
+use crate::msg::{CollectionResponse, CollectionsResponse, ItemCountResponse, ItemsResponse, ItemResponse, 
+    CollectionsWithParamsResponse, OutstandingRewardsResponse};
+use cosmwasm_std::{Deps, StdResult, Order, Addr, Env };
 use crate::state::{Collection, Item, COLLECTION_STATUS_ACTIVATED};
 use crate::indexes::{collections_store, COLLECTION_ITEMS_STORE};
 use cw_storage_plus::Bound;
 use crate::ins::collection_id;
+use archway_bindings::{ArchwayQuery, PageRequest};
+use archway_bindings::types::rewards::RewardsRecordsResponse;
+use cw_utils::NativeBalance;
+
 
 pub const DEFAULT_LIMIT : u32 = 10;
 
@@ -400,4 +405,30 @@ pub fn get_item(deps : Deps ,
 
 
 
+pub fn outstanding_rewards(deps: Deps<ArchwayQuery>,env: Env) -> StdResult<OutstandingRewardsResponse> {
+    
+    // get the outstanding reward from the current contract address
+    
+    let rewards_address = env.contract.address;
+    let req = ArchwayQuery::rewards_records_with_pagination(
+        rewards_address,
+        PageRequest::new().count_total(),
+    )
+    .into();
 
+    let response: RewardsRecordsResponse = deps.querier.query(&req)?;
+    let rewards_coins = response
+        .records
+        .iter()
+        .flat_map(|r| r.rewards.iter().cloned())
+        .collect();
+    let mut rewards_balance = NativeBalance(rewards_coins);
+    rewards_balance.normalize();
+
+    let total_records = response.pagination.and_then(|p| p.total).unwrap_or(0);
+
+    Ok(OutstandingRewardsResponse {
+        rewards_balance: rewards_balance.into_vec(),
+        total_records,
+    })
+}
