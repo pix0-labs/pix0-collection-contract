@@ -8,6 +8,30 @@
     "deployments": [
       {
         "project": "pix0-collection-contract",
+        "type": "set-metadata",
+        "chainId": "constantine-2",
+        "codeId": 546,
+        "txhash": "FCD50D533E96C481BA63A0A23CF2E0B0A8844CD376CAB385180DAF02CAD56098",
+        "contract": "archway1u5tyxz5gzfl6cmhtnujj9deved5eaan0dveg3wnlp5qgay64mahsc305m6",
+        "contractMetadata": {
+          "ownerAddress": "archway14l92fdhae4htjtkyla73f262c39cngf2wc65ky",
+          "rewardsAddress": "archway1u5tyxz5gzfl6cmhtnujj9deved5eaan0dveg3wnlp5qgay64mahsc305m6"
+        }
+      },
+      {
+        "project": "pix0-collection-contract",
+        "type": "set-metadata",
+        "chainId": "constantine-2",
+        "codeId": 546,
+        "txhash": "98A620CFE4489D2A38DF9C109DBC09A99384701F1133F748CA7B1AF8D2FFE2A4",
+        "contract": "archway1u5tyxz5gzfl6cmhtnujj9deved5eaan0dveg3wnlp5qgay64mahsc305m6",
+        "contractMetadata": {
+          "ownerAddress": "",
+          "rewardsAddress": "archway1u5tyxz5gzfl6cmhtnujj9deved5eaan0dveg3wnlp5qgay64mahsc305m6"
+        }
+      },
+      {
+        "project": "pix0-collection-contract",
         "type": "instantiate",
         "chainId": "constantine-2",
         "codeId": 546,
