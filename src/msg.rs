@@ -312,10 +312,3 @@ pub struct ItemCountResponse {
     pub count : usize,
 }
 
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct OutstandingRewardsResponse {
-    pub rewards_balance: archway_bindings::Coins,
-
-    pub total_records: u64,
-}
