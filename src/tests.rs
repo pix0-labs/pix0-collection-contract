@@ -15,7 +15,7 @@ mod tests {
     use pix0_contract_common::state::{Fee, ContractInfoResponse, PaymentByPercentage};
     use pix0_contract_common::msg::InstantiateMsg;
     use pix0_contract_common::funcs::{pay_by_percentage_checked, try_paying_contract_treasuries};
-
+    use pix0_contract_common::utils::RandomNumGen;
 
     const DEFAULT_PRICE_DENOM : &str = "uconst";
    
@@ -310,7 +310,7 @@ mod tests {
     #[test]
     fn test_rand_gen(){
 
-        let mut rng = crate::utils::RandomNumGen::new(2390);
+        let mut rng = RandomNumGen::new(2390);
        
         for i in 0..10 {
            
@@ -475,7 +475,7 @@ mod tests {
 
         let cats = vec!["art", "music", "game assets"];
 
-        let mut rng = crate::utils::RandomNumGen::new(3390);
+        let mut rng = RandomNumGen::new(3390);
        
         for i in 0..7000 {
 

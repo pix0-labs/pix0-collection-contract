@@ -7,6 +7,7 @@ use crate::error::ContractError;
 use crate::query::{internal_get_collection, internal_get_all_items, internal_get_item};
 use crate::nft_ins::init_and_mint_nft;
 use pix0_contract_common::funcs::{try_paying_contract_treasuries};
+use pix0_contract_common::utils::RandomNumGen;
 use pix0_contract_common::state::{Fee, Contract};
 use crate::checks::*;
 
@@ -274,7 +275,7 @@ pub fn mint_item (mut deps : DepsMut ,
     let items = internal_get_all_items(deps.as_ref(), owner.clone(), collection_name.clone(), 
     collection_symbol.clone());
 
-    let mut rng = crate::utils::RandomNumGen::new(seed);
+    let mut rng = RandomNumGen::new(seed);
     let index = rng.generate_range(0, items.len() as u64) as usize;
    
    // println!("minted.at.index::{}", index);
