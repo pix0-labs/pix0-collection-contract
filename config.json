@@ -11,6 +11,18 @@
         "type": "set-metadata",
         "chainId": "constantine-2",
         "codeId": 546,
+        "txhash": "8B74A82DEC37F09F7F7AEE82AE1BE88F81509AC2EDEBE45D546139F6485DBAAF",
+        "contract": "archway1u5tyxz5gzfl6cmhtnujj9deved5eaan0dveg3wnlp5qgay64mahsc305m6",
+        "contractMetadata": {
+          "ownerAddress": "archway14l92fdhae4htjtkyla73f262c39cngf2wc65ky",
+          "rewardsAddress": "archway18q3czfmz8dkyknexsjp7p492fcuz5awuzgslfkqy8rr50t9sxkwqxqpxmg"
+        }
+      },
+      {
+        "project": "pix0-collection-contract",
+        "type": "set-metadata",
+        "chainId": "constantine-2",
+        "codeId": 546,
         "txhash": "552ED2A53671237284D26B67258AC3A735F490DE0B4A28C179451031D19EB246",
         "contract": "archway1u5tyxz5gzfl6cmhtnujj9deved5eaan0dveg3wnlp5qgay64mahsc305m6",
         "contractMetadata": {
